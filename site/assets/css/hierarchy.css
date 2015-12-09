@@ -1,0 +1,31 @@
+a.btn.btn-primary.nomineeBtn.modal{
+
+    position: relative !important;
+	display:initial !important;
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    top: 0px !important;
+    left: 0px !important;
+    z-index:0 !important;
+
+    margin: 0;
+}
+
+.nomineeSearch {
+  height: 41px !important;
+}
+
+.selected_events{
+width:450px;
+}
+
+.jt_alert{
+background-color: #dff0d8;
+border-color: #d6e9c6;
+color: #468847;
+margin-top:4px;
+padding-top:6px;
+padding-bottom:5px;
+margin-bottom:4px;
+}

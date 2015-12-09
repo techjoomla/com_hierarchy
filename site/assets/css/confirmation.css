@@ -1,0 +1,14 @@
+.panel.well {
+color: #000;
+background-color: #fff;
+border: 0px;
+}
+#reason
+{
+	min-height : 130px;
+	margin-bottom : 10px;
+}
+.tab-content
+{
+	overflow: hidden !important;
+}

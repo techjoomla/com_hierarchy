@@ -1,0 +1,49 @@
+div#system-message-container {
+width: 76%;
+float: right;
+}
+.t3-content {
+    padding-top: 0px !important;
+}
+
+.tjlms-toggle-box
+{
+	overflow: hidden !important;
+}
+
+
+div#t3-mainbody {
+max-width: 100%;
+}
+.row {
+margin: 0px;
+}
+#reschedule_div
+{
+	padding-top : 20px;
+}
+.alert
+{
+	margin-top : 20px;
+}
+input.search-query.GINGER_SOFTWARE_control {
+border: 1px solid #000 !important;
+}
+.btn-submit {
+padding: 5.5px 27px !important;
+margin-left: 10px !important;
+}
+.hidden-lbl
+{
+font-weight : normal;
+}
+#remain_div
+{
+margin-top: 20px;
+color: red;
+}
+body {
+    background: url('../../../../templates/uber/images/cp/ap8254.jpg');
+    background-repeat: repeat-y;
+    background-size: 25% 100%;
+} 
