@@ -28,13 +28,7 @@ class HierarchyHelper
 	 */
 	public static function addSubmenu($vName = '')
 	{
-		JHtmlSidebar::addEntry(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'),'index.php?option=com_hierarchy&view=hierarchys',$vName == 'hierarchys');
-
-		JHtmlSidebar::addEntry(
-			JText::_('Managers'),
-			'index.php?option=com_hierarchy&view=managers',
-			$vName == 'managers'
-		);
+		JHtmlSidebar::addEntry(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'index.php?option=com_hierarchy&view=hierarchys', $vName == 'hierarchys');
 	}
 
 	/**
