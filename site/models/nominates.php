@@ -415,11 +415,6 @@ class HierarchyModelNominates extends JModelList
 		$jinput        = JFactory::getApplication()->input;
 		$catId         = $jinput->get('catId', '', 'integer');
 		$nomineeId      = $jinput->get('nomineeId', '', 'INT');
-		$nominee_location = $this->NomineeLocation($nomineeId);
-
-		$location      = $jinput->get('location', $nominee_location, 'string');
-		$location = trim($location);
-		$location = strtolower($location);
 		$msg = array();
 
 		if (!empty($catId))
@@ -439,11 +434,6 @@ class HierarchyModelNominates extends JModelList
 			// Get events with repect to access level
 			$query->where('te.access IN ("' . $implodedViewLevels . '")');
 
-			if ($location)
-			{
-				$location = $db->Quote('%' . $db->escape($location, true) . '%');
-				$query->where('( LOWER(te.location) LIKE ' . $location . ' )');
-			}
 
 			$query->group('te.id');
 			$db->setQuery($query);
@@ -458,28 +448,7 @@ class HierarchyModelNominates extends JModelList
 				{
 					$respectDateofjoining = 0;
 
-					// Check if date of validation field is yes or no for this event
-					$respectDateofjoining = $this->checkJoiningDateNominee($value->eventId);
 
-					if ($respectDateofjoining == 1)
-					{
-						// Joining date validation plugin called jticketing_bajaj
-						$dispatcher  = JDispatcher::getInstance();
-						JPluginHelper::importPlugin('system', 'jticketing_bajaj');
-						$resp = $dispatcher->trigger('jt_OnBeforeNominateUser', array($nomineeId));
-
-						if (empty($resp[0]))
-						{
-
-							$disabled_count++;
-							$message = JText::_('COM_HIERARCHY_DATE_JOINING_FAIL');
-							$nominee_name = JFactory::getUser($nomineeId)->name;
-							$message = str_replace("[NOMINEE_NAME]",$nominee_name,$message);
-							$msg['date_of_joining_missing'] = $message;
-							// Not a valid nominee
-							continue;
-						}
-					}
 
 					$query = $db->getQuery(true);
 					$query->select('jix.eventid');
@@ -539,44 +508,7 @@ class HierarchyModelNominates extends JModelList
 		}
 	}
 
-	/**
-	 * Method to check if We want to respect joining date for this event
-	 *
-	 * @param   int  $eventID  eventID
-	 *
-	 * @return  1 or 0
-	 *
-	 * @since   1.0
-	 */
-	public function checkJoiningDateNominee($eventID)
-	{
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("id");
-		$query->from('`#__tjfields_fields` AS te');
-		$query->where('te.name = ' . $db->Quote("com_jticketing_event_rdoj"));
-		$db->setQuery($query);
-		$fieldID = $db->loadResult();
 
-		if ($fieldID)
-		{
-			$query = $db->getQuery(true);
-			$query->select("value");
-			$query->from('`#__tjfields_fields_value` AS te');
-			$query->where('te.field_id = ' . $fieldID);
-			$query->where('te.content_id = ' . $eventID);
-			$query->where('te.client = ' . $db->Quote("com_jticketing.event"));
-			$db->setQuery($query);
-			$field_value = $db->loadResult();
-
-			if ($field_value)
-			{
-				return 1;
-			}
-		}
-
-		return 0;
-	}
 
 	/**
 	 * Method to get a list of reporting users.

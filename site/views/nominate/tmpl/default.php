@@ -98,9 +98,12 @@ $canDelete = $user->authorise('core.delete', 'com_hierarchy');
 						<?php  if (isset($item->already_nominated_events)) echo $item->already_nominated_events; ?>
 					</td>
 					<td>
+
+
 						<a class="btn btn-primary nomineeBtn modal" title="<?php echo JText::_('COM_HIERARCHY_NOMINATION_BUTTON'); ?>" href="<?php echo JRoute::_('index.php?option=com_hierarchy&view=nominates&tmpl=component&nomineeId='.(int) $item->id); ?> " rel="{handler: 'iframe', size: {x: 800, y: 500}}">
 							<i class="icon-user icon-white"></i> <?php echo JText::_('COM_HIERARCHY_NOMINATION_BUTTON'); ?>
 						</a>
+
 					</td>
 				</tr>
 			<?php endforeach; ?>

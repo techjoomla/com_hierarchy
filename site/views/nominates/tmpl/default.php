@@ -115,24 +115,10 @@ $canDelete = $user->authorise('core.delete', 'com_hierarchy');
 <?php } else { ?>
 
 	<?php echo JLayoutHelper::render('default_filter', array('view' => $this), dirname(__FILE__)); ?>
-	<div class="">
-			<span class=""><?php echo JText::_('COM_HIERARCHY_HIERARCHYS_USER_NAME');?>
-			<?php $nomineename=JFactory::getUser($nomineeId)->name; echo $nomineename;?>
-		 </span>
-
-		<div class="alert alert-info"><?php	echo "<br/>".JText::sprintf('COM_HIERARCHY_HIERARCHYS_CONDITION',$nomineename);?>
+		<div class="">
+			<div class="alert alert-info"><?php	echo JText::_('COM_HIERARCHY_HIERARCHYS_CONDITION');?>
+			</div>
 		</div>
-</div>
-		<div class="btn-group pull-left">
-			<?php echo JText::_('COM_HIERARCHY_NOMINATION_MESSAGE'); ?>
-			<!--label for="location" class=""><?php echo JText::_('COM_HIERARCHY_NOMINATION_LOCATION');?></label-->
-			<input type="text" class="nomineeSearch" name="location" id="location" placeholder="<?php echo JText::_('COM_HIERARCHY_NOMINATION_LOCATION'); ?>" value="<?php echo $location;?>" title="<?php echo JText::_('COM_HIERARCHY_NOMINATION_LOCATION'); ?>" />
-		</div>
-		<div class="btn-group pull-left">
-			<button class="btn hasTooltip" type="submit" title="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>"><i class="icon-search"></i></button>
-			<button class="btn hasTooltip" id="clear-search-button" type="button" title="<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>"><i class="icon-remove"></i></button>
-		</div>
-
 		<table class="table table-striped" border="0" id = "hierarchyList" >
 
 
@@ -214,7 +200,7 @@ $canDelete = $user->authorise('core.delete', 'com_hierarchy');
 					<?php endif;*/ ?>
 					<tr>
 						<td colspan="2" class="center">
-							<button type="button" class="btn btn-success" id="nominate-submit" disabled>
+							<button type="button" class="btn btn-success" id="nominate-submit">
 								<i class="icon-user icon-white"></i>
 								<?php echo JText::_('COM_HIERARCHY_NOMINATION_BUTTON'); ?>
 							</button>

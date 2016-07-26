@@ -75,9 +75,9 @@ class HierarchyViewNominate extends JViewLegacy
 					foreach ($already_nominated_events_obj AS $already_nominated_event)
 					{
 						$date_str = $startdate = $enddate ='';
-						$startdate = JFactory::getDate($already_nominated_event->startdate)->Format(JText::_('COM_JTICKETING_DATE_FORMAT_SHOW_SHORT'));
-						$enddate = JFactory::getDate($already_nominated_event->enddate)->Format(JText::_('COM_JTICKETING_DATE_FORMAT_SHOW_SHORT'));
-						$date_str = $startdate . JText::_('COM_JTICKETING_TO') . $enddate;
+						$startdate = JFactory::getDate($already_nominated_event->startdate)->Format(JText::_('COM_HIERARCHY_DATE_FORMAT_SHOW_SHORT'));
+						$enddate = JFactory::getDate($already_nominated_event->enddate)->Format(JText::_('COM_HIERARCHY_DATE_FORMAT_SHOW_SHORT'));
+						$date_str = $startdate . JText::_('COM_HIERARCHY_TO') . $enddate;
 						$already_nominated_events[] = $already_nominated_event->title . " (" .$date_str . " )";
 					}
 				}
