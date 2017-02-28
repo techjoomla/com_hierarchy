@@ -184,7 +184,6 @@ class HierarchyModelNominate extends JModelList
 					'list.select', 'DISTINCT u.*'
 				)
 			);
-		$query->select('xref.join_date');
 		// $query->from('`#__hierarchy_users` AS a');
 		$query->from('`#__users` AS u');
 		$query->join('LEFT', '#__hierarchy_users AS a ON u.id = a.subuser_id');

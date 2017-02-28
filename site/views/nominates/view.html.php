@@ -76,7 +76,6 @@ class HierarchyViewNominates extends JViewLegacy
 			}
 		}
 
-		$nominee_location = $this->getmodel()->NomineeLocation($nomineeId);
 
 
 		$groups = $user->getAuthorisedViewLevels();
@@ -104,11 +103,10 @@ class HierarchyViewNominates extends JViewLegacy
 
 		if (!empty($already_nominated_event) and !isset($popupClose))
 		{
-			echo $msg = JText::_('COM_HIERARCHY_ALREADY_NOMINATED');
-			return;
+			//echo $msg = JText::_('COM_HIERARCHY_ALREADY_NOMINATED');
+			//return;
 		}
 
-		$this->location  = $jinput->get('location',$nominee_location, 'STRING');
 		$path                     = JPATH_ROOT . '/components/com_jticketing/controllers/nomim.php';
 
 		if (!class_exists('HierarchyControllerNominate'))
