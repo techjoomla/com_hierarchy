@@ -12,7 +12,6 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modeladmin');
-jimport('joomla.database.table');
 
 /**
  * Methods supporting a list of Hierarchy records.
@@ -36,7 +35,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 *
 	 * @return  JTable    A database object
 	 */
-	public function getTable($type = 'Hierarchy', $prefix = 'HierarchyTable', $config = array())
+	public function getTable($type = 'hierarchy', $prefix = 'HierarchyTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -147,30 +146,17 @@ class HierarchyModelHierarchy extends JModelAdmin
 	}
 
 	/**
-	 * Prepare and sanitise the  data prior to saving.
+	 * function to save data to jtable.
 	 *
-	 * @param   integer  $bossId  Manager id.
-	 * @param   integer  $empId   Employee id.
+	 * @param   array  $data  csv file data.
 	 *
-	 * @return  void
+	 * @return  boolean
 	 *
 	 * @since   1.6
 	 */
-	public function saveUserHier($bossId, $empId)
+	public function save($data)
 	{
-		$db = $this->getDbo();
-
-		$query = "DELETE FROM #__hierarchy_users
-				WHERE subuser_id=" . $empId;
-		$db->setQuery($query);
-		$db->execute($query);
-
-		$insert_obj             = new stdClass;
-		$insert_obj->user_id    = $bossId;
-		$insert_obj->subuser_id = $empId;
-		$db->insertObject('#__hierarchy_users', $insert_obj);
-
-		return;
+		return parent::save($data);
 	}
 
 	/**
