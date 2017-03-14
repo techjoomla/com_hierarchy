@@ -126,9 +126,6 @@ class HierarchyModelHierarchys extends JModelList
 		$query->select('hu.id, hu.user_id AS bossId, hu.subuser_id AS empId, hu.client, hu.client_id, hu.state, hu.note');
 		$query->join('LEFT', '#__hierarchy_users AS hu ON hu.subuser_id = a.id');
 
-		// $query->leftjoin('#__tjlms_enrolled_users as eu ON eu.user_id = a.id');
-		// $query->where('eu.course_id= 2');
-
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 
@@ -235,20 +232,5 @@ class HierarchyModelHierarchys extends JModelList
 		$db->setQuery($query);
 
 		return $res = $db->loadObjectList();
-	}
-
-	/**
-	 * Build an SQL query to load the user group data.
-	 *
-	 * @return	Items
-	 *
-	 * @since	1.6
-	 */
-	public function getUserGroup()
-	{
-		$jinput = JFactory::getApplication()->input;
-		$value  = $jinput->get('usergroup', '0', 'INT');
-
-		return $usergroup = JHtml::_('access.usergroup', 'usergroup', $value, '');
 	}
 }
