@@ -115,16 +115,20 @@ class HierarchyModelHierarchys extends JModelList
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'DISTINCT a.id AS subuserId, a.name'
-			)
-		);
-		$query->from('`#__users` AS a');
+		$abc = $this->getState(
+				'list.select', 'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name')
+			);
+		$query->select($abc);
+		$query->from($db->quoteName('#__users', 'a'));
 
 		// Join over the user field 'user_id'
-		$query->select('hu.id, hu.user_id AS bossId, hu.subuser_id AS empId, hu.client, hu.client_id, hu.state, hu.note');
-		$query->join('LEFT', '#__hierarchy_users AS hu ON hu.subuser_id = a.id');
+$query->select(
+				$db->quoteName(
+					array('hu.id', 'hu.user_id', 'hu.subuser_id', 'hu.client', 'hu.client_id', 'hu.state', 'hu.note'),
+					array(null, 'bossId', 'empId', null, null, null, null)
+							)
+				);
+		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.subuser_id') . ' = ' . $db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -147,7 +151,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($filter_subuser_id)
 		{
-			$query->where("hu.subuser_id = '" . $db->escape($filter_subuser_id) . "'");
+			$query->where($db->quote('hu.subuser_id') . ' = ' . $db->escape($filter_subuser_id) . "'");
 		}
 
 		// Filtering state
@@ -155,7 +159,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($filter_state)
 		{
-			$query->where("hu.state = '" . $db->escape($filter_state) . "'");
+			$query->where($db->quote('hu.state') . ' = ' . $db->escape($filter_state));
 		}
 
 		// Filtering client
@@ -163,7 +167,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($filter_client)
 		{
-			$query->where("hu.client = '" . $db->escape($filter_client) . "'");
+			$query->where($db->quote('hu.client') . ' = ' . $db->quote($filter_client));
 		}
 
 		// Filtering client_id
@@ -171,7 +175,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($filter_client_id)
 		{
-			$query->where("hu.client_id = '" . $db->escape($filter_client_id) . "'");
+			$query->where($db->quote('hu.client_id') . ' = ' . $db->escape($filter_client_id));
 		}
 
 		$query->where('a.block=0');

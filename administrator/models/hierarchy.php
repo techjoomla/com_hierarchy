@@ -12,6 +12,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modeladmin');
+jimport('joomla.database.table');
 
 /**
  * Methods supporting a list of Hierarchy records.
@@ -37,6 +38,8 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function getTable($type = 'hierarchy', $prefix = 'HierarchyTable', $config = array())
 	{
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -143,20 +146,6 @@ class HierarchyModelHierarchy extends JModelAdmin
 		$db->setQuery('SELECT * FROM #__hierarchy_users');
 
 		return $AllUser = $db->loadObjectList();
-	}
-
-	/**
-	 * function to save data to jtable.
-	 *
-	 * @param   array  $data  csv file data.
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.6
-	 */
-	public function save($data)
-	{
-		return parent::save($data);
 	}
 
 	/**

@@ -1,25 +1,28 @@
 <?php
 
 /**
- * @version     1.0.0
- * @package     com_hierarchy
- * @copyright   Copyright (C) 2015. All rights reserved.
+ * @package     Joomla.Administrator
+ * @subpackage  com_hierarchy
+ *
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @author      Parth Lawate <contact@techjoomla.com> - http://techjoomla.com
  */
+
+
 // No direct access
 defined('_JEXEC') or die;
 
 /**
  * hierarchy Table class
+ * 
+ * @since  1.0.4
  */
-class HierarchyTablehierarchy extends JTable
+class HierarchyTableHierarchy extends JTable
 {
-
 	/**
 	 * Constructor
 	 *
-	 * @param JDatabase A database connector object
+	 * @param   JDatabase  &$db  A database connector object
 	 */
 	public function __construct(&$db)
 	{
@@ -29,42 +32,45 @@ class HierarchyTablehierarchy extends JTable
 	/**
 	 * Overloaded bind function to pre-process the params.
 	 *
-	 * @param    array        Named array
+	 * @param   array  $array   Named array
+	 * @param   array  $ignore  ignore values
 	 *
 	 * @return    null|string    null is operation was satisfactory, otherwise returns an error
+	 * 
 	 * @see        JTable:bind
 	 * @since      1.5
 	 */
 	public function bind($array, $ignore = '')
 	{
-
-		
-
 		if (isset($array['params']) && is_array($array['params']))
 		{
-			$registry = new JRegistry();
+			$registry = new JRegistry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
 		if (isset($array['metadata']) && is_array($array['metadata']))
 		{
-			$registry = new JRegistry();
+			$registry = new JRegistry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
+
 		if (!JFactory::getUser()->authorise('core.admin', 'com_hierarchy.hierarchy.' . $array['id']))
 		{
 			$actions         = JFactory::getACL()->getActions('com_hierarchy', 'hierarchy');
 			$default_actions = JFactory::getACL()->getAssetRules('com_hierarchy.hierarchy.' . $array['id'])->getData();
 			$array_jaccess   = array();
+
 			foreach ($actions as $action)
 			{
 				$array_jaccess[$action->name] = $default_actions[$action->name];
 			}
+
 			$array['rules'] = $this->JAccessRulestoArray($array_jaccess);
 		}
-		//Bind the rules for ACL where supported.
+
+		// Bind the rules for ACL where supported.
 		if (isset($array['rules']) && is_array($array['rules']))
 		{
 			$this->setRules($array['rules']);
@@ -76,18 +82,23 @@ class HierarchyTablehierarchy extends JTable
 	/**
 	 * This function convert an array of JAccessRule objects into an rules array.
 	 *
-	 * @param type $jaccessrules an arrao of JAccessRule objects.
+	 * @param   type  $jaccessrules  an arrao of JAccessRule objects.
+	 * 
+	 * @return $rules
 	 */
 	private function JAccessRulestoArray($jaccessrules)
 	{
 		$rules = array();
+
 		foreach ($jaccessrules as $action => $jaccess)
 		{
 			$actions = array();
+
 			foreach ($jaccess->getData() as $group => $allow)
 			{
 				$actions[$group] = ((bool) $allow);
 			}
+
 			$rules[$action] = $actions;
 		}
 
@@ -96,11 +107,12 @@ class HierarchyTablehierarchy extends JTable
 
 	/**
 	 * Overloaded check function
+	 * 
+	 * @return boolean
 	 */
 	public function check()
 	{
-
-		//If there is an ordering column and this is a new row then get the next ordering value
+		// If there is an ordering column and this is a new row then get the next ordering value
 		if (property_exists($this, 'ordering') && $this->id == 0)
 		{
 			$this->ordering = self::getNextOrder();
@@ -114,12 +126,13 @@ class HierarchyTablehierarchy extends JTable
 	 * table.  The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param    mixed    An optional array of primary key values to update.  If not
+	 * @param   integer  $pks     An optional array of primary key values to update.  If not
 	 *                    set the instance property value is used.
-	 * @param    integer  The publishing state. eg. [0 = unpublished, 1 = published]
-	 * @param    integer  The user id of the user performing the operation.
+	 * @param   integer  $state   The publishing state. eg. [0 = unpublished, 1 = published]
+	 * @param   integer  $userId  The user id of the user performing the operation.
 	 *
 	 * @return    boolean    True on success.
+	 * 
 	 * @since    1.0.4
 	 */
 	public function publish($pks = null, $state = 1, $userId = 0)
@@ -193,6 +206,7 @@ class HierarchyTablehierarchy extends JTable
 
 	/**
 	 * Define a namespaced asset name for inclusion in the #__assets table
+	 * 
 	 * @return string The asset name
 	 *
 	 * @see JTable::_getAssetName
@@ -207,17 +221,26 @@ class HierarchyTablehierarchy extends JTable
 	/**
 	 * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
 	 *
+	 * @param   JTable  $table  table object
+	 * @param   Int     $id     event id 
+	 * 
+	 * @return assetParentId
+	 * 
 	 * @see JTable::_getAssetParentId
 	 */
 	protected function _getAssetParentId(JTable $table = null, $id = null)
 	{
 		// We will retrieve the parent-asset from the Asset-table
 		$assetParent = JTable::getInstance('Asset');
+
 		// Default: if no asset-parent can be found we take the global asset
 		$assetParentId = $assetParent->getRootId();
+
 		// The item has the component as asset-parent
 		$assetParent->loadByName('com_hierarchy');
+
 		// Return the found asset-parent-id
+
 		if ($assetParent->id)
 		{
 			$assetParentId = $assetParent->id;
@@ -226,17 +249,20 @@ class HierarchyTablehierarchy extends JTable
 		return $assetParentId;
 	}
 
+	/**
+	 * Function to delete the records
+	 *
+	 * @param   int  $pk  primary key
+	 * 
+	 * @return result
+	 * 
+	 * @see JTable::_getAssetParentId
+	 */
 	public function delete($pk = null)
 	{
 		$this->load($pk);
 		$result = parent::delete($pk);
-		if ($result)
-		{
-
-			
-		}
 
 		return $result;
 	}
-
 }
