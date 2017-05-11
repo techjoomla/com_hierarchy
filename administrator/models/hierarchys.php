@@ -61,9 +61,12 @@ class HierarchyModelHierarchys extends JModelList
 
 		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
+		$user_id = $app->getUserState('filter.user_id');
 
-		// Filtering user_id
-		$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
+		if (!empty($user_id))
+		{
+			$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
+		}
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_hierarchy');
@@ -145,7 +148,6 @@ class HierarchyModelHierarchys extends JModelList
 		}
 
 		$query->where('a.block=0');
-
 
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering');
