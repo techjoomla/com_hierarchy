@@ -59,17 +59,19 @@ class HierarchyHelper
 /**
  * Check the user is Course creator or not
  * 
- * @param user_Id $user_Id Id of user*
+ * @param   user_Id  $user_Id  Id of user*
  *
- * @return result format
+ * @return  result  format
  *
- * @since 1.0*/
-public function checkManager($user_Id = null)
-{
-	if (empty($user_Id))
+ * @since 1.0
+ */
+	public function checkManager($user_Id = null)
 	{
-		$user_Id = JFactory::getUser()->id;
-	}
+		if (empty($user_Id))
+		{
+			$user_Id = JFactory::getUser()->id;
+		}
+
 		if ($user_Id)
 		{
 			// Checking if the user is having subuser in hierarchy
@@ -77,8 +79,10 @@ public function checkManager($user_Id = null)
 			$HierarchyModelHierarchys = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
 			$HierarchyModelHierarchys->setState('filter.user_id', $user_Id);
 			$isManager = $HierarchyModelHierarchys->getItems();
+
 			return $isManager;
 		}
+
 			return false;
 	}
 }
