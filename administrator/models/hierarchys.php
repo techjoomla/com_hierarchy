@@ -65,6 +65,11 @@ class HierarchyModelHierarchys extends JModelList
 		// Filtering user_id
 		$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
 
+		if (!empty($user_id))
+		{
+			$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
+		}
+		
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_hierarchy');
 		$this->setState('params', $params);
