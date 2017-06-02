@@ -65,8 +65,4 @@
 			<language tag="en-GB">en-GB/en-GB.com_hierarchy.sys.ini</language>
         </languages>
     </administration>
-    <plugins>
-        <plugin group="search" plugin="hierarchy"/>
-    </plugins>
-
 </extension>
