@@ -143,6 +143,20 @@ class Com_HierarchyInstallerScript
 			$db->execute();
 		}
 
+		if (!in_array('state', $res))
+		{
+			$query = "ALTER TABLE #__hierarchy_users add column state INT(11);";
+			$db->setQuery($query);
+			$db->execute();
+		}
+
+		if (!in_array('note', $res))
+		{
+			$query = "ALTER TABLE #__hierarchy_users add column note TEXT;";
+			$db->setQuery($query);
+			$db->execute();
+		}
+
 		$query = "ALTER TABLE #__hierarchy_users modify subuser_id int(11);";
 		$db->setQuery($query);
 		$db->execute();

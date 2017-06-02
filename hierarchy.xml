@@ -9,6 +9,7 @@
     <authorUrl>http://techjoomla.com</authorUrl>
     <version>1.0.0</version>
     <description>This tool will let the admin set a ‘Reports to’ field for each user in the system. This will be updated en masse using a CSV</description>
+
     <install> <!-- Runs on install -->
         <sql>
             <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
@@ -19,7 +20,7 @@
             <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
         </sql>
     </uninstall>
-
+	<scriptfile>script.hierarchy.php</scriptfile>
     <files folder="site">
         <filename>index.html</filename>
         <filename>hierarchy.php</filename>
