@@ -59,11 +59,17 @@ class HierarchyModelHierarchys extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
-		$this->setState('filter.state', $published);
-
+		if (empty($this->state->get("filter.state")))
+		{
+			$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
+			$this->setState('filter.state', $published);
+		}
 		// Filtering user_id
 		$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
+
+		// Filtering usergroup
+		$groupId = $this->getUserStateFromRequest($this->context . '.usergroup', 'usergroup', null, 'int');
+		$this->setState('usergroup', $groupId);
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_hierarchy');
@@ -109,16 +115,20 @@ class HierarchyModelHierarchys extends JModelList
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'DISTINCT a.id AS subuserId, a.name'
-			)
-		);
-		$query->from('`#__users` AS a');
+		$abc = $this->getState(
+				'list.select', 'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name')
+			);
+		$query->select($abc);
+		$query->from($db->quoteName('#__users', 'a'));
 
 		// Join over the user field 'user_id'
-		$query->select('hu.user_id AS bossId, hu.subuser_id AS empId');
-		$query->join('LEFT', '#__hierarchy_users AS hu ON hu.subuser_id = a.id');
+$query->select(
+				$db->quoteName(
+					array('hu.id', 'hu.user_id', 'hu.subuser_id', 'hu.client', 'hu.client_id', 'hu.state', 'hu.note'),
+					array(null, 'bossId', 'empId', null, null, null, null)
+							)
+				);
+		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.subuser_id') . ' = ' . $db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -136,16 +146,39 @@ class HierarchyModelHierarchys extends JModelList
 			}
 		}
 
-		// Filtering user_id
-		$filter_user_id = $this->state->get("filter.user_id");
+		// Filtering subuser_id
+		$filter_subuser_id = $this->state->get("filter.subuser_id");
 
-		if ($filter_user_id)
+		if ($filter_subuser_id)
 		{
-			$query->where("hu.user_id = '" . $db->escape($filter_user_id) . "'");
+			$query->where($db->quote('hu.subuser_id') . ' = ' . $db->escape($filter_subuser_id) . "'");
+		}
+
+		// Filtering state
+		$filter_state = $this->state->get("filter.state");
+
+		if ($filter_state)
+		{
+			$query->where($db->quote('hu.state') . ' = ' . $db->escape($filter_state));
+		}
+
+		// Filtering client
+		$filter_client = $this->state->get("filter.client");
+
+		if ($filter_client)
+		{
+			$query->where($db->quote('hu.client') . ' = ' . $db->quote($filter_client));
+		}
+
+		// Filtering client_id
+		$filter_client_id = $this->state->get("filter.client_id");
+
+		if ($filter_client_id)
+		{
+			$query->where($db->quote('hu.client_id') . ' = ' . $db->escape($filter_client_id));
 		}
 
 		$query->where('a.block=0');
-
 
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering');
@@ -154,6 +187,19 @@ class HierarchyModelHierarchys extends JModelList
 		if ($orderCol && $orderDirn)
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
+		}
+
+		// Filter the items over the group id if set.
+		$groupId = $this->getState('usergroup');
+
+		if ($groupId)
+		{
+			$query->join('LEFT', '#__user_usergroup_map AS map2 ON map2.user_id = a.id');
+
+			if ($groupId)
+			{
+				$query->where('map2.group_id = ' . (int) $groupId);
+			}
 		}
 
 		return $query;

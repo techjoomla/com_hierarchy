@@ -36,8 +36,10 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 *
 	 * @return  JTable    A database object
 	 */
-	public function getTable($type = 'Hierarchy', $prefix = 'HierarchyTable', $config = array())
+	public function getTable($type = 'hierarchy', $prefix = 'HierarchyTable', $config = array())
 	{
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -144,33 +146,6 @@ class HierarchyModelHierarchy extends JModelAdmin
 		$db->setQuery('SELECT * FROM #__hierarchy_users');
 
 		return $AllUser = $db->loadObjectList();
-	}
-
-	/**
-	 * Prepare and sanitise the  data prior to saving.
-	 *
-	 * @param   integer  $bossId  Manager id.
-	 * @param   integer  $empId   Employee id.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
-	 */
-	public function saveUserHier($bossId, $empId)
-	{
-		$db = $this->getDbo();
-
-		$query = "DELETE FROM #__hierarchy_users
-				WHERE subuser_id=" . $empId;
-		$db->setQuery($query);
-		$db->execute($query);
-
-		$insert_obj             = new stdClass;
-		$insert_obj->user_id    = $bossId;
-		$insert_obj->subuser_id = $empId;
-		$db->insertObject('#__hierarchy_users', $insert_obj);
-
-		return;
 	}
 
 	/**
