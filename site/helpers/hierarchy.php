@@ -270,7 +270,7 @@ class HierarchyFrontendHelper
 	 *
 	 * @since   1.0
 	 */
-	public function checkManager($user_Id = null)
+	public function getSubUsers($user_Id = null)
 	{
 		if (empty($user_Id))
 		{
