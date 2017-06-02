@@ -18,6 +18,7 @@ JHtml::_('behavior.keepalive');
 
 // Import CSS
 JHtml::stylesheet(JUri::root(). 'administrator/components/com_hierarchy/assets/css/hierarchy.css' );
+JHtml::_('script', 'jui/fielduser.min.js', array('version' => 'auto', 'relative' => true));
 
 $user      = JFactory::getUser();
 $userId    = $user->get('id');
@@ -177,7 +178,7 @@ if (!empty($this->extra_sidebar))
 						<td>
 							<div class="controls">
 								<div class="input-append">
-									<input title="Report to id" type="text" class="resizedTextbox" id="jform_user_id_id_<?php echo $i;?>" readonly name="jform[user_id]" placeholder="Id" value="<?php echo $bossId;?>">
+									<input title="Report to id" type="text" class="resizedTextbox" id="jform_user_id_<?php echo $i;?>_id" readonly name="jform[user_id]" placeholder="Id" value="<?php echo $bossId;?>">
 									<input title="Report to name"  type="text" id="jform_user_id_<?php echo $i;?>" value="<?php echo $bossName;?>" placeholder="Name" readonly>
 									<a class="btn btn-primary modal_jform_user_id  modal" title="Select User." href="<?php echo JRoute::_('index.php?option=com_users&view=users&layout=modal&tmpl=component&field=jform_user_id_'.(int) $i); ?> " rel="{handler: 'iframe', size: {x: 800, y: 500}}">
 										<i class="icon-user"></i>
@@ -250,7 +251,7 @@ if (!empty($this->extra_sidebar))
 								<?php echo JText::_('COM_HIERARCHY_IMPORT_CSV'); ?>
 							</button>
 							<hr class="hr hr-condensed">
-							<div class="alert alert-warning" role="alert"><i class="icon-info"></i> 
+							<div class="alert alert-warning" role="alert"><i class="icon-info"></i>
 									<?php
 									$link = '<a href="' . JUri::root() . 'media/com_hierarchy/samplecsv/userImport.csv' . '">' . JText::_("COM_HIERARCHY_CSV_SAMPLE") . '</a>';
 								echo JText::sprintf('COM_HIERARCHY_CSVHELP', $link);
