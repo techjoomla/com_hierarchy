@@ -64,6 +64,7 @@ class HierarchyModelHierarchys extends JModelList
 			$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 			$this->setState('filter.state', $published);
 		}
+
 		// Filtering user_id
 		$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
 
@@ -217,6 +218,150 @@ $query->select(
 		$items = parent::getItems();
 
 		return $items;
+	}
+
+	/**
+	 * Method to save the hierachty for the user
+	 *
+	 * @param   integer  $data  Array of userid and managers
+	 *
+	 * @return  mixed  Object on success, false on failure.
+	 */
+	public function saveUserManagers($data)
+	{
+		if ($data('userId'))
+		{
+			if (!empty($data['managerIds']))
+			{
+				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
+				$hierTable  = JTable::getInstance('hierarchy', 'HierarchyTable');
+
+				foreach ($data['managerIds'] as $mangerId)
+				{
+					$hierTable->load(array("user_id" => $mangerId, "subuser_id" => $data('userId')));
+
+					if (!$hirTable->id)
+					{
+						$hierTable->user_id = $mangerId;
+						$hierTable->subuser_id = $data('userId');
+						$hierTable->store();
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Method to save the hierachty for the user
+	 *
+	 * @param   Array  $data  user id and manager ids
+	 *
+	 * @return  mixed  Object on success, false on failure.
+	 */
+	public function deleteUserManagers($data)
+	{
+		if ($data('userId'))
+		{
+			if (!empty($data['managerIds']))
+			{
+				$data['managerIds'] = (array) $data['managerIds'];
+
+				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
+				$hierTable  = JTable::getInstance('hierarchy', 'HierarchyTable');
+
+				foreach ($data['managerIds'] as $mangerId)
+				{
+					$hierTable->load(array("user_id" => $mangerId, "subuser_id" => $data('userId')));
+
+					if ($hirTable->id)
+					{
+						$hierTable->delete($hirTable->id);
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Method to get sub users
+	 *
+	 * @param   INT  $userId  Userid whose managers to get
+	 *
+	 * @return  mixed  An array of data items on success, false on failure.
+	 *
+	 * @since   1.6.1
+	 */
+	public function getSubusers($userId)
+	{
+		$db = $this->getDbo();
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('hu.user_id') . " = " . $userId,
+			$db->quoteName('u.block') . " = 0",
+		);
+
+		if ($this->getState('filter.client'))
+		{
+			$conditions['client'] = $this->getState('filter.client');
+		}
+
+		if ($this->getState('filter.client_d'))
+		{
+			$conditions['client_id'] = $this->getState('filter.client_d');
+		}
+
+		$query->select($db->quoteName('hu.subuser_id'));
+		$query->from($db->quoteName('#__hierarchy_users'), 'hu');
+		$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.subuser_id');
+		$query->where($conditions);
+		$db->setQuery($query);
+
+		return $db->loadColumn();
+	}
+
+	/**
+	 * Method to get sub users
+	 *
+	 * @param   INT  $userId  Userid whose managers to get
+	 *
+	 * @return  mixed  An array of data items on success, false on failure.
+	 *
+	 * @since   1.6.1
+	 */
+	public function getManagers($userId)
+	{
+		$db = $this->getDbo();
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('hu.subuser_id') . " = " . $userId,
+			$db->quoteName('u.block') . " = 0"
+		);
+
+		if ($this->getState('filter.client'))
+		{
+			$conditions['client'] = $this->getState('filter.client');
+		}
+
+		if ($this->getState('filter.client_d'))
+		{
+			$conditions['client_id'] = $this->getState('filter.client_d');
+		}
+
+		$query->select($db->quoteName('user_id'));
+		$query->from($db->quoteName('#__hierarchy_users'));
+		$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.user_id');
+		$query->where($conditions);
+		$db->setQuery($query);
+
+		return $db->loadColumn();
 	}
 
 	/**
