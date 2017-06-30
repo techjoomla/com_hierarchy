@@ -285,4 +285,39 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		return $output;
 	}
+
+	/**
+	 * Prepare and sanitise the  data prior to saving.
+	 *
+	 * @param   ARRAY  $data  it is array of managerId, empId, client, clientId and state.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.6
+	 */
+	public function save($data)
+	{
+		$db = $this->getDbo();
+
+		try
+		{
+			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+			$userHierarchyObj = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
+			$userHierarchyObj->load(array('subuser_id' => (int) $data['subuser_id']));
+			$data['id'] = isset($userHierarchyObj->id) ? $userHierarchyObj->id : '' ;
+
+			if (parent::save($data))
+			{
+				return $data;
+			}
+		}
+		catch (RuntimeException $e)
+		{
+			$this->setError($e->getMessage());
+
+			return false;
+		}
+
+		return false;
+	}
 }

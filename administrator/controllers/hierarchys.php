@@ -185,11 +185,14 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	{
 		$jinput     = JFactory::getApplication()->input;
 		$subuserId  = $jinput->get->get('subuserId', '', 'int');
-		$bossuserId = $jinput->post->get('user_id', '', 'int');
+		$userId = $jinput->post->get('user_id', '', 'int');
 
 		// Get the model
 		$model  = $this->getModel();
-		$return = $model->saveUserHier($bossuserId, $subuserId);
+		$data = array();
+		$data['subuser_id'] = $subuserId;
+		$data['user_id'] = $userId;
+		$return = $model->save($data);
 
 		jexit();
 	}
