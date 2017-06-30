@@ -317,7 +317,7 @@ $query->select(
 		}
 
 		$query->select($db->quoteName('hu.subuser_id'));
-		$query->from($db->quoteName('#__hierarchy_users'), 'hu');
+		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
 		$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.subuser_id');
 		$query->where($conditions);
 		$db->setQuery($query);
