@@ -229,23 +229,19 @@ $query->select(
 	 */
 	public function saveUserManagers($data)
 	{
-		if ($data('userId'))
+		if ($data['userId'])
 		{
 			if (!empty($data['managerIds']))
 			{
 				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
-				$hierTable  = JTable::getInstance('hierarchy', 'HierarchyTable');
 
 				foreach ($data['managerIds'] as $mangerId)
 				{
-					$hierTable->load(array("user_id" => $mangerId, "subuser_id" => $data('userId')));
-
-					if (!$hirTable->id)
-					{
-						$hierTable->user_id = $mangerId;
-						$hierTable->subuser_id = $data('userId');
-						$hierTable->store();
-					}
+					$hierTable  = JTable::getInstance('hierarchy', 'HierarchyTable');
+					$hierTable->load(array("subuser_id" => $data['userId']));
+					$hierTable->user_id = $mangerId;
+					$hierTable->subuser_id = $data['userId'];
+					$hierTable->store();
 				}
 			}
 		}
@@ -262,7 +258,7 @@ $query->select(
 	 */
 	public function deleteUserManagers($data)
 	{
-		if ($data('userId'))
+		if ($data['userId'])
 		{
 			if (!empty($data['managerIds']))
 			{
@@ -273,7 +269,7 @@ $query->select(
 
 				foreach ($data['managerIds'] as $mangerId)
 				{
-					$hierTable->load(array("user_id" => $mangerId, "subuser_id" => $data('userId')));
+					$hierTable->load(array("user_id" => $mangerId, "subuser_id" => $data['userId']));
 
 					if ($hirTable->id)
 					{
@@ -295,34 +291,47 @@ $query->select(
 	 *
 	 * @since   1.6.1
 	 */
-	public function getSubusers($userId)
+	public function getSubusers($userId = null)
 	{
-		$db = $this->getDbo();
+		static $subusers = array();
 
-		$query = $db->getQuery(true);
-
-		$conditions = array(
-			$db->quoteName('hu.user_id') . " = " . $userId,
-			$db->quoteName('u.block') . " = 0",
-		);
-
-		if ($this->getState('filter.client'))
+		if ($userId === null)
 		{
-			$conditions['client'] = $this->getState('filter.client');
+			$user 	= JFactory::getUser();
+			$userId	= $user->get('id');
 		}
 
-		if ($this->getState('filter.client_d'))
+		if (!isset($subusers[$userId]))
 		{
-			$conditions['client_id'] = $this->getState('filter.client_d');
+			$db = $this->getDbo();
+
+			$query = $db->getQuery(true);
+
+			$conditions = array(
+				$db->quoteName('hu.user_id') . " = " . (int) $userId,
+				$db->quoteName('u.block') . " = 0",
+			);
+
+			if ($this->getState('filter.client'))
+			{
+				$conditions['client'] = $this->getState('filter.client');
+			}
+
+			if ($this->getState('filter.client_d'))
+			{
+				$conditions['client_id'] = $this->getState('filter.client_d');
+			}
+
+			$query->select($db->quoteName('hu.subuser_id'));
+			$query->from($db->quoteName('#__hierarchy_users', 'hu'));
+			$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.subuser_id');
+			$query->where($conditions);
+			$db->setQuery($query);
+
+			$subusers[$userId] = $db->loadColumn();
 		}
 
-		$query->select($db->quoteName('hu.subuser_id'));
-		$query->from($db->quoteName('#__hierarchy_users'), 'hu');
-		$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.subuser_id');
-		$query->where($conditions);
-		$db->setQuery($query);
-
-		return $db->loadColumn();
+		return $subusers[$userId];
 	}
 
 	/**

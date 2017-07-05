@@ -184,14 +184,16 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	public function setUser()
 	{
 		$jinput     = JFactory::getApplication()->input;
-		$subuserId  = $jinput->get->get('subuserId', '', 'int');
-		$bossuserId = $jinput->post->get('user_id', '', 'int');
+		$data = array();
+		$data['userId']  = $jinput->get->get('subuserId', '', 'int');
+		$data['managerIds'] = (array)$jinput->post->get('user_id', '', 'int');
 
 		// Get the model
-		$model  = $this->getModel();
-		$return = $model->saveUserHier($bossuserId, $subuserId);
+		$model  = $this->getModel('Hierarchys');
+		$return = $model->saveUserManagers($data);
 
-		jexit();
+		// Close the application
+		JFactory::getApplication()->close();
 	}
 
 	/**

@@ -187,37 +187,8 @@ if (!empty($this->extra_sidebar))
 							</div>
 							<input type="hidden" id="subuser_id_<?php echo $i;?>" name="subuser_id_<?php echo $i;?>" value="<?php  echo $item->subuserId; ?>">
 						</td>
-					</tr><?php
-
-					$content = 'function jSelectUser_jform_user_id_'.$i.'(id, title) {
-								var old_id = document.getElementById("jform_user_id_id_'.$i.'").value;
-								if (old_id != id) {
-									document.getElementById("jform_user_id_id_'.$i.'").value = id;
-									document.getElementById("jform_user_id_'.$i.'").value = title;
-									document.getElementById("jform_user_id_'.$i.'").className = document.getElementById("jform_user_id_'.$i.'").className.replace(" invalid" , "");
-								}
-								jModalClose();
-
-								var bossUserId = jQuery("#jform_user_id_id_'.$i.'").val();
-
-								jQuery.ajax(
-								{
-									url:"index.php?option=com_hierarchy&task=hierarchys.setUser&subuserId='.$item->subuserId.'",
-									data:{user_id:bossUserId},
-									type:"POST",
-									datatype : "json",
-									success:function(resp)
-									{
-										// console.log(resp);
-										// js("#order_html").html(data);
-									}
-								});
-							}
-							';
-
-					$doc =JFactory::getDocument();
-					$doc->addScriptDeclaration( $content );
-				endforeach; ?>
+					</tr>
+					<?php endforeach; ?>
 			</tbody>
 		</table>
 		<?php endif; ?>
@@ -264,3 +235,24 @@ if (!empty($this->extra_sidebar))
 		</form>
 	</div>
 </div>
+<script>
+jQuery("[name='jform[user_id]']").on("change",function(){
+	var bossUserId = jQuery(this).val();
+	var subuserId = jQuery(this).parents('tr').find('input[id^="subuser_id_"]').val();
+	jQuery.ajax(
+	{
+		url:"<?php echo Juri::base();?>index.php?option=com_hierarchy&task=hierarchys.setUser&subuserId=" + subuserId,
+		data:{user_id:bossUserId},
+		type:"POST",
+		datatype : "json",
+		success:function(resp)
+		{
+			console.log('Manager Set');
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown)
+		{
+			console.log('Something went wrong.');
+		}
+	});
+});
+</script>
