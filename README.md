@@ -33,9 +33,13 @@ The following Views and menus are available on the backend.
 * Some sort of Adapters to query Human readable name for Context per extension
 
 ## Methods (APIs ?)
-SetHierarchy(userid, mgr_id, context, context_id)
-GetHierarchyTree(userid, context, context_id, level)
-GetManagers(userid, context, context_idlevel)
+```
+setHierarchy(userid, mgr_id, context, context_id)
+
+getHierarchyTree(userid, context, context_id, level)
+
+getManagers(userid, context, context_idlevel)
+```
 
 ## Future Upgrades
 *Fetching fields to show on User Team view from Integration available 
