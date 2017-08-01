@@ -8,7 +8,10 @@ Mark, Swapnil, Mary & Vaishali normally report to Vijay. However Mary and Vaisha
 ##How to Install
 Donwload the code. Package it as a Zip and install it using the Joomla extension manager. 
 
-##Menus 
+##Configurtion
+Integration Options : Core Joomla, EasySocial, JomSocial, EasyProfile, Community Builder
+
+##Frontend Menus 
 The Hierarchy management system supports the following menus on the frontend.
 
 #My Team 
@@ -17,10 +20,23 @@ From this view they can drill down to the user and see a short User information 
 
 The default layout to use can be set in menu parameters. 
 
+#Backend Views and Menus 
+The following Views and menus are available on the backend. 
+
+Options
+Permissions
+Manage Relations + Import/Export + set new relation
+
 ##Table Structure
 
 
 * State - What will it be used for ? 
-* Need to add a column to have a human readable name for context
+* Some sort of Adapters to query Human readable name for Context per extension
 
+##Methods
+SetHierarchy(userid,mgr_id,context,context_id)
+GetHierarchyTree(userid,context,context_id,level)
+GetManagers(userid,context,context_idlevel)
 
+##Future Upgrades
+*Fetching fields to show on User Team fiew from Integration available 
