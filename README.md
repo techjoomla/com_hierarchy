@@ -40,3 +40,5 @@ GetManagers(userid,context,context_idlevel)
 
 ##Future Upgrades
 *Fetching fields to show on User Team fiew from Integration available 
+
+Ability to Insert user specific Action buttons as well as team level Action buttons on the My team view. This can be used by 3rd Party extensions to insert their actions 
