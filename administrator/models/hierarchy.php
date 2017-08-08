@@ -1,12 +1,11 @@
 <?php
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_hierarchy
- *
- * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version    SVN: <svn_id>
+ * @package    Com_Hierarchy
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (c) 2009-2017 TechJoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
  */
-
 
 // No direct access.
 defined('_JEXEC') or die;
@@ -22,7 +21,8 @@ jimport('joomla.database.table');
 class HierarchyModelHierarchy extends JModelAdmin
 {
 	/**
-	 * @var        string    The prefix to use with controller messages.
+	 * @var string The prefix to use with controller messages.
+	 * 
 	 * @since   1.6
 	 */
 	protected $text_prefix = 'COM_HIERARCHY';
@@ -56,7 +56,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app	= JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		// Get the form.
 		$form = $this->loadForm('com_hierarchy.hierarchy', 'hierarchy', array('control' => 'jform', 'load_data' => $loadData));
