@@ -5,9 +5,9 @@
 		<field name="user_id" type="user" label="COM_HIERARCHY_FORM_LBL_HIERARCHY_USER_ID" description="COM_HIERARCHY_FORM_DESC_HIERARCHY_USER_ID"/>
 		<field name="filter_user_id" type="user" onchange="this.form.submit();" /> 
 		<field name="subuser_id" type="text" label="COM_HIERARCHY_FORM_LBL_HIERARCHY_SUBUSER_ID" description="COM_HIERARCHY_FORM_DESC_HIERARCHY_SUBUSER_ID" />
-	</fieldset>
-	<fieldset name="accesscontrol">
-		<field name="asset_id" type="hidden" filter="unset" />
-		<field name="rules" type="rules" label="JFIELD_RULES_LABEL" translate_label="false" filter="rules" validate="rules" class="inputbox" component="com_hierarchy" section="hierarchy"/>
+
+		<field name="users" type="sql" label="COM_HIERARCHY_SELECT_MANAGERS" desc="COM_HIERARCHY_SELECT_MANAGERS_DESC" query="SELECT id, name FROM #__users" multiple="multiple" key_field="id" value_field="name" required="true"/>
+		<field name="context" type="text" label="COM_HIERARCHY_CONTEXT" description="COM_HIERARCHY_CONTEXT_DESC" required="true"/> 
+		<field name="context_id" type="text" label="COM_HIERARCHY_CONTEXT_ID" description="COM_HIERARCHY_CONTEXT_ID_DESC" required="true"/>
 	</fieldset>
 </form>

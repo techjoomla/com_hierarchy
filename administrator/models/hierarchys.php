@@ -59,14 +59,11 @@ class HierarchyModelHierarchys extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		if (empty($this->state->get("filter.state")))
-		{
-			$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
-			$this->setState('filter.state', $published);
-		}
+		$UserNames = $app->getUserStateFromRequest($this->context . '.filter.hierarchy_users', 'filter_hierarchy_users', '', 'string');
+		$this->setState('filter.hierarchy_users', $UserNames);
 
-		// Filtering user_id
-		$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
+		$contextName = $app->getUserStateFromRequest($this->context . '.filter.context', 'filter_context', '', 'string');
+		$this->setState('filter.context', $contextName);
 
 		// Filtering usergroup
 		$groupId = $this->getUserStateFromRequest($this->context . '.usergroup', 'usergroup', null, 'int');
@@ -81,28 +78,6 @@ class HierarchyModelHierarchys extends JModelList
 	}
 
 	/**
-	 * Method to get a store id based on model configuration state.
-	 *
-	 * This is necessary because the model is used by the component and
-	 * different modules that might need different sets of data or different
-	 * ordering requirements.
-	 *
-	 * @param   string  $id  A prefix for the store id.
-	 *
-	 * @return  string  A store id.
-	 *
-	 * @since   1.6
-	 */
-	protected function getStoreId($id = '')
-	{
-		// Compile the store id.
-		$id .= ':' . $this->getState('filter.search');
-		$id .= ':' . $this->getState('filter.state');
-
-		return parent::getStoreId($id);
-	}
-
-	/**
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return  JDatabaseQuery
@@ -112,27 +87,30 @@ class HierarchyModelHierarchys extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$abc = $this->getState(
-				'list.select', 'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name')
-			);
-		$query->select($abc);
+		$query->select(
+				$this->getState('list.select',
+				'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name') . ',' . $db->quoteName('a.username')
+				)
+				);
 		$query->from($db->quoteName('#__users', 'a'));
 
 		// Join over the user field 'user_id'
 		$query->select(
 				$db->quoteName(
-					array('hu.id', 'hu.user_id', 'hu.subuser_id', 'hu.client', 'hu.client_id', 'hu.state', 'hu.note'),
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note'),
 					array(null, 'bossId', 'empId', null, null, null, null)
 							)
 				);
-		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.subuser_id') . ' = ' . $db->quoteName('a.id') . ')');
+		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.reports_to') . ' = ' . $db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
+		$UserNames = $this->getState('filter.hierarchy_users');
+		$contextName = $this->getState('filter.context');
 
 		if (!empty($search))
 		{
@@ -147,36 +125,18 @@ class HierarchyModelHierarchys extends JModelList
 			}
 		}
 
-		// Filtering subuser_id
-		$filter_subuser_id = $this->state->get("filter.subuser_id");
-
-		if ($filter_subuser_id)
+		// Filter by user name
+		if (!empty($UserNames))
 		{
-			$query->where($db->quote('hu.subuser_id') . ' = ' . $db->escape($filter_subuser_id) . "'");
+			$UserNames = $db->Quote('%' . $db->escape($UserNames, true) . '%');
+			$query->where('( a.id LIKE ' . $UserNames . ' )');
 		}
 
-		// Filtering state
-		$filter_state = $this->state->get("filter.state");
-
-		if ($filter_state)
+		// Filter by context
+		if (!empty($contextName))
 		{
-			$query->where($db->quote('hu.state') . ' = ' . $db->escape($filter_state));
-		}
-
-		// Filtering client
-		$filter_client = $this->state->get("filter.client");
-
-		if ($filter_client)
-		{
-			$query->where($db->quote('hu.client') . ' = ' . $db->quote($filter_client));
-		}
-
-		// Filtering client_id
-		$filter_client_id = $this->state->get("filter.client_id");
-
-		if ($filter_client_id)
-		{
-			$query->where($db->quote('hu.client_id') . ' = ' . $db->escape($filter_client_id));
+			$contextName = $db->Quote('%' . $db->escape($contextName, true) . '%');
+			$query->where('( hu.context LIKE ' . $contextName . ' )');
 		}
 
 		$query->where('a.block=0');

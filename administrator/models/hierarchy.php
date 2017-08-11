@@ -285,4 +285,52 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		return $output;
 	}
+
+	/**
+	 * Method to save an event data.
+	 *
+	 * @param   array  $data  data
+	 *
+	 * @return  void
+	 *
+	 * @since    1.6
+	 */
+	public function save($data)
+	{
+		$userID = JFactory::getUser()->id;
+		$data['user_id']    = $userID;
+		$data['reports_to'] = $data['users'];
+
+		$date = JFactory::getDate();
+
+		if ($data['id'])
+		{
+			$data['modified_date'] = $date->toSql(true);
+		}
+		else
+		{
+			$data['created_date'] = $date->toSql(true);
+		}
+
+		$table = $this->getTable();
+
+		// Bind data
+		if (!$table->bind($data))
+		{
+			$this->setError($table->getError());
+
+			return false;
+		}
+
+		if (parent::save($data))
+		{
+			$id = (int) $this->getState($this->getName() . '.id');
+
+			return $id;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
