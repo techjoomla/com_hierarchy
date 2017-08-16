@@ -59,7 +59,9 @@ class HierarchyModelHierarchys extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		if (empty($this->state->get("filter.state")))
+		$state = $this->state->get("filter.state");
+
+		if (empty($state))
 		{
 			$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 			$this->setState('filter.state', $published);
