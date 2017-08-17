@@ -107,48 +107,6 @@ class HierarchyModelHierarchy extends JModelAdmin
 	}
 
 	/**
-	 * Prepare and sanitise the table data prior to saving.
-	 *
-	 * @param   JTable  $table  A JTable object.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
-	 */
-	protected function prepareTable($table)
-	{
-		jimport('joomla.filter.output');
-
-		if (empty($table->id))
-		{
-			// Set ordering to the last item if not set
-			if (@$table->ordering === '')
-			{
-				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__hierarchy_users');
-				$max = $db->loadResult();
-				$table->ordering = $max + 1;
-			}
-		}
-	}
-
-	/**
-	 * get All users list.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
-	 */
-	public function getHirUser()
-	{
-		$db = $this->getDbo();
-
-		$db->setQuery('SELECT * FROM #__hierarchy_users');
-
-		return $AllUser = $db->loadObjectList();
-	}
-
-	/**
 	 * Import csv data for hierarchy user save in database.
 	 *
 	 * @param   array  $userData  csv file data.

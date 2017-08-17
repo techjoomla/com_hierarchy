@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controllerform');
 
 /**
- * The Categories List Controller
+ * The Hierarchy Controller
  *
  * @since  1.6
  */
@@ -79,7 +79,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 
 		$msg   = JText::_('COM_HIERARCHY_REPORTEES_SAVE_MSG');
 		$input = JFactory::getApplication()->input;
-		$id = $input->get('id');
+		$id    = $input->get('id');
 
 		if (empty($id))
 		{
