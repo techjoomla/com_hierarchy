@@ -104,6 +104,9 @@ if (!empty($this->extra_sidebar))
 		<table class="table table-striped" id="hierarchyList">
 			<thead>
 				<tr>
+					<th width="1%">
+						<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+					</th>
 					<th class='center'>
 						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
 					</th>
@@ -156,7 +159,8 @@ if (!empty($this->extra_sidebar))
 					}
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
-						<td  class='center'><?php echo $item->subuserId; ?></td>
+						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->id); ?></td>
+						<td class='center'><?php echo $item->subuserId; ?></td>
 						<td><?php  echo $item->name; ?></td>
 						<td>
 						<?php

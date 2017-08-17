@@ -42,7 +42,6 @@
 		<menu img="components/com_hierarchy/assets/images/s_com_hierarchy.png" >COM_HIERARCHY</menu>
 		<submenu>
 			<menu link="option=com_hierarchy&amp;view=hierarchys" view="hierarchys" img="components/com_hierarchy/assets/images/s_hierarchys.png" alt="Hierarchy/Hierarchys">COM_HIERARCHY_TITLE_HIERARCHYS</menu>
-			<menu link="option=com_hierarchy&amp;view=catimpexp" view="catimpexp" img="components/com_hierarchy/assets/images/s_hierarchys.png" alt="Hierarchy/CSV Import/Export">COM_HIERARCHY_CATIMPORTEXPORT</menu>
 		</submenu>
 		<files folder="administrator">
 			<filename>access.xml</filename>
