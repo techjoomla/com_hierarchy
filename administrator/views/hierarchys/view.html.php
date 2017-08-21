@@ -70,6 +70,9 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
+		// Import Csv export button
+		jimport('techjoomla.tjtoolbar.button.csvexport');
+
 		require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
 
 		$state = $this->get('State');
@@ -81,15 +84,11 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/hierarchy';
 
 		$bar = JToolBar::getInstance('toolbar');
-		$layout = JFactory::getApplication()->input->get('layout', 'default');
 
-		if ($layout == 'default')
-		{
-			$button = "<a class='btn' class='button'
-			type='submit' id='export-submit' href='#usersCsv'><span title='Export'
-			class='icon-download icon-white'></span>" . JText::_('CSV_EXPORT') . "</a>";
-			$bar->appendButton('Custom', $button);
-		}
+		$message = array();
+		$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
+		$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
+		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
 
 		$buttonImport = '<a href="#import_append" class="btn button modal" rel="{size: {x: 800, y: 200}, ajaxOptions: {method: &quot;get&quot;}}">
 		<span class="icon-upload icon-white"></span>' . JText::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
