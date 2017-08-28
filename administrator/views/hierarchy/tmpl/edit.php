@@ -15,6 +15,8 @@ JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
+$input   = JFactory::getApplication()->input;
+$user_id = $input->get('user_id', 0);
 
 // Import CSS
 $document = JFactory::getDocument();
@@ -60,6 +62,7 @@ $document->addStyleSheet('components/com_hierarchy/assets/css/hierarchy.css');
 		</div>
 		<?php echo JHtml::_('bootstrap.endTab');?>
 		<input type="hidden" name="task" value="" />
+		<input type="hidden" id="user_id" name="user_id" value="<?php  echo $user_id; ?>">
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
 </form>

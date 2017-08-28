@@ -69,6 +69,9 @@ class HierarchyModelHierarchys extends JModelList
 		$groupId = $this->getUserStateFromRequest($this->context . '.usergroup', 'usergroup', null, 'int');
 		$this->setState('usergroup', $groupId);
 
+		$user_id = $this->getUserStateFromRequest($this->context . '.user_id', 'user_id', null, 'int');
+		$this->setState('user_id', $user_id);
+
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_hierarchy');
 		$this->setState('params', $params);
@@ -101,8 +104,7 @@ class HierarchyModelHierarchys extends JModelList
 		// Join over the user field 'user_id'
 		$query->select(
 				$db->quoteName(
-					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note'),
-					array(null, 'bossId', 'empId', null, null, null, null)
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
 							)
 				);
 		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.reports_to') . ' = ' . $db->quoteName('a.id') . ')');

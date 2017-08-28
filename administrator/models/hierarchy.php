@@ -22,7 +22,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 {
 	/**
 	 * @var string The prefix to use with controller messages.
-	 * 
+	 *
 	 * @since   1.6
 	 */
 	protected $text_prefix = 'COM_HIERARCHY';
@@ -101,6 +101,24 @@ class HierarchyModelHierarchy extends JModelAdmin
 		if ($item = parent::getItem($pk))
 		{
 			// Do any procesing on fields here if needed
+		}
+
+		if ($item->user_id)
+		{
+			JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_ADMINISTRATOR);
+			$HierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
+			$HierarchysModel->getState('user_id', $item->user_id);
+			$hierarchyData = $HierarchysModel->getItems();
+
+			$item->users = array();
+
+			foreach ($hierarchyData as $hierarchy)
+			{
+				if ($item->user_id == $hierarchy->user_id)
+				{
+					$item->users[] = $hierarchy->reports_to;
+				}
+			}
 		}
 
 		return $item;
@@ -255,8 +273,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function save($data)
 	{
-		$userID = JFactory::getUser()->id;
-		$data['user_id']    = $userID;
+		$data['user_id']    = $data['userid'];
 		$data['reports_to'] = $data['users'];
 
 		$date = JFactory::getDate();

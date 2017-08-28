@@ -71,6 +71,9 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$data = $model->validate($form, $data);
 		}
 
+		$jinput = JFactory::getApplication()->input;
+		$data['userid'] = $jinput->get('user_id', '', 'int');
+
 		foreach ($data['users'] as $key => $val)
 		{
 			$data['users'] = $val;

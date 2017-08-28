@@ -78,7 +78,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$state = $this->get('State');
 		$canDo = HierarchyHelper::getActions($state->get('filter.category_id'));
 
-		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'hierarchys.png');
+		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/hierarchy';
@@ -90,6 +90,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
 		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
 
+		$bar->appendButton('CsvExport',  $message);		
 		$buttonImport = '<a href="#import_append" class="btn button modal" rel="{size: {x: 800, y: 200}, ajaxOptions: {method: &quot;get&quot;}}">
 		<span class="icon-upload icon-white"></span>' . JText::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
 		$bar->appendButton('Custom', $buttonImport);
