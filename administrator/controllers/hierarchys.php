@@ -99,7 +99,18 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 		fclose($file);
 
 		$model = $this->getModel();
-		$resultx = $model->saveCSVdata($userData);
+
+		$data = array();
+
+		foreach ($userData as $key => $val)
+		{
+			$data['context'] = $val['Context'];
+			$data['context_id'] = $val['Context_id'];
+			$data['userid'] = $val['SubuserId'];
+			$data['users'] = $val['Reports_to'];
+
+			$resultx = $model->save($data);
+		}
 
 		$return = $resultx['return'];
 		$msg = $resultx['msg'];
@@ -108,5 +119,31 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 		$mainframe->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
 
 		return;
+	}
+
+	/**
+	 * Delete hierarchy from the list
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public function remove()
+	{
+		$model = $this->getModel('hierarchys');
+		$input = JFactory::getApplication()->input;
+		$post  = $input->post;
+		$hierarchyID = $post->get('cid', '', 'ARRAY');
+
+		if ($model->delete($hierarchyID))
+		{
+			$msg = JText::_('COM_HIERARCHY_HIERARCHY_DELETED_SCUSS');
+		}
+		else
+		{
+			$msg = JText::_('COM_HIERARCHY_HIERARCHY_DELETED_ERROR');
+		}
+
+		$this->setRedirect("index.php?option=com_hierarchy&view=hierarchys", $msg);
 	}
 }

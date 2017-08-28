@@ -95,14 +95,10 @@ class HierarchyViewHierarchys extends JViewLegacy
 		<span class="icon-upload icon-white"></span>' . JText::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
 		$bar->appendButton('Custom', $buttonImport);
 
+		JToolbarHelper::deleteList('', 'hierarchys.remove', 'JTOOLBAR_DELETE');
+
 		if ($canDo->get('core.edit.state'))
 		{
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::archiveList('hierarchys.archive', 'JTOOLBAR_ARCHIVE');
-			}
-
 			if (isset($this->items[0]->checked_out))
 			{
 				JToolBarHelper::custom('hierarchys.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);

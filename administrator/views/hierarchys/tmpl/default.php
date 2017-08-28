@@ -107,7 +107,7 @@ if (!empty($this->extra_sidebar))
 					<th width="1%">
 						<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 					</th>
-					<th class='center'>
+					<th class='right'>
 						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
 					</th>
 					<th class='left'>
@@ -144,23 +144,10 @@ if (!empty($this->extra_sidebar))
 					$canEdit    = $user->authorise('core.edit', 'com_hierarchy');
 					$canCheckin = $user->authorise('core.manage', 'com_hierarchy');
 					$canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
-					$bossName = '';
-
-					if ($item->bossId)
-					{
-						$user = JFactory::getUser($item->bossId);
-						$bossName = $user->name;
-						$bossId = $item->bossId;
-					}
-					else
-					{
-						$bossName = '';
-						$bossId = '';
-					}
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->id); ?></td>
-						<td class='center'><?php echo $item->subuserId; ?></td>
+						<td class='right'><?php echo $item->subuserId; ?></td>
 						<td><?php  echo $item->name; ?></td>
 						<td>
 						<?php

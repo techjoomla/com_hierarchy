@@ -181,4 +181,36 @@ class HierarchyModelHierarchys extends JModelList
 
 		return $items;
 	}
+
+	/**
+	 * Delete order
+	 *
+	 * @param   integer  $hierarchyID  id of jticketing_order table to delete
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public function delete($hierarchyID)
+	{
+		$db = JFactory::getDBO();
+		$id = implode(',', $hierarchyID);
+
+		// Delete the order item
+		$db = JFactory::getDbo();
+		$deleteHierarchy = $db->getQuery(true);
+		$deleteHierarchy->delete($db->quoteName('#__hierarchy_users'));
+		$deleteHierarchy->where('id IN (' . $id . ')');
+		$db->setQuery($deleteHierarchy);
+		$confrim = $db->execute();
+
+		if ($confrim)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
