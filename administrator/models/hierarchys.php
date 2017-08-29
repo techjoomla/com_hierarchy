@@ -59,7 +59,9 @@ class HierarchyModelHierarchys extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		if (empty($this->state->get("filter.state")))
+		$state = $this->state->get("filter.state");
+
+		if (empty($state))
 		{
 			$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 			$this->setState('filter.state', $published);
@@ -293,45 +295,40 @@ $query->select(
 	 */
 	public function getSubusers($userId = null)
 	{
-		static $subusers = array();
-
 		if ($userId === null)
 		{
 			$user 	= JFactory::getUser();
 			$userId	= $user->get('id');
 		}
 
-		if (!isset($subusers[$userId]))
+		$db = $this->getDbo();
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('hu.user_id') . " = " . (int) $userId,
+			$db->quoteName('u.block') . " = 0",
+		);
+
+		if ($this->getState('filter.client'))
 		{
-			$db = $this->getDbo();
-
-			$query = $db->getQuery(true);
-
-			$conditions = array(
-				$db->quoteName('hu.user_id') . " = " . (int) $userId,
-				$db->quoteName('u.block') . " = 0",
-			);
-
-			if ($this->getState('filter.client'))
-			{
-				$conditions['client'] = $this->getState('filter.client');
-			}
-
-			if ($this->getState('filter.client_d'))
-			{
-				$conditions['client_id'] = $this->getState('filter.client_d');
-			}
-
-			$query->select($db->quoteName('hu.subuser_id'));
-			$query->from($db->quoteName('#__hierarchy_users', 'hu'));
-			$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.subuser_id');
-			$query->where($conditions);
-			$db->setQuery($query);
-
-			$subusers[$userId] = $db->loadColumn();
+			$conditions['client'] = $this->getState('filter.client');
 		}
 
-		return $subusers[$userId];
+		if ($this->getState('filter.client_d'))
+		{
+			$conditions['client_id'] = $this->getState('filter.client_d');
+		}
+
+		$query->select($db->quoteName('hu.subuser_id'));
+		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
+		$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.subuser_id');
+		$query->where($conditions);
+		$db->setQuery($query);
+
+		$result = $db->loadColumn();
+
+		return $result;
 	}
 
 	/**
