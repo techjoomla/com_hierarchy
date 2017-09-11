@@ -40,6 +40,12 @@ class HierarchyViewHierarchys extends JViewLegacy
 		// $this->userlist = $this->get('UserList');
 		$this->pagination = $this->get('Pagination');
 
+		// Get filter form.
+		$this->filterForm = $this->get('FilterForm');
+
+		// Get active filters.
+		$this->activeFilters = $this->get('ActiveFilters');
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
@@ -64,50 +70,36 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
+		// Import Csv export button
+		jimport('techjoomla.tjtoolbar.button.csvexport');
+
 		require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
-
-		$this_reportTo = $this->get('ReportToList');
-		$reportTo       = array();
-		$reportTo[]     = JHtml::_('select.option', '0', JText::_('COM_HIERARCHY_FILTER_SELECT_LABEL1'));
-
-		foreach ($this_reportTo as $k => $value)
-		{
-			$reportTo[] = JHtml::_('select.option', $value->value, $value->text);
-		}
-
-		$this->reportTo = $reportTo;
 
 		$state = $this->get('State');
 		$canDo = HierarchyHelper::getActions($state->get('filter.category_id'));
 
-		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'hierarchys.png');
+		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/hierarchy';
 
 		$bar = JToolBar::getInstance('toolbar');
-		$layout = JFactory::getApplication()->input->get('layout', 'default');
 
-		if ($layout == 'default')
-		{
-			$button = "<a class='btn' class='button'
-			type='submit' id='export-submit' href='#usersCsv'><span title='Export'
-			class='icon-download icon-white'></span>" . JText::_('CSV_EXPORT') . "</a>";
-			$bar->appendButton('Custom', $button);
-		}
+		$message = array();
+		$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
+		$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
+		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
+		$message['btn-name'] = JText::_("COM_HIERARCHY_EXPORT_CSV");
 
+		$bar->appendButton('CsvExport',  $message);		
 		$buttonImport = '<a href="#import_append" class="btn button modal" rel="{size: {x: 800, y: 200}, ajaxOptions: {method: &quot;get&quot;}}">
 		<span class="icon-upload icon-white"></span>' . JText::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
 		$bar->appendButton('Custom', $buttonImport);
 
+		JToolbarHelper::deleteList('', 'hierarchys.remove', 'JTOOLBAR_DELETE');
+
 		if ($canDo->get('core.edit.state'))
 		{
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::archiveList('hierarchys.archive', 'JTOOLBAR_ARCHIVE');
-			}
-
 			if (isset($this->items[0]->checked_out))
 			{
 				JToolBarHelper::custom('hierarchys.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
@@ -118,25 +110,6 @@ class HierarchyViewHierarchys extends JViewLegacy
 		{
 			JToolBarHelper::preferences('com_hierarchy');
 		}
-
-		// Set sidebar action - New in 3.0
-		JHtmlSidebar::setAction('index.php?option=com_hierarchy&view=hierarchys');
-
-		$this->extra_sidebar = '';
-
-		$this->extra_sidebar .= '<hr><h4 class="page-header reportToWidthLabel">Filter';
-
-		// Filter for the field user_id
-		// $this->extra_sidebar .= '<label class="reportToWidthLabel" for="filter_user_id">Report to</label>';
-
-		$v_att = 'onchange="this.form.submit();" class="reportToWidth"';
-		$d = $this->state->get('filter.user_id');
-
-		$this->extra_sidebar .= JHtml::_('select.genericlist', $this->reportTo, "filter_user_id", $v_att, "value", "text", $d);
-
-		$this->extra_sidebar .= '</h4>';
-
-		// $this->extra_sidebar .= JHtmlList::users('filter_user_id', $this->state->get('filter.user_id'), 1, 'onchange="this.form.submit();"');
 	}
 
 	/**

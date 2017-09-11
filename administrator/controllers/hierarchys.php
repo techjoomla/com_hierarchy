@@ -99,7 +99,18 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 		fclose($file);
 
 		$model = $this->getModel();
-		$resultx = $model->saveCSVdata($userData);
+
+		$data = array();
+
+		foreach ($userData as $key => $val)
+		{
+			$data['context'] = $val['Context'];
+			$data['context_id'] = $val['Context_id'];
+			$data['userid'] = $val['SubuserId'];
+			$data['users'] = $val['Reports_to'];
+
+			$resultx = $model->save($data);
+		}
 
 		$return = $resultx['return'];
 		$msg = $resultx['msg'];
@@ -111,121 +122,28 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	}
 
 	/**
-	 * Method to csv export
+	 * Delete hierarchy from the list
 	 *
 	 * @return  void
 	 *
 	 * @since   1.0
 	 */
-	public function csvexport()
+	public function remove()
 	{
-		$input      = Jfactory::getApplication()->input;
-		$post       = $input->post;
-		$model      = $this->getModel('hierarchys');
-		$DATA       = $model->getItems();
-		$db         = JFactory::getDBO();
-
-		// Create CSV headers
-		$csvData       = null;
-		$csvData_arr[] = JText::_('User Id');
-		$csvData_arr[] = JText::_('User Name');
-		$csvData_arr[] = JText::_('Report To Id');
-		$csvData_arr[] = JText::_('Report To Name');
-
-		$filename = "UserDataExport_" . date("Y-m-d_H-i", time());
-
-		// Set CSV headers
-		header("Content-type: text/csv");
-		header("Content-Disposition: attachment; filename=" . $filename . ".csv");
-		header("Pragma: no-cache");
-		header("Expires: 0");
-
-		$csvData .= implode(',', $csvData_arr);
-		$csvData .= "\n";
-		echo $csvData;
-
-		$csvData      = '';
-
-		foreach ($DATA as $data)
-		{
-			$csvData_arr1 = array();
-
-			// #if ($data->bossId)
-			{
-				$csvData_arr1[] = $data->subuserId;
-				$csvData_arr1[] = JFactory::getUser($data->subuserId)->name;
-
-				if ($data->bossId)
-				{
-					$csvData_arr1[] = $data->bossId;
-					$csvData_arr1[] = JFactory::getUser($data->bossId)->name;
-				}
-				else
-				{
-					$csvData_arr1[] = '';
-					$csvData_arr1[] = '';
-				}
-
-				$csvData = implode(',', $csvData_arr1);
-				echo $csvData . "\n";
-			}
-		}
-
-		jexit();
-	}
-
-	/**
-	 * Method to set user.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.0
-	 */
-	public function setUser()
-	{
-		$jinput     = JFactory::getApplication()->input;
-		$data = array();
-		$data['userId']  = $jinput->get->get('subuserId', '', 'int');
-		$data['managerIds'] = (array) $jinput->post->get('user_id', '', 'int');
-
-		// Get the model
-		$model  = $this->getModel('Hierarchys');
-		$return = $model->saveUserManagers($data);
-
-		// Close the application
-		JFactory::getApplication()->close();
-	}
-
-	/**
-	 * Method to save the submitted ordering values for records via AJAX.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.0
-	 */
-	public function saveOrderAjax()
-	{
-		// Get the input
+		$model = $this->getModel('hierarchys');
 		$input = JFactory::getApplication()->input;
-		$pks = $input->post->get('cid', array(), 'array');
-		$order = $input->post->get('order', array(), 'array');
+		$post  = $input->post;
+		$hierarchyID = $post->get('cid', '', 'ARRAY');
 
-		// Sanitize the input
-		JArrayHelper::toInteger($pks);
-		JArrayHelper::toInteger($order);
-
-		// Get the model
-		$model = $this->getModel();
-
-		// Save the ordering
-		$return = $model->saveorder($pks, $order);
-
-		if ($return)
+		if ($model->delete($hierarchyID))
 		{
-			echo "1";
+			$msg = JText::_('COM_HIERARCHY_HIERARCHY_DELETED_SCUSS');
+		}
+		else
+		{
+			$msg = JText::_('COM_HIERARCHY_HIERARCHY_DELETED_ERROR');
 		}
 
-		// Close the application
-		JFactory::getApplication()->close();
+		$this->setRedirect("index.php?option=com_hierarchy&view=hierarchys", $msg);
 	}
 }

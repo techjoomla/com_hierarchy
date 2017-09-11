@@ -87,27 +87,10 @@ if (!empty($this->extra_sidebar))
 		<div id="j-main-container">
 		<?php
 	endif;
-?>
-	<div id="filter-bar" class="btn-toolbar">
-		<div class="filter-search btn-group pull-left">
-			<label for="filter_search" class="element-invisible"><?php echo JText::_('JSEARCH_FILTER');?></label>
-			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('JSEARCH_FILTER'); ?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" title="<?php echo JText::_('JSEARCH_FILTER'); ?>" />
-		</div>
-		<div class="btn-group pull-left">
-			<button class="btn hasTooltip" type="submit" title="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>">
-				<i class="icon-search"></i>
-			</button>
-			<button class="btn hasTooltip" id="clear-search-button" type="button" title="<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>">
-				<i class="icon-remove"></i>
-			</button>
-		</div>
-		<div class="btn-group pull-right hidden-phone">
-			<label for="limit" class="element-invisible">
-				<?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?>
-			</label>
-			<?php echo $this->pagination->getLimitBox(); ?>
-		</div>
-	</div>
+
+	// Search tools bar
+	echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+	?>
 	<div class="clearfix"> </div>
 	<?php
 		if (empty($this->items)) :
@@ -121,11 +104,17 @@ if (!empty($this->extra_sidebar))
 		<table class="table table-striped" id="hierarchyList">
 			<thead>
 				<tr>
-					<th class='center'>
+					<th width="1%">
+						<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+					</th>
+					<th class='right'>
 						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
 					</th>
 					<th class='left'>
 						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_NAME', 'a.name', $listDirn, $listOrder); ?>
+					</th>
+					<th class='left'>
+						<?php echo JText::_('COM_HIERARCHY_CONTEXT'); ?>
 					</th>
 					<th class='left'>
 						<?php echo JText::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
@@ -150,39 +139,32 @@ if (!empty($this->extra_sidebar))
 			<tbody>
 			<?php
 				foreach ($this->items as $i => $item) :
-					$ordering   = ($listOrder == 'a.ordering');
+					$ordering   = ($listOrder == 'a.+ordering');
 					$canCreate  = $user->authorise('core.create', 'com_hierarchy');
 					$canEdit    = $user->authorise('core.edit', 'com_hierarchy');
 					$canCheckin = $user->authorise('core.manage', 'com_hierarchy');
 					$canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
-					$bossName = '';
-
-					if ($item->bossId)
-					{
-						$user = JFactory::getUser($item->bossId);
-						$bossName = $user->name;
-						$bossId = $item->bossId;
-					}
-					else
-					{
-						$bossName = '';
-						$bossId = '';
-					}
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
-						<td  class='center'><?php echo $item->subuserId; ?></td>
+						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->id); ?></td>
+						<td class='right'><?php echo $item->subuserId; ?></td>
 						<td><?php  echo $item->name; ?></td>
 						<td>
-							<div class="controls">
-								<div class="input-append">
-									<input title="Report to id" type="text" class="resizedTextbox" id="jform_user_id_<?php echo $i;?>_id" readonly name="jform[user_id]" placeholder="Id" value="<?php echo $bossId;?>">
-									<input title="Report to name"  type="text" id="jform_user_id_<?php echo $i;?>" value="<?php echo $bossName;?>" placeholder="Name" readonly>
-									<a class="btn btn-primary modal_jform_user_id  modal" title="Select User." href="<?php echo JRoute::_('index.php?option=com_users&view=users&layout=modal&tmpl=component&field=jform_user_id_'.(int) $i); ?> " rel="{handler: 'iframe', size: {x: 800, y: 500}}">
-										<i class="icon-user"></i>
-									</a>
-								</div>
-							</div>
-							<input type="hidden" id="subuser_id_<?php echo $i;?>" name="subuser_id_<?php echo $i;?>" value="<?php  echo $item->subuserId; ?>">
+						<?php
+							if (!empty($item->context))
+							{
+								echo $item->context;
+							}
+							else
+							{
+								echo '-';
+							}
+							?></td>
+						<td>
+							<a href="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit');?>" class="btn button btn-success modal" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+								<span class="icon icon-users"></span>
+								<?php echo JText::_('Set Managers');?>
+							</a>
 						</td>
 					</tr>
 					<?php
