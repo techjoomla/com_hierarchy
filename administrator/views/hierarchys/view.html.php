@@ -89,6 +89,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
 		$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
 		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
+		$message['btn-name'] = JText::_("COM_HIERARCHY_EXPORT_CSV");
 
 		$bar->appendButton('CsvExport',  $message);		
 		$buttonImport = '<a href="#import_append" class="btn button modal" rel="{size: {x: 800, y: 200}, ajaxOptions: {method: &quot;get&quot;}}">
