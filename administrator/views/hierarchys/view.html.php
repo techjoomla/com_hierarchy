@@ -46,6 +46,11 @@ class HierarchyViewHierarchys extends JViewLegacy
 		// Get active filters.
 		$this->activeFilters = $this->get('ActiveFilters');
 
+		// Fetch client and client ID from URL
+		$jinput = JFactory::getApplication()->input;
+		$this->client = $jinput->get('client');
+		$this->clientId = $jinput->get('client_id');
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{

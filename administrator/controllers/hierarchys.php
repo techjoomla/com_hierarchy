@@ -52,12 +52,12 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 
 		// Start file heandling functionality *
 		$fname       = $_FILES['csvfile']['name'];
-		$uploads_dir = JPATH_COMPONENT_ADMINISTRATOR . '/csv/' . $fname;
-		move_uploaded_file($_FILES['csvfile']['tmp_name'], $uploads_dir);
+		$uploadsDir = JPATH_COMPONENT_ADMINISTRATOR . '/csv/' . $fname;
+		move_uploaded_file($_FILES['csvfile']['tmp_name'], $uploadsDir);
 
-		$file      = fopen($uploads_dir, "r");
+		$file      = fopen($uploadsDir, "r");
 		$contentsc = "";
-		$info      = pathinfo($uploads_dir);
+		$info      = pathinfo($uploadsDir);
 		$rowNum    = 0;
 
 		if ($info['extension'] != 'csv')

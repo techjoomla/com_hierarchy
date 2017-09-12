@@ -59,8 +59,8 @@ class HierarchyModelHierarchys extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$UserNames = $app->getUserStateFromRequest($this->context . '.filter.hierarchy_users', 'filter_hierarchy_users', '', 'string');
-		$this->setState('filter.hierarchy_users', $UserNames);
+		$userNames = $app->getUserStateFromRequest($this->context . '.filter.hierarchy_users', 'filter_hierarchy_users', '', 'string');
+		$this->setState('filter.hierarchy_users', $userNames);
 
 		$contextName = $app->getUserStateFromRequest($this->context . '.filter.context', 'filter_context', '', 'string');
 		$this->setState('filter.context', $contextName);
@@ -111,7 +111,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
-		$UserNames = $this->getState('filter.hierarchy_users');
+		$userNames = $this->getState('filter.hierarchy_users');
 		$contextName = $this->getState('filter.context');
 
 		if (!empty($search))
@@ -128,10 +128,10 @@ class HierarchyModelHierarchys extends JModelList
 		}
 
 		// Filter by user name
-		if (!empty($UserNames))
+		if (!empty($userNames))
 		{
-			$UserNames = $db->Quote('%' . $db->escape($UserNames, true) . '%');
-			$query->where('( a.id LIKE ' . $UserNames . ' )');
+			$userNames = $db->Quote('%' . $db->escape($userNames, true) . '%');
+			$query->where('( a.id LIKE ' . $userNames . ' )');
 		}
 
 		// Filter by context
@@ -169,20 +169,6 @@ class HierarchyModelHierarchys extends JModelList
 	}
 
 	/**
-	 * Method to get a list of users.
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since   1.6.1
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
-
-		return $items;
-	}
-
-	/**
 	 * Delete order
 	 *
 	 * @param   integer  $hierarchyID  id of jticketing_order table to delete
@@ -194,23 +180,26 @@ class HierarchyModelHierarchys extends JModelList
 	public function delete($hierarchyID)
 	{
 		$db = JFactory::getDBO();
-		$id = implode(',', $hierarchyID);
+		$id = implode(',', array_filter($hierarchyID));
 
-		// Delete the order item
-		$db = JFactory::getDbo();
-		$deleteHierarchy = $db->getQuery(true);
-		$deleteHierarchy->delete($db->quoteName('#__hierarchy_users'));
-		$deleteHierarchy->where('id IN (' . $id . ')');
-		$db->setQuery($deleteHierarchy);
-		$confrim = $db->execute();
+		if ($id)
+		{
+			// Delete the order item
+			$db = JFactory::getDbo();
+			$deleteHierarchy = $db->getQuery(true);
+			$deleteHierarchy->delete($db->quoteName('#__hierarchy_users'));
+			$deleteHierarchy->where('id IN (' . $id . ')');
+			$db->setQuery($deleteHierarchy);
+			$confrim = $db->execute();
 
-		if ($confrim)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
+			if ($confrim)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 }

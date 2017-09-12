@@ -1,42 +1,43 @@
 <?php
-
 /**
- * @version     1.0.0
- * @package     com_hierarchy
- * @copyright   Copyright (C) 2015. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @author      Parth Lawate <contact@techjoomla.com> - http://techjoomla.com
+ * @version    SVN: <svn_id>
+ * @package    Com_Hierarchy
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (c) 2009-2017 TechJoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
  */
+
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
 
 /**
  * Methods supporting a list of Hierarchy records.
+ *
+ * @since  1.6
  */
 class HierarchyModelHierarchys extends JModelList
 {
-
 	/**
 	 * Constructor.
 	 *
-	 * @param    array    An optional associative array of configuration settings.
+	 * @param   array  $config  An optional associative array of configuration settings.
 	 *
-	 * @see        JController
-	 * @since      1.6
+	 * @since   1.6
+	 * @see     JController
 	 */
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				                'id', 'a.id',
-                'user_id', 'a.user_id',
-                'subuser_id', 'a.subuser_id',
-                'created_by', 'a.created_by',
-
+				'id', 'a.id',
+				'user_id', 'a.user_id',
+				'subuser_id', 'a.subuser_id',
+				'created_by', 'a.created_by',
 			);
 		}
+
 		parent::__construct($config);
 	}
 
@@ -45,12 +46,15 @@ class HierarchyModelHierarchys extends JModelList
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 *
-	 * @since    1.6
+	 * @param   string  $ordering   An optional ordering field.
+	 * @param   string  $direction  An optional direction (asc|desc).
+	 *
+	 * @return  void
+	 *
+	 * @since   1.6
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-
-
 		// Initialise variables.
 		$app = JFactory::getApplication();
 
@@ -61,70 +65,12 @@ class HierarchyModelHierarchys extends JModelList
 		$limitstart = $app->input->getInt('limitstart', 0);
 		$this->setState('list.start', $limitstart);
 
-		if ($list = $app->getUserStateFromRequest($this->context . '.list', 'list', array(), 'array'))
-		{
-			foreach ($list as $name => $value)
-			{
-				// Extra validations
-				switch ($name)
-				{
-					case 'fullordering':
-						$orderingParts = explode(' ', $value);
+		// Load the filter state.
+		$search = $app->getUserStateFromRequest($this->context . 'filter_search', 'filter_search');
+		$this->setState('filter_search', $search);
 
-						if (count($orderingParts) >= 2)
-						{
-							// Latest part will be considered the direction
-							$fullDirection = end($orderingParts);
-
-							if (in_array(strtoupper($fullDirection), array('ASC', 'DESC', '')))
-							{
-								$this->setState('list.direction', $fullDirection);
-							}
-
-							unset($orderingParts[count($orderingParts) - 1]);
-
-							// The rest will be the ordering
-							$fullOrdering = implode(' ', $orderingParts);
-
-							if (in_array($fullOrdering, $this->filter_fields))
-							{
-								$this->setState('list.ordering', $fullOrdering);
-							}
-						}
-						else
-						{
-							$this->setState('list.ordering', $ordering);
-							$this->setState('list.direction', $direction);
-						}
-						break;
-
-					case 'ordering':
-						if (!in_array($value, $this->filter_fields))
-						{
-							$value = $ordering;
-						}
-						break;
-
-					case 'direction':
-						if (!in_array(strtoupper($value), array('ASC', 'DESC', '')))
-						{
-							$value = $direction;
-						}
-						break;
-
-					case 'limit':
-						$limit = $value;
-						break;
-
-					// Just to keep the default case
-					default:
-						$value = $value;
-						break;
-				}
-
-				$this->setState('list.' . $name, $value);
-			}
-		}
+		$contextName = $app->getUserStateFromRequest($this->context . 'filter_context', 'filter_context', '', 'string');
+		$this->setState('filter_context', $contextName);
 
 		// Receive & set filters
 		if ($filters = $app->getUserStateFromRequest($this->context . '.filter', 'filter', array(), 'array'))
@@ -136,6 +82,7 @@ class HierarchyModelHierarchys extends JModelList
 		}
 
 		$ordering = $app->input->get('filter_order');
+
 		if (!empty($ordering))
 		{
 			$list             = $app->getUserState($this->context . '.list');
@@ -144,6 +91,7 @@ class HierarchyModelHierarchys extends JModelList
 		}
 
 		$orderingDirection = $app->input->get('filter_order_Dir');
+
 		if (!empty($orderingDirection))
 		{
 			$list              = $app->getUserState($this->context . '.list');
@@ -152,9 +100,6 @@ class HierarchyModelHierarchys extends JModelList
 		}
 
 		$list = $app->getUserState($this->context . '.list');
-
-		
-
 		$this->setState('list.ordering', $list['ordering']);
 		$this->setState('list.direction', $list['direction']);
 	}
@@ -162,33 +107,54 @@ class HierarchyModelHierarchys extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return    JDatabaseQuery
-	 * @since    1.6
+	 * @return  JDatabaseQuery
+	 *
+	 * @since   1.6
 	 */
 	protected function getListQuery()
 	{
+		$user       = JFactory::getUser();
+
 		// Create a new query object.
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
+		/*$subQquery = $db->getQuery(true);
+		$subQquery->select(
+				$db->quoteName(
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
+							)
+				);
+
+		$subQquery->from($db->quoteName('#__hierarchy_users', 'hu'));
+		$subQquery->where('hu.user_id = ' . (int) $user->id);*/
+
 		// Select the required fields from the table.
-		$query
-			->select(
-				$this->getState(
-					'list.select', 'DISTINCT a.*'
+		$query->select(
+				$this->getState('list.select',
+				'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name') . ',' . $db->quoteName('a.username')
 				)
-			);
+				);
+		$query->from($db->quoteName('#__users', 'a'));
 
-		$query->from('`#__hierarchy_users` AS a');
-
-		
-		// Join over the created by field 'created_by'
-		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
-
-		
+		// Join over the user field 'user_id'
+		$query->select(
+				$db->quoteName(
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
+							)
+				);
+		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.reports_to') . ' = ' . $db->quoteName('a.id') . ')');
 
 		// Filter by search in title
-		$search = $this->getState('filter.search');
+		$search = $this->getState('filter_search');
+
+		$contextName = $this->getState('filter_context');
+
+		if ($user->id)
+		{
+			$query->where('hu.user_id = ' . (int) $user->id);
+		}
+
 		if (!empty($search))
 		{
 			if (stripos($search, 'id:') === 0)
@@ -198,36 +164,51 @@ class HierarchyModelHierarchys extends JModelList
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.subuser_id LIKE '.$search.' )');
+				$query->where('( a.name LIKE ' . $search . ' )');
 			}
 		}
 
-		
-
-		//Filtering user_id
-		$filter_user_id = $this->state->get("filter.user_id");
-		if ($filter_user_id) {
-			$query->where("a.user_id = '".$db->escape($filter_user_id)."'");
+		// Filter by user name
+		if (!empty($UserNames))
+		{
+			$UserNames = $db->Quote('%' . $db->escape($UserNames, true) . '%');
+			$query->where('( a.id LIKE ' . $UserNames . ' )');
 		}
 
+		// Filter by context
+		if (!empty($contextName))
+		{
+			$contextName = $db->Quote('%' . $db->escape($contextName, true) . '%');
+			$query->where('( hu.context LIKE ' . $contextName . ' )');
+		}
+
+		$query->where('a.block=0');
+
 		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering');
+		$orderCol = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
+
 		if ($orderCol && $orderDirn)
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
 		}
 
+		// Filter the items over the group id if set.
+		$groupId = $this->getState('usergroup');
+
+		if ($groupId)
+		{
+			$query->join('LEFT', '#__user_usergroup_map AS map2 ON map2.user_id = a.id');
+
+			if ($groupId)
+			{
+				$query->where('map2.group_id = ' . (int) $groupId);
+			}
+		}
+
 		return $query;
 	}
 
-	public function getItems()
-	{
-		$items = parent::getItems();
-		
-
-		return $items;
-	}
 
 	/**
 	 * Overrides the default function to check Date fields format, identified by
@@ -238,6 +219,7 @@ class HierarchyModelHierarchys extends JModelList
 		$app              = JFactory::getApplication();
 		$filters          = $app->getUserState($this->context . '.filter', array());
 		$error_dateformat = false;
+
 		foreach ($filters as $key => $value)
 		{
 			if (strpos($key, '_dateformat') && !empty($value) && !$this->isValidDate($value))
@@ -246,6 +228,7 @@ class HierarchyModelHierarchys extends JModelList
 				$error_dateformat = true;
 			}
 		}
+
 		if ($error_dateformat)
 		{
 			$app->enqueueMessage(JText::_("COM_HIERARCHY_SEARCH_FILTER_DATE_FORMAT"), "warning");
@@ -265,6 +248,7 @@ class HierarchyModelHierarchys extends JModelList
 	{
 		return preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/", $date) && date_create($date);
 	}
+
 	public function store($data)
     {
 		//print_r($data);die;
@@ -294,7 +278,7 @@ class HierarchyModelHierarchys extends JModelList
 			}
 			$obj = new jticketingmainhelper();
 			$tid = explode('-',$data->get('ticketid'));
-			
+
 			$t_data = $obj->getorderinfo($tid[1]);
 
 			// Get ticket user id
@@ -316,7 +300,7 @@ class HierarchyModelHierarchys extends JModelList
 				$bh_email = $bh_user_data->email;
 			}
 
-			// Hr Head 
+			// Hr Head
 			$params = JComponentHelper::getParams('com_hierarchy');
 			$hr_email = $params->get('hrhead', '');
 			$reschedule_perfix = $params->get('reschedule_perfix', '');
@@ -404,7 +388,7 @@ class HierarchyModelHierarchys extends JModelList
 <br><br>
 <p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 0pt;" dir="ltr"><span style="font-size: 12px; font-family: "Open Sans"; vertical-align: baseline; white-space: pre-wrap; background-color: transparent;">Regards,</span></p>
 <p><span id="docs-internal-guid-0ff25d6f-ba34-3c6c-8af8-89c7ed8c26cb"><span style="font-size: 12px; font-family: "Open Sans"; vertical-align: baseline; white-space: pre-wrap; background-color: transparent;">L&amp;D</span></span></p>';
-			
+
 $rowBody_hr = '
 <p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 0pt;" dir="ltr"><span style="font-size: 12px; font-family: "Open Sans"; vertical-align: baseline; white-space: pre-wrap; background-color: transparent;">Hi  {hr_head_name},</span></p><br>
 
@@ -503,10 +487,10 @@ $amt = money_format('%!i', $amt);
 
 			$emailBody_bh = HierarchyFrontendHelper::EmailBody($replaceArr, $rowBody_bh);
 			$emailBody_hr = HierarchyFrontendHelper::EmailBody($replaceArr, $rowBody_hr);
-			
+
 			$cc[] = $params->get('reschedule_manager_email');
 			$cc[] = $manager->email;
-			
+
 			if ($bh_email === $hr_email)
 			{
 				$email = HierarchyFrontendHelper::RescheduleEmail($mailfrom, $fromname, $hr_email, $emailSubject, $emailBody_bh, $cc);

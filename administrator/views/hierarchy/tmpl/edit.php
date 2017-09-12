@@ -21,33 +21,13 @@ $user_id = $input->get('user_id', 0);
 // Import CSS
 $document = JFactory::getDocument();
 $document->addStyleSheet('components/com_hierarchy/assets/css/hierarchy.css');
-?>
-<script type="text/javascript">
-	js = jQuery.noConflict();
-		js(document).ready(function() {
-	});
-	Joomla.submitbutton = function(task)
-	{
-		if (task == 'hierarchy.cancel') {
-			Joomla.submitform(task, document.getElementById('hierarchy-form'));
-		}
-		else {
-			if (task != 'hierarchy.cancel' && document.formvalidator.isValid(document.id('hierarchy-form'))) {
-				Joomla.submitform(task, document.getElementById('hierarchy-form'));
-			}
-			else {
-				alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
-			}
-		}
-	}
-</script>
+$rootUrl = JUri::root() . '/administrator/';
 
+// Call helper function
+HierarchyHelper::getLanguageConstant();
+?>
 <form action="<?php echo JRoute::_('index.php?option=com_hierarchy&layout=edit&id=' . (int) $this->item->id); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="hierarchy-form" class="form-validate">
 	<div class="form-horizontal">
-		<?php
-			echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'general'));
-			echo JHtml::_('bootstrap.addTab', 'myTab', 'general', JText::_('COM_HIERARCHY_TITLE_HIERARCHY', true));
-		?>
 		<div class="row-fluid">
 			<div class="span10 form-horizontal">
 				<fieldset class="adminform">
@@ -63,6 +43,12 @@ $document->addStyleSheet('components/com_hierarchy/assets/css/hierarchy.css');
 		<?php echo JHtml::_('bootstrap.endTab');?>
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" id="user_id" name="user_id" value="<?php  echo $user_id; ?>">
+		<input type="hidden" id="created_by" name="created_by" value="<?php  echo $user_id; ?>">
+		<input type="hidden" id="modified_by" name="modified_by" value="<?php  echo $user_id; ?>">
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
 </form>
+<script type="text/javascript">
+	var rootUrl = "<?php echo $rootUrl; ?>";
+	hierarchyAdmin.hierarchy.initHierarchyJs();
+</script>

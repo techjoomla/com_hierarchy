@@ -72,7 +72,9 @@ class HierarchyControllerHierarchy extends JControllerForm
 		}
 
 		$jinput = JFactory::getApplication()->input;
-		$data['userid'] = $jinput->get('user_id', '', 'int');
+		$data['userid']      = $jinput->get('user_id', '', 'int');
+		$data['created_by']  = $jinput->get('created_by', '', 'int');
+		$data['modified_by'] = $jinput->get('modified_by', '', 'int');
 
 		foreach ($data['users'] as $key => $val)
 		{

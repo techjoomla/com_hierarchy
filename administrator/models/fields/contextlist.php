@@ -63,11 +63,12 @@ class JFormFieldContextList extends JFormFieldList
 		{
 			foreach ($contextList as $key => $val)
 			{
-				$userID    = $val->user_id;
 				$context   = $val->context;
 				$options[] = JHtml::_('select.option', $context, $context);
 			}
 		}
+
+		$options = array_unique($options, SORT_REGULAR);
 
 		if (!$this->loadExternally)
 		{
@@ -76,19 +77,5 @@ class JFormFieldContextList extends JFormFieldList
 		}
 
 		return $options;
-	}
-
-	/**
-	 * Method to get a list of options for a list input externally and not from xml.
-	 *
-	 * @return array An array of JHtml options.
-	 *
-	 * @since   2.2
-	 */
-	public function getOptionsExternally()
-	{
-		$this->loadExternally = 1;
-
-		return $this->getOptions();
 	}
 }

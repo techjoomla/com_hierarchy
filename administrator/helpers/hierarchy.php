@@ -55,4 +55,16 @@ class HierarchyHelper
 
 		return $result;
 	}
+
+	/** Get all jtext for javascript
+	 *
+	 * @return   void
+	 *
+	 * @since   1.0
+	 */
+	public static function getLanguageConstant()
+	{
+		JText::script('JGLOBAL_VALIDATION_FORM_FAILED');
+		JText::script('COM_HIERARCHY_HIERARCHY_DELETE_CONF');
+	}
 }

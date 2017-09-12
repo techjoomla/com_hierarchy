@@ -103,12 +103,25 @@ class HierarchyModelHierarchy extends JModelAdmin
 			// Do any procesing on fields here if needed
 		}
 
+		// Get client and client_id from URL
+		$jinput = JFactory::getApplication()->input;
+
+		if (empty($item->context) && $jinput->get('client'))
+		{
+			$item->context = $jinput->get('client');
+		}
+
+		if (empty($item->context_id) && $jinput->get('client_id'))
+		{
+			$item->context_id = $jinput->get('client_id');
+		}
+
 		if ($item->user_id)
 		{
 			JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_ADMINISTRATOR);
-			$HierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
-			$HierarchysModel->getState('user_id', $item->user_id);
-			$hierarchyData = $HierarchysModel->getItems();
+			$hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
+			$hierarchysModel->getState('user_id', $item->user_id);
+			$hierarchyData = $hierarchysModel->getItems();
 
 			$item->users = array();
 
