@@ -59,8 +59,8 @@ class HierarchyModelHierarchys extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$UserNames = $app->getUserStateFromRequest($this->context . '.filter.hierarchy_users', 'filter_hierarchy_users', '', 'string');
-		$this->setState('filter.hierarchy_users', $UserNames);
+		$userNames = $app->getUserStateFromRequest($this->context . '.filter.hierarchy_users', 'filter_hierarchy_users', '', 'string');
+		$this->setState('filter.hierarchy_users', $userNames);
 
 		$contextName = $app->getUserStateFromRequest($this->context . '.filter.context', 'filter_context', '', 'string');
 		$this->setState('filter.context', $contextName);
@@ -101,15 +101,14 @@ class HierarchyModelHierarchys extends JModelList
 		// Join over the user field 'user_id'
 		$query->select(
 				$db->quoteName(
-					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note'),
-					array(null, 'bossId', 'empId', null, null, null, null)
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
 							)
 				);
 		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.reports_to') . ' = ' . $db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
-		$UserNames = $this->getState('filter.hierarchy_users');
+		$userNames = $this->getState('filter.hierarchy_users');
 		$contextName = $this->getState('filter.context');
 
 		if (!empty($search))
@@ -126,10 +125,10 @@ class HierarchyModelHierarchys extends JModelList
 		}
 
 		// Filter by user name
-		if (!empty($UserNames))
+		if (!empty($userNames))
 		{
-			$UserNames = $db->Quote('%' . $db->escape($UserNames, true) . '%');
-			$query->where('( a.id LIKE ' . $UserNames . ' )');
+			$userNames = $db->Quote('%' . $db->escape($userNames, true) . '%');
+			$query->where('( a.id LIKE ' . $userNames . ' )');
 		}
 
 		// Filter by context
@@ -167,183 +166,37 @@ class HierarchyModelHierarchys extends JModelList
 	}
 
 	/**
-	 * Method to get a list of users.
+	 * Delete order
 	 *
-	 * @return  mixed  An array of data items on success, false on failure.
+	 * @param   integer  $hierarchyID  id of jticketing_order table to delete
 	 *
-	 * @since   1.6.1
+	 * @return  void
+	 *
+	 * @since   1.0
 	 */
-	public function getItems()
+	public function delete($hierarchyID)
 	{
-		$items = parent::getItems();
+		$db = JFactory::getDBO();
+		$id = implode(',', array_filter($hierarchyID));
 
-		return $items;
-	}
-
-	/**
-	 * Method to save the hierachty for the user
-	 *
-	 * @param   integer  $data  Array of userid and managers
-	 *
-	 * @return  mixed  Object on success, false on failure.
-	 */
-	public function saveUserManagers($data)
-	{
-		if ($data['userId'])
+		if ($id)
 		{
-			if (!empty($data['managerIds']))
-			{
-				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
+			// Delete the order item
+			$db = JFactory::getDbo();
+			$deleteHierarchy = $db->getQuery(true);
+			$deleteHierarchy->delete($db->quoteName('#__hierarchy_users'));
+			$deleteHierarchy->where('id IN (' . $id . ')');
+			$db->setQuery($deleteHierarchy);
+			$confrim = $db->execute();
 
-				foreach ($data['managerIds'] as $mangerId)
-				{
-					$hierTable  = JTable::getInstance('hierarchy', 'HierarchyTable');
-					$hierTable->load(array("subuser_id" => $data['userId']));
-					$hierTable->user_id = $mangerId;
-					$hierTable->subuser_id = $data['userId'];
-					$hierTable->store();
-				}
+			if ($confrim)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
-
-		return true;
-	}
-
-	/**
-	 * Method to save the hierachty for the user
-	 *
-	 * @param   Array  $data  user id and manager ids
-	 *
-	 * @return  mixed  Object on success, false on failure.
-	 */
-	public function deleteUserManagers($data)
-	{
-		if ($data['userId'])
-		{
-			if (!empty($data['managerIds']))
-			{
-				$data['managerIds'] = (array) $data['managerIds'];
-
-				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
-				$hierTable  = JTable::getInstance('hierarchy', 'HierarchyTable');
-
-				foreach ($data['managerIds'] as $mangerId)
-				{
-					$hierTable->load(array("user_id" => $mangerId, "subuser_id" => $data['userId']));
-
-					if ($hirTable->id)
-					{
-						$hierTable->delete($hirTable->id);
-					}
-				}
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Method to get sub users
-	 *
-	 * @param   INT  $userId  Userid whose managers to get
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since   1.6.1
-	 */
-	public function getSubusers($userId = null)
-	{
-		if ($userId === null)
-		{
-			$user 	= JFactory::getUser();
-			$userId	= $user->get('id');
-		}
-
-		$db = $this->getDbo();
-
-		$query = $db->getQuery(true);
-
-		$conditions = array(
-			$db->quoteName('hu.user_id') . " = " . (int) $userId,
-			$db->quoteName('u.block') . " = 0",
-		);
-
-		if ($this->getState('filter.client'))
-		{
-			$conditions['client'] = $this->getState('filter.client');
-		}
-
-		if ($this->getState('filter.client_d'))
-		{
-			$conditions['client_id'] = $this->getState('filter.client_d');
-		}
-
-		$query->select($db->quoteName('hu.subuser_id'));
-		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
-		$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.subuser_id');
-		$query->where($conditions);
-		$db->setQuery($query);
-
-		$result = $db->loadColumn();
-
-		return $result;
-	}
-
-	/**
-	 * Method to get sub users
-	 *
-	 * @param   INT  $userId  Userid whose managers to get
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since   1.6.1
-	 */
-	public function getManagers($userId)
-	{
-		$db = $this->getDbo();
-
-		$query = $db->getQuery(true);
-
-		$conditions = array(
-			$db->quoteName('hu.subuser_id') . " = " . $userId,
-			$db->quoteName('u.block') . " = 0"
-		);
-
-		if ($this->getState('filter.client'))
-		{
-			$conditions['client'] = $this->getState('filter.client');
-		}
-
-		if ($this->getState('filter.client_d'))
-		{
-			$conditions['client_id'] = $this->getState('filter.client_d');
-		}
-
-		$query->select($db->quoteName('user_id'));
-		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->join('inner', $db->quoteName('#__users') . 'as u ON u.id=hu.user_id');
-		$query->where($conditions);
-		$db->setQuery($query);
-
-		return $db->loadColumn();
-	}
-
-	/**
-	 * Method to get a list of reporting users.
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since   1.6.1
-	 */
-	public function getReportToList()
-	{
-		$db = $this->getDbo();
-		$query = "SELECT a.id AS value,a.name AS text
-		FROM #__users AS a, #__hierarchy_users AS hu
-		WHERE a.id = hu.user_id AND a.block=0
-		GROUP BY user_id";
-		$db->setQuery($query);
-
-		return $res = $db->loadObjectList();
 	}
 }

@@ -8,9 +8,6 @@
  */
 
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.html.pane');
-jimport('joomla.application.component.helper');
-jimport('joomla.filesystem.folder');
 jimport('joomla.form.formfield');
 
 /**

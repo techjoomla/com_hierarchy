@@ -22,7 +22,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 {
 	/**
 	 * @var string The prefix to use with controller messages.
-	 * 
+	 *
 	 * @since   1.6
 	 */
 	protected $text_prefix = 'COM_HIERARCHY';
@@ -103,187 +103,38 @@ class HierarchyModelHierarchy extends JModelAdmin
 			// Do any procesing on fields here if needed
 		}
 
+		// Get client and client_id from URL
+		$jinput = JFactory::getApplication()->input;
+
+		if (empty($item->context) && $jinput->get('client'))
+		{
+			$item->context = $jinput->get('client');
+		}
+
+		if (empty($item->context_id) && $jinput->get('client_id'))
+		{
+			$item->context_id = $jinput->get('client_id');
+		}
+
+		if ($item->user_id)
+		{
+			JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_ADMINISTRATOR);
+			$hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
+			$hierarchysModel->getState('user_id', $item->user_id);
+			$hierarchyData = $hierarchysModel->getItems();
+
+			$item->users = array();
+
+			foreach ($hierarchyData as $hierarchy)
+			{
+				if ($item->user_id == $hierarchy->user_id)
+				{
+					$item->users[] = $hierarchy->reports_to;
+				}
+			}
+		}
+
 		return $item;
-	}
-
-	/**
-	 * Prepare and sanitise the table data prior to saving.
-	 *
-	 * @param   JTable  $table  A JTable object.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
-	 */
-	protected function prepareTable($table)
-	{
-		jimport('joomla.filter.output');
-
-		if (empty($table->id))
-		{
-			// Set ordering to the last item if not set
-			if (@$table->ordering === '')
-			{
-				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__hierarchy_users');
-				$max = $db->loadResult();
-				$table->ordering = $max + 1;
-			}
-		}
-	}
-
-	/**
-	 * get All users list.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
-	 */
-	public function getHirUser()
-	{
-		$db = $this->getDbo();
-
-		$db->setQuery('SELECT * FROM #__hierarchy_users');
-
-		return $AllUser = $db->loadObjectList();
-	}
-
-	/**
-	 * Import csv data for hierarchy user save in database.
-	 *
-	 * @param   array  $userData  csv file data.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
-	 */
-	public function saveCSVdata($userData)
-	{
-		$db                 = $this->getDbo();
-		$subuserid          = 0;
-		$reportToId         = 0;
-		$booking_start_date = 0;
-		$useridnotfound     = 0;
-		$reportToIdnotfound = 0;
-		$bad                = 0;
-		$new                = 0;
-		$updated_records    = 0;
-		$notexist           = 0;
-		$totalUser          = count($userData);
-
-		if (!empty($userData))
-		{
-			$data = array();
-
-			foreach ($userData as $eachUser)
-			{
-				foreach ($eachUser as $key => $value)
-				{
-					switch ($key)
-					{
-						case 'User Id / Email Id' :
-							$data['subuser_id'] = 0;
-
-							if (!empty ($value))
-							{
-								$data['subuser_id'] = $value;
-							}
-
-						break;
-
-						case 'Report To Id / Email Id' :
-							$data['user_id'] = 0;
-
-							if (!empty($value))
-							{
-								$data['user_id'] = $value;
-							}
-
-						break;
-
-						default :
-						break;
-					}
-				}
-
-				if ($data['subuser_id'])
-				{
-					if ($data['user_id'])
-					{
-						if (filter_var($data['user_id'], FILTER_VALIDATE_EMAIL))
-						{
-						$query = "SELECT id FROM #__users WHERE email='" . $data['user_id'] . "'";
-						$db->setQuery($query);
-						$existUserID = $db->loadResult();
-						}
-						else
-						{
-						$query = "SELECT id FROM #__users WHERE id='" . $data['user_id'] . "'";
-						$db->setQuery($query);
-						$existUserID = $db->loadResult();
-						}
-
-						if (filter_var($data['subuser_id'], FILTER_VALIDATE_EMAIL))
-						{
-						$query = "SELECT id FROM #__users WHERE email='" . $data['subuser_id'] . "'";
-						$db->setQuery($query);
-						$existSubUserID = $db->loadResult();
-						}
-						else
-						{
-						$query = "SELECT id FROM #__users WHERE id='" . $data['subuser_id'] . "'";
-						$db->setQuery($query);
-						$existSubUserID = $db->loadResult();
-						}
-
-						if ($existSubUserID)
-						{
-							if ($existUserID)
-							{
-								$query = "DELETE FROM #__hierarchy_users WHERE subuser_id=" . $existSubUserID;
-								$db->setQuery($query);
-								$db->execute($query);
-
-								$insert_obj             = new stdClass;
-								$insert_obj->user_id    = $existUserID;
-								$insert_obj->subuser_id = $existSubUserID;
-
-								if ($db->insertObject('#__hierarchy_users', $insert_obj, 'id'))
-								{
-									$test[] = $insert_obj->id;
-								}
-								else
-								{
-									$bad++;
-								}
-							}
-							else
-							{
-								$reportToIdnotfound ++;
-							}
-						}
-						else
-						{
-							$useridnotfound ++;
-						}
-					}
-					else
-					{
-						$reportToId ++;
-					}
-				}
-				else
-				{
-					$subuserid ++;
-				}
-			}
-		}
-
-		$output['msg'] = JText::sprintf('COM_HIERARCHY_USER_IMPORT_SUCCESS_MSG', $totalUser, $subuserid, $useridnotfound);
-		$output['msg1'] = JText::sprintf('COM_HIERARCHY_USER_IMPORT_SUCCESS_MSG1', $reportToId, $reportToIdnotfound);
-		$output['msg2'] = JText::sprintf('COM_HIERARCHY_USER_IMPORT_SUCCESS_MSG2', count($test));
-
-		return $output;
 	}
 
 	/**
@@ -297,8 +148,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function save($data)
 	{
-		$userID = JFactory::getUser()->id;
-		$data['user_id']    = $userID;
+		$data['user_id']    = $data['userid'];
 		$data['reports_to'] = $data['users'];
 
 		$date = JFactory::getDate();
