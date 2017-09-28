@@ -22,7 +22,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 {
 	/**
 	 * @var string The prefix to use with controller messages.
-	 * 
+	 *
 	 * @since   1.6
 	 */
 	protected $text_prefix = 'COM_HIERARCHY';
@@ -107,6 +107,86 @@ class HierarchyModelHierarchy extends JModelAdmin
 	}
 
 	/**
+	 * Method to save an hierarchy data.
+	 *
+	 * @param   array  $data  data
+	 *
+	 * @return  void
+	 *
+	 * @since    1.6
+	 */
+	public function save($data)
+	{
+		// Validate if user_id is not specified
+		if (!$data['user_id'] || !$data['reports_to'])
+		{
+			$this->setError(JText::_('COM_HIERARCHY_INVALID_USER'));
+
+			return false;
+		}
+
+		if (!isset($data['state']))
+		{
+			$data['state'] = 1;
+		}
+
+		// Check hierarchy is already exist or not.
+		$hierarchyId = $this->checkIfHierarchyExist($data);
+
+		$date = JFactory::getDate();
+
+		if ($hierarchyId)
+		{
+			$data['id'] = $hierarchyId;
+			$data['modified_date'] = $date->toSql(true);
+			$data['modified_by'] = $data['created_by'];
+		}
+		else
+		{
+			$data['created_date'] = $date->toSql(true);
+		}
+
+		if (parent::save($data))
+		{
+			$id = (int) $this->getState($this->getName() . '.id');
+
+			return $id;
+		}
+
+		$this->setError(JText::_('COM_HIERARCHY_SAVE_FAIL'));
+
+		return false;
+	}
+
+	/**
+	 * Method to check hierarchy exist.
+	 *
+	 * @param   array  $data  data
+	 *
+	 * @return  void
+	 *
+	 * @since    1.6
+	 */
+	public function checkIfHierarchyExist($data)
+	{
+		$hierarchyTableObj = $this->getTable();
+
+		if (!$data['context'])
+		{
+			$hierarchyTableObj->load(array('user_id' => (int) $data['user_id'], 'reports_to' => (int) $data['reports_to'], 'context' => null));
+		}
+		elseif ($data['context'])
+		{
+			$hierarchyTableObj->load(
+			array(
+			'user_id' => (int) $data['user_id'], 'reports_to' => (int) $data['reports_to'], 'context' => $data['context'], 'context_id' => $data['context_id'])
+			);
+		}
+
+		return $hierarchyTableObj->id;
+	}
+
+	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
 	 * @param   JTable  $table  A JTable object.
@@ -130,6 +210,70 @@ class HierarchyModelHierarchy extends JModelAdmin
 				$table->ordering = $max + 1;
 			}
 		}
+	}
+
+	/**
+	 * Method to get a single record.
+	 *
+	 * @param   integer  $id  user id whose sub users we need to get
+	 *
+	 * @return  mixed  Object on success, false on failure.
+	 */
+	public function getSubUsers($id)
+	{
+		$user = JFactory::getuser($id);
+
+		if (!$user->id)
+		{
+			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+		}
+
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from($db->quoteName('#__hierarchy_users'));
+		$query->where($db->quoteName('reports_to') . " = " . $db->quote($id));
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		if ($result)
+		{
+			return $result;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Method to get a single record.
+	 *
+	 * @param   integer  $id  user id whose managers we need to get
+	 *
+	 * @return  mixed  Object on success, false on failure.
+	 */
+	public function getManagers($id)
+	{
+		$user = JFactory::getuser($id);
+
+		if (!$user->id)
+		{
+			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+		}
+
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from($db->quoteName('#__hierarchy_users'));
+		$query->where($db->quoteName('user_id') . " = " . $db->quote($id));
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		if ($result)
+		{
+			return $result;
+		}
+
+		return true;
 	}
 
 	/**
