@@ -37,6 +37,11 @@ class HierarchyViewHierarchy extends JViewLegacy
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
+		$jinput = JFactory::getApplication()->input;
+
+		$this->client = $jinput->get('client');
+		$this->clientID = $jinput->get('client_id');
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{

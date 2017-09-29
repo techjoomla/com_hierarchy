@@ -33,7 +33,7 @@ HierarchyHelper::getLanguageConstant();
 				<fieldset class="adminform">
 					<input type="hidden" name="jform[id]" value="<?php echo $this->item->id; ?>" />
 					<?php
-						echo $this->form->renderField('users');
+						echo $this->form->renderField('user_id');
 						echo $this->form->renderField('context');
 						echo $this->form->renderField('context_id');
 					?>
@@ -50,5 +50,7 @@ HierarchyHelper::getLanguageConstant();
 </form>
 <script type="text/javascript">
 	var rootUrl = "<?php echo $rootUrl; ?>";
+	var client = "<?php echo $this->client; ?>";
+	var clientID = "<?php echo $this->clientID; ?>";
 	hierarchyAdmin.hierarchy.initHierarchyJs();
 </script>

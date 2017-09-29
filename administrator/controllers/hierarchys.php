@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controlleradmin');
+jimport('joomla.filesystem.file');
 
 /**
  * The Hierarchys List Controller
@@ -47,76 +48,84 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	public function csvImport()
 	{
 		jimport('joomla.filesystem.file');
-		$mainframe = JFactory::getApplication();
-		$rs1       = @mkdir(JPATH_COMPONENT_ADMINISTRATOR . '/csv', 0777);
+		$app = JFactory::getApplication();
 
-		// Start file heandling functionality *
+		// Start file heandling functionality
 		$fname       = $_FILES['csvfile']['name'];
-		$uploadsDir = JPATH_COMPONENT_ADMINISTRATOR . '/csv/' . $fname;
-		move_uploaded_file($_FILES['csvfile']['tmp_name'], $uploadsDir);
+		$rowNum      = 0;
+		$uploadsDir = JFactory::getApplication()->getCfg('tmp_path') . '/' . $fname;
+		JFile::upload($_FILES['csvfile']['tmp_name'], $uploadsDir);
 
-		$file      = fopen($uploadsDir, "r");
-		$contentsc = "";
-		$info      = pathinfo($uploadsDir);
-		$rowNum    = 0;
-
-		if ($info['extension'] != 'csv')
+		if ($file = fopen($uploadsDir, "r"))
 		{
-			$msg = JText::_('NOT_CSV_MSG');
-			$mainframe->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
+			$ext = JFile::getExt($uploadsDir);
+
+			if ($ext != 'csv')
+			{
+				$msg = JText::_('NOT_CSV_MSG');
+				$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
+
+				return;
+			}
+
+			while (($data = fgetcsv($file)) !== false)
+			{
+				if ($rowNum == 0)
+				{
+					// Parsing the CSV header
+					$headers = array();
+
+					foreach ($data as $d)
+					{
+						$headers[] = $d;
+					}
+				}
+				else
+				{
+					// Parsing the data rows
+					$rowData = array();
+
+					foreach ($data as $d)
+					{
+						$rowData[] = $d;
+					}
+
+					$userData[] = array_combine($headers, $rowData);
+				}
+
+				$rowNum++;
+			}
+
+			fclose($file);
+		}
+		else
+		{
+			$app->enqueueMessage(JText::_('COM_HIERARCHY_IMPORT_CSV_ERROR'), 'error');
+			$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false));
 
 			return;
 		}
-
-		while (($data = fgetcsv($file)) !== false)
-		{
-			if ($rowNum == 0)
-			{
-				// Parsing the CSV header
-				$headers = array();
-
-				foreach ($data as $d)
-				{
-					$headers[] = $d;
-				}
-			}
-			else
-			{
-				// Parsing the data rows
-				$rowData = array();
-
-				foreach ($data as $d)
-				{
-					$rowData[] = $d;
-				}
-
-				$userData[] = array_combine($headers, $rowData);
-			}
-
-			$rowNum++;
-		}
-
-		fclose($file);
 
 		$model = $this->getModel();
 
 		$data = array();
 
+		$userID = JFactory::getUser()->id;
+
 		foreach ($userData as $key => $val)
 		{
-			$data['context'] = $val['Context'];
+			$data['id']         = '';
+			$data['user_id']    = $val['User_id'];
+			$data['reports_to'] = $val['Reports_to'];
+			$data['context']    = $val['Context'];
 			$data['context_id'] = $val['Context_id'];
-			$data['userid'] = $val['SubuserId'];
-			$data['users'] = $val['Reports_to'];
+			$data['created_by'] = $userID;
 
 			$resultx = $model->save($data);
 		}
 
-		$return = $resultx['return'];
-		$msg = $resultx['msg'];
-		$msg .= $resultx['msg1'];
-		$msg .= $resultx['msg2'];
-		$mainframe->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
+		$msg = JText::_('COM_HIERARCHY_IMPORT_CSV_SUCCESS_MSG');
+		$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
 
 		return;
 	}

@@ -34,44 +34,9 @@ if ($saveOrder)
 }
 
 $sortFields = $this->getSortFields();
-?>
-<script type="text/javascript">
-	Joomla.orderTable = function(){
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
 
-		if (order != '<?php echo $listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-		Joomla.tableOrdering(order, dirn, '');
-	}
-
-	jQuery(document).ready(function () {
-		jQuery('#import_append').attr('style','height:196px !important;');
-		jQuery('#clear-search-button').on('click', function () {
-			jQuery('#filter_search').val('');
-			jQuery('#adminForm').submit();
-		});
-
-		jQuery('#export-submit').on('click', function () {
-			document.getElementById('task').value = 'hierarchys.csvexport';
-			document.adminForm.submit();
-			document.getElementById('task').value = '';
-		});
-	});
-</script>
-<?php
-// Joomla Component Creator code to allow adding non select list filters
-if (!empty($this->extra_sidebar))
-{
-	$this->sidebar .= $this->extra_sidebar;
-}
+// Call helper function
+HierarchyHelper::getLanguageConstant();
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchys'); ?>" method="post" name="adminForm" id="adminForm">
 <?php
@@ -107,9 +72,6 @@ if (!empty($this->extra_sidebar))
 					<th width="1%">
 						<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 					</th>
-					<th class='right'>
-						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
-					</th>
 					<th class='left'>
 						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_NAME', 'a.name', $listDirn, $listOrder); ?>
 					</th>
@@ -118,6 +80,9 @@ if (!empty($this->extra_sidebar))
 					</th>
 					<th class='left'>
 						<?php echo JText::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
+					</th>
+					<th class='right'>
+						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
 					</th>
 				</tr>
 			</thead>
@@ -144,10 +109,12 @@ if (!empty($this->extra_sidebar))
 					$canEdit    = $user->authorise('core.edit', 'com_hierarchy');
 					$canCheckin = $user->authorise('core.manage', 'com_hierarchy');
 					$canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
+					$canChart   = $user->authorise('core.edit.chart', 'com_hierarchy');
+					$canImportCSV = $user->authorise('core.edit.importcsv', 'com_hierarchy');
+					$canExportCSV = $user->authorise('core.edit.exportcsv', 'com_hierarchy');
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
-						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->id); ?></td>
-						<td class='right'><?php echo $item->subuserId; ?></td>
+						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->subuserId); ?></td>
 						<td><?php  echo $item->name; ?></td>
 						<td>
 						<?php
@@ -159,13 +126,54 @@ if (!empty($this->extra_sidebar))
 							{
 								echo '-';
 							}
-							?></td>
-						<td>
-							<a href="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit');?>" class="btn button btn-success modal" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
-								<span class="icon icon-users"></span>
-								<?php echo JText::_('Set Managers');?>
-							</a>
+							?>
 						</td>
+						<td>
+							<?php
+								if ($item->subuserId)
+								{
+									JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
+									$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
+									$results = $hierarchyModel->getReportsTo($item->reports_to);
+
+									$name = array();
+
+									foreach($results as $res)
+									{
+										$user = JFactory::getUser($res->user_id);
+										$name[] = $user->name;
+									}
+
+									$userName = implode(', ', array_unique($name));
+								}
+
+								$clientUrl = '';
+								// Client and client_id is passed to the form URL 
+								if ($this->client && $this->clientId)
+								{
+									$clientUrl = '&client=' . $this->client . '&client_id=' . $this->clientId;
+								}
+
+								if ($canEdit) :
+									$url = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id='.(int) $item->id . '&user_id=' .(int) $item->subuserId . $clientUrl);
+									$text = JText::_('Set');
+								else :
+									$url = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&user_id=' . (int) $item->subuserId . $clientUrl);
+									$text = JText::_('Set');
+								endif;
+							?>
+							<a href="<?php echo $url;?>" class="btn button btn-success modal" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+								<span class="icon icon-users"></span>
+								<?php echo $text;?>
+							</a>
+							<?php
+								if ($canEdit)
+								{
+									echo $userName;
+								}
+								?>
+						</td>
+						<td class='right'><?php echo $item->subuserId; ?></td>
 					</tr>
 					<?php
 				endforeach;
@@ -175,11 +183,6 @@ if (!empty($this->extra_sidebar))
 		<?php
 		endif;
 		?>
-		<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
-			<p><?php echo JText::_('COM_HIERARCHY_CSV_HELP_TEXT'); ?></p>
-			<p><?php echo JText::_('COM_HIERARCHY_CSV_EXPORT_HELP_TEXT'); ?></p>
-			<p><?php echo JText::_('COM_HIERARCHY_CSV_IMPORT_HELP_TEXT'); ?></p>
-		</div>
 		<input type="hidden" id="task" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
@@ -191,9 +194,7 @@ if (!empty($this->extra_sidebar))
 	<div id="import_append">
 		<form action="<?php echo JUri::base(); ?>index.php?option=com_hierarchy&task=hierarchys.csvImport&tmpl=component&format=html" id="uploadForm" class="form-inline center"  name="uploadForm" method="post" enctype="multipart/form-data">
 			<table>
-				<tr>
-					&nbsp;
-				</tr>
+				</br>
 				<tr>
 					<div id="uploadform">
 						<fieldset id="upload-noflash" class="actions">
@@ -220,24 +221,6 @@ if (!empty($this->extra_sidebar))
 		</form>
 	</div>
 </div>
-<script>
-jQuery("[name='jform[user_id]']").on("change",function(){
-	var bossUserId = jQuery(this).val();
-	var subuserId = jQuery(this).parents('tr').find('input[id^="subuser_id_"]').val();
-	jQuery.ajax(
-	{
-		url:"<?php echo Juri::base();?>index.php?option=com_hierarchy&task=hierarchys.setUser&subuserId=" + subuserId,
-		data:{user_id:bossUserId},
-		type:"POST",
-		datatype : "json",
-		success:function(resp)
-		{
-			console.log('Manager Set');
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown)
-		{
-			console.log('Something went wrong.');
-		}
-	});
-});
+<script type="text/javascript">
+	hierarchyAdmin.hierarchys.initHierarchysJs();
 </script>

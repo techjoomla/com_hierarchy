@@ -69,9 +69,6 @@ class HierarchyModelHierarchys extends JModelList
 		$groupId = $this->getUserStateFromRequest($this->context . '.usergroup', 'usergroup', null, 'int');
 		$this->setState('usergroup', $groupId);
 
-		$user_id = $this->getUserStateFromRequest($this->context . '.user_id', 'user_id', null, 'int');
-		$this->setState('user_id', $user_id);
-
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_hierarchy');
 		$this->setState('params', $params);
@@ -165,7 +162,23 @@ class HierarchyModelHierarchys extends JModelList
 			}
 		}
 
+		$query->group('hu.reports_to, a.id');
+
 		return $query;
+	}
+
+	/**
+	 * Method to get a list of users.
+	 *
+	 * @return  mixed  An array of data items on success, false on failure.
+	 *
+	 * @since   1.6.1
+	 */
+	public function getItems()
+	{
+		$items = parent::getItems();
+
+		return $items;
 	}
 
 	/**
