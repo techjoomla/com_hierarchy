@@ -338,4 +338,34 @@ class HierarchyFrontendHelper
 			return '';
 		}
 	}
+
+	/**
+	 * Get user Avatar
+	 *
+	 * @param   integer  $userid    userid
+	 * @param   integer  $relative  relative
+	 *
+	 * @return  string  profile url
+	 *
+	 * @since   1.0
+	 */
+	public function getUserAvatar($userid, $relative = false)
+	{
+		$user        = JFactory::getUser($userid);
+		$params      = JComponentHelper::getParams('com_hierarchy');
+		$integration = $params->get('integration') ? $params->get('integration') : $params->get('integration');
+		$uimage      = '';
+
+		if ($integration == "2")
+		{
+			$user     = JFactory::getUser($userid);
+			$usermail = $user->get('email');
+
+			// Refer https://en.gravatar.com/site/implement/images/php/
+			$hash     = md5(strtolower(trim($usermail)));
+			$uimage   = 'http://www.gravatar.com/avatar/' . $hash . '?s=32';
+
+			return $uimage;
+		}
+	}
 }

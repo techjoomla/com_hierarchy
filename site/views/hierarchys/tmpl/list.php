@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 $user = JFactory::getUser();
 ?>
 <div class="alert alert-info" role="alert">
-<?php echo JText::_('Shows a list of people directly reporting to the ' . $user->name . '.'); ?>
+<?php echo JText::_('COM_HIERARCHY_SHOW_LIST') . $user->name . '.'; ?>
 </div>
 <form action="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchys'); ?>" method="post" name="adminForm" id="adminForm">
 	<div class=" col-lg-4 col-md-6 col-sm-6 col-xs-12">
@@ -52,6 +52,9 @@ $user = JFactory::getUser();
 					<?php echo JText::_('COM_HIERARCHY_CONTEXT'); ?>
 				</th>
 				<th class='left'>
+					<?php echo JText::_('COM_HIERARCHY_CONTEXT_ID'); ?>
+				</th>
+				<th class='left'>
 					<?php echo JText::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
 				</th>
 			</tr>
@@ -75,36 +78,52 @@ $user = JFactory::getUser();
 			<?php
 			foreach ($this->items as $i => $item)
 			{
-			?>
+				JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
+				$hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
+				$results = $hierarchysModel->getReportsTo($item->reports_to);
+			}
+
+			$hierarchyFrontendHelper = new HierarchyFrontendHelper;
+			$gravatar = $hierarchyFrontendHelper->getUserAvatar($item->subuserId);
+
+			$userData = array();
+
+			foreach ($results as $res)
+			{
+				$user = JFactory::getUser($res->user_id);
+				$userData['name']       = $user->name;
+				$userData['subuserId']  = $res->user_id;
+				$userData['context']    = $res->context;
+				$userData['context_id'] = $res->context_id;
+				$userData['reports_to'] = $res->reports_to;
+				?>
 				<tr class="row<?php echo $i % 2; ?>">
-					<td><?php echo $item->subuserId; ?></td>
+					<td><?php echo $userData['subuserId']; ?></td>
 					<td>
-						<a href="#"><?php  echo $item->name; ?></a>
+						<img src="<?php echo $gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
+						<a href="#" title="<?php echo $userData['name'];?>"><?php  echo $userData['name']; ?></a>
 					</td>
-<!--
-					<td><?php echo JHtml::_('grid.sort',  $item->name, 'a.name', $listDirn, $listOrder); ?></td>
--->
 					<td>
 					<?php
-						if (!empty($item->context))
-						{
-							echo $item->context;
-						}
-						else
-						{
-							echo '-';
-						}
+						echo $userData['context'] = !empty($userData['context']) ? $userData['context'] : '-';
 						?>
 					</td>
 					<td>
 					<?php
-						if ($item->subuserId)
+						echo $userData['context_id'] = !empty($userData['context_id']) ? $userData['context_id'] : '-';
+						?>
+					</td>
+					<td>
+					<?php
+						if ($userData['subuserId'])
 						{
 							$name = array();
 
-							foreach($this->items as $res)
+							$reportsTo = $hierarchysModel->getReportsTo($userData['subuserId']);
+
+							foreach($reportsTo as $res)
 							{
-								$user = JFactory::getUser($res->reports_to);
+								$user = JFactory::getUser($res->user_id);
 								$name[] = $user->name;
 							}
 

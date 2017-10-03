@@ -152,7 +152,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($user->id)
 		{
-			$query->where('hu.user_id = ' . (int) $user->id);
+			$query->where('hu.reports_to = ' . (int) $user->id);
 		}
 
 		if (!empty($search))
@@ -209,6 +209,27 @@ class HierarchyModelHierarchys extends JModelList
 		return $query;
 	}
 
+	/**
+	 * Method to get reports_to
+	 *
+	 * @param   INT  $reportsTo
+	 *
+	 * @return  Array of data
+	 *
+	 * @since   1.0
+	 */
+	public function getReportsTo($reportsTo)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from($db->quoteName('#__hierarchy_users'));
+		$query->where($db->quoteName('reports_to') . ' = '. $db->quote($reportsTo));
+		$db->setQuery($query);
+		$results = $db->loadObjectList();
+
+		return $results;
+	}
 
 	/**
 	 * Overrides the default function to check Date fields format, identified by

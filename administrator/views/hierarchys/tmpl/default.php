@@ -79,6 +79,9 @@ HierarchyHelper::getLanguageConstant();
 						<?php echo JText::_('COM_HIERARCHY_CONTEXT'); ?>
 					</th>
 					<th class='left'>
+						<?php echo JText::_('COM_HIERARCHY_CONTEXT_ID'); ?>
+					</th>
+					<th class='left'>
 						<?php echo JText::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
 					</th>
 					<th class='right'>
@@ -118,14 +121,12 @@ HierarchyHelper::getLanguageConstant();
 						<td><?php  echo $item->name; ?></td>
 						<td>
 						<?php
-							if (!empty($item->context))
-							{
-								echo $item->context;
-							}
-							else
-							{
-								echo '-';
-							}
+							echo $item->context = !empty($item->context) ? $item->context : '-';
+							?>
+						</td>
+						<td>
+						<?php
+							echo $item->context_id = !empty($item->context_id) ? $item->context_id : '-';
 							?>
 						</td>
 						<td>
@@ -156,10 +157,10 @@ HierarchyHelper::getLanguageConstant();
 
 								if ($canEdit) :
 									$url = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id='.(int) $item->id . '&user_id=' .(int) $item->subuserId . $clientUrl);
-									$text = JText::_('Set');
+									$text = JText::_('COM_HIERARCHY_SET_MANAGER');
 								else :
 									$url = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&user_id=' . (int) $item->subuserId . $clientUrl);
-									$text = JText::_('Set');
+									$text = JText::_('COM_HIERARCHY_SET_MANAGER');
 								endif;
 							?>
 							<a href="<?php echo $url;?>" class="btn button btn-success modal" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
