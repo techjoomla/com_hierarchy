@@ -165,6 +165,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		}
 		else
 		{
+			$data['id'] = '';
 			$data['created_date'] = $date->toSql(true);
 		}
 

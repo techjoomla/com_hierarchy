@@ -23,7 +23,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 	 * Constructor.
 	 *
 	 * @since   1.6
-	 * 
+	 *
 	 * @see     JController
 	 */
 	public function __construct()
@@ -72,14 +72,33 @@ class HierarchyControllerHierarchy extends JControllerForm
 		}
 
 		$jinput = JFactory::getApplication()->input;
-		$data['reports_to'] = $jinput->get('user_id', '', 'int');
-
-		/*$user_id      = $jinput->get('user_id', '', 'int');
-		$user = JFactory::getUser()->id;
-		$data['userid'] = !empty($user_id) ? $user_id : $user;*/
-
+		$data['reports_to']  = $jinput->get('user_id', '', 'int');
 		$data['created_by']  = $jinput->get('created_by', '', 'int');
 		$data['modified_by'] = $jinput->get('modified_by', '', 'int');
+
+		// To add new or remove manager from the selected managers list.
+		$hierarchysData = $model->getReportsTo($data['reports_to']);
+
+		$userIDs = array();
+
+		foreach ($hierarchysData as $hierarchy)
+		{
+			$userIDs[] = $hierarchy->user_id;
+		}
+
+		$deleteUser = array_diff($userIDs, $data['user_id']);
+
+		// Delete user from the existing list
+		foreach ($deleteUser as $key => $val)
+		{
+			$db = JFactory::getDbo();
+			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+			$hierarchyTableObj = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
+			$hierarchyTableObj->load(array('user_id' => (int) $val));
+
+			$id = $hierarchyTableObj->id;
+			$delete = $model->delete($id);
+		}
 
 		foreach ($data['user_id'] as $key => $val)
 		{
@@ -101,12 +120,6 @@ class HierarchyControllerHierarchy extends JControllerForm
 		if ($task == 'apply')
 		{
 			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id=' . $id, false);
-			$app->redirect($redirect, $msg);
-		}
-
-		if ($task == 'save2new')
-		{
-			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit', false);
 			$app->redirect($redirect, $msg);
 		}
 

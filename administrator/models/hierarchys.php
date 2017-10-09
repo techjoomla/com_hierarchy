@@ -162,7 +162,7 @@ class HierarchyModelHierarchys extends JModelList
 			}
 		}
 
-		$query->group('hu.reports_to, a.id');
+		$query->group('hu.reports_to, hu.context, a.id');
 
 		return $query;
 	}
