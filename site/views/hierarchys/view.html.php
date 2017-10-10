@@ -62,9 +62,9 @@ class HierarchyViewHierarchys extends JViewLegacy
 
 		if (!empty($this->items))
 		{
-			foreach ($this->items as $key => $val)
+			foreach ($this->items as $item)
 			{
-				$context   = $val->context;
+				$context   = $item->context;
 				$contextList[] = JHtml::_('select.option', $context, $context);
 			}
 		}

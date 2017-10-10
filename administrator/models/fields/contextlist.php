@@ -61,9 +61,9 @@ class JFormFieldContextList extends JFormFieldList
 
 		if (!empty($contextList))
 		{
-			foreach ($contextList as $key => $val)
+			foreach ($contextList as $context)
 			{
-				$context   = $val->context;
+				$context   = $context->context;
 				$options[] = JHtml::_('select.option', $context, $context);
 			}
 		}

@@ -121,7 +121,7 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 			$data['context_id'] = $val['Context_id'];
 			$data['created_by'] = $userID;
 
-			$resultx = $model->save($data);
+			$result = $model->save($data);
 		}
 
 		$msg = JText::_('COM_HIERARCHY_IMPORT_CSV_SUCCESS_MSG');

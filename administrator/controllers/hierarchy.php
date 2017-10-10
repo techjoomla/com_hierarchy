@@ -30,20 +30,24 @@ class HierarchyControllerHierarchy extends JControllerForm
 	{
 		$this->view_list = 'hierarchys';
 
+		$this->db = JFactory::getDbo();
+		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+		$this->hierarchyTableObj = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $this->db));
+
+		$this->msg   = JText::_('COM_HIERARCHY_REPORTEES_SAVE_MSG');
 		parent::__construct();
 	}
 
 	/**
 	 * Method to save a user's profile data.
 	 *
-	 * @param   string  $key     TO ADD
-	 * @param   string  $urlVar  TO ADD
+	 * @param   string  $key  TO ADD
 	 *
 	 * @return    void
 	 *
 	 * @since    1.6
 	 */
-	public function save($key = null, $urlVar = null)
+	public function save($key = null)
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -91,13 +95,9 @@ class HierarchyControllerHierarchy extends JControllerForm
 		// Delete user from the existing list
 		foreach ($deleteUser as $key => $val)
 		{
-			$db = JFactory::getDbo();
-			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
-			$hierarchyTableObj = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
-			$hierarchyTableObj->load(array('user_id' => (int) $val));
-
-			$id = $hierarchyTableObj->id;
-			$delete = $model->delete($id);
+			$this->hierarchyTableObj->load(array('user_id' => (int) $val));
+			$id = $this->hierarchyTableObj->id;
+			$model->delete($id);
 		}
 
 		foreach ($data['user_id'] as $key => $val)
@@ -106,7 +106,6 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$return = $model->save($data);
 		}
 
-		$msg   = JText::_('COM_HIERARCHY_REPORTEES_SAVE_MSG');
 		$input = JFactory::getApplication()->input;
 		$id    = $input->get('id');
 
@@ -120,7 +119,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 		if ($task == 'apply')
 		{
 			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id=' . $id, false);
-			$app->redirect($redirect, $msg);
+			$app->redirect($redirect, $this->msg);
 		}
 
 		// Check in the profile.
@@ -131,6 +130,6 @@ class HierarchyControllerHierarchy extends JControllerForm
 
 		// Redirect to the list screen.
 		$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false);
-		$app->redirect($redirect, $msg);
+		$app->redirect($redirect, $this->msg);
 	}
 }

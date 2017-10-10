@@ -343,13 +343,12 @@ class HierarchyFrontendHelper
 	 * Get user Avatar
 	 *
 	 * @param   integer  $userid    userid
-	 * @param   integer  $relative  relative
 	 *
 	 * @return  string  profile url
 	 *
 	 * @since   1.0
 	 */
-	public function getUserAvatar($userid, $relative = false)
+	public function getUserAvatar($userid)
 	{
 		$user        = JFactory::getUser($userid);
 		$params      = JComponentHelper::getParams('com_hierarchy');
