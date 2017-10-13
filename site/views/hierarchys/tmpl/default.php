@@ -11,13 +11,13 @@ defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
-JHtml::script(JURI::root().'media/jui/js/jquery.min.js');
 JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('formbehavior.chosen', 'select');
-JHtml::stylesheet(JURI::root().'components/com_hierarchy/assets/css/confirmation.css');
-$user       = JFactory::getUser();
+JHtml::stylesheet(JUri::root().'components/com_hierarchy/assets/css/confirmation.css');
+JHtml::script(JURI::root().'media/jui/js/jquery.min.js');
 
+$user       = JFactory::getUser();
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_hierarchy');
@@ -47,45 +47,20 @@ $menulistChart = $app->getParams()->get('select_layout');
 	endif;
 	?>
 </div>
-<div class="container-fluid">
-	<div class=" col-lg-12 col-md-12 col-sm-12 col-xs-12">
-		<form method="post" name="adminForm" id="adminForm" class="form-inline">
-			<?php
-			if (empty($this->items ))
-			{
-				?>
-				<div class="alert alert-info" role="alert">
-				<?php echo JText::_('NODATA'); ?>
-				</div>
-				<?php
-			}
-			else
-			{
-				if ($menulistChart == 0 || $menulistChart == '')
-				{
-					$billPath = $this->HierarchyFrontendHelper ->getViewPath('hierarchys', 'list');
+<?php
+	if ($menulistChart == 0 || $menulistChart == '')
+	{
+		$hierarchyPath = $this->HierarchyFrontendHelper ->getViewPath('hierarchys', 'list');
+	}
+	else
+	{
+		$hierarchyPath = $this->HierarchyFrontendHelper ->getViewPath('hierarchys', 'chart');
+	}
 
-					ob_start();
-					include $billPath;
-					$html = ob_get_contents();
-					ob_end_clean();
+	ob_start();
+	include $hierarchyPath;
+	$html = ob_get_contents();
+	ob_end_clean();
 
-					echo $html;
-				}
-				else
-				{
-					$billPath = $this->HierarchyFrontendHelper ->getViewPath('hierarchys', 'chart');
-
-					ob_start();
-					include $billPath;
-					$html = ob_get_contents();
-					ob_end_clean();
-
-					echo $html;
-				}
-			}
-			?>
-		</form>
-	</div>
-</div>
-
+	echo $html;
+?>

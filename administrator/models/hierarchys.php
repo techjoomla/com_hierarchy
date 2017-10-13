@@ -201,7 +201,7 @@ class HierarchyModelHierarchys extends JModelList
 			$db = JFactory::getDbo();
 			$deleteHierarchy = $db->getQuery(true);
 			$deleteHierarchy->delete($db->quoteName('#__hierarchy_users'));
-			$deleteHierarchy->where('id IN (' . $id . ')');
+			$deleteHierarchy->where('reports_to IN (' . $id . ')');
 			$db->setQuery($deleteHierarchy);
 			$confrim = $db->execute();
 

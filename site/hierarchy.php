@@ -19,3 +19,7 @@ JHtml::_('bootstrap.framework');
 $controller = JControllerLegacy::getInstance('Hierarchy');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();
+
+// Initialize hierarchy js
+$document = JFactory::getDocument();
+$document->addScript(JUri::root(true) . '/media/com_hierarchy/js/hierarchy.js');

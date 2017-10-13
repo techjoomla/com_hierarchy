@@ -115,8 +115,25 @@ HierarchyHelper::getLanguageConstant();
 					$canChart   = $user->authorise('core.edit.chart', 'com_hierarchy');
 					$canImportCSV = $user->authorise('core.edit.importcsv', 'com_hierarchy');
 					$canExportCSV = $user->authorise('core.edit.exportcsv', 'com_hierarchy');
+
+					if ($item->subuserId)
+					{
+						JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
+						$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
+						$results = $hierarchyModel->getReportsTo($item->reports_to);
+
+						$name = array();
+
+						foreach($results as $res)
+						{
+							$user = JFactory::getUser($res->user_id);
+							$name[] = $user->name;
+						}
+
+						$userName = implode(', ', array_unique($name));
+					}
 					?>
-					<tr class="row<?php echo $i % 2; ?>">
+					<tr class="row<?php echo $i % 2; ?> reports_to">
 						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->subuserId); ?></td>
 						<td><?php  echo $item->name; ?></td>
 						<td>
@@ -131,24 +148,8 @@ HierarchyHelper::getLanguageConstant();
 						</td>
 						<td>
 							<?php
-								if ($item->subuserId)
-								{
-									JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
-									$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
-									$results = $hierarchyModel->getReportsTo($item->reports_to);
-
-									$name = array();
-
-									foreach($results as $res)
-									{
-										$user = JFactory::getUser($res->user_id);
-										$name[] = $user->name;
-									}
-
-									$userName = implode(', ', array_unique($name));
-								}
-
 								$clientUrl = '';
+
 								// Client and client_id is passed to the form URL 
 								if ($this->client && $this->clientId)
 								{
@@ -170,7 +171,9 @@ HierarchyHelper::getLanguageConstant();
 							<?php
 								if ($canEdit)
 								{
-									echo $userName;
+									?>
+									<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $userName; ?>"><?php echo $userName = strlen($userName) > 20 ? substr($userName, 0, 20) . "..." : $userName; ?></span>
+									<?php
 								}
 								?>
 						</td>
@@ -224,4 +227,5 @@ HierarchyHelper::getLanguageConstant();
 </div>
 <script type="text/javascript">
 	hierarchyAdmin.hierarchys.initHierarchysJs();
+	hierarchyAdmin.hierarchys.showUserNames();
 </script>
