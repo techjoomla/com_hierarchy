@@ -32,6 +32,8 @@ class HierarchyModelHierarchys extends JModelList
 		{
 			$config['filter_fields'] = array(
 				'name', 'a.name',
+				'hierarchy_users', 'a.hierarchy_users',
+				'context', 'a.context',
 			);
 		}
 

@@ -13,7 +13,6 @@ defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
-JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
 $input   = JFactory::getApplication()->input;
 $user_id = $input->get('user_id', 0);
@@ -21,7 +20,11 @@ $user_id = $input->get('user_id', 0);
 // Import CSS
 $document = JFactory::getDocument();
 $document->addStyleSheet('components/com_hierarchy/assets/css/hierarchy.css');
-$rootUrl = JUri::root() . '/administrator/';
+$JUriRoot = JUri::root(true) . '/administrator/';
+
+// Tokenize
+$document->addScript(JUri::root(true) . '/media/com_hierarchy/tokenize/jquery.tokenize.js');
+$document->addStylesheet(JUri::root(true) . '/media/com_hierarchy/tokenize/jquery.tokenize.css');
 
 // Call helper function
 HierarchyHelper::getLanguageConstant();
@@ -49,8 +52,10 @@ HierarchyHelper::getLanguageConstant();
 	</div>
 </form>
 <script type="text/javascript">
-	var rootUrl = "<?php echo $rootUrl; ?>";
+	var JUriRoot = "<?php echo $JUriRoot; ?>";
 	var client = "<?php echo $this->client; ?>";
+	var userID = "<?php echo $user_id; ?>";
 	var clientID = "<?php echo $this->clientID; ?>";
 	hierarchyAdmin.hierarchy.initHierarchyJs();
+	hierarchyAdmin.hierarchy.getUsersToManageHierarchy();
 </script>

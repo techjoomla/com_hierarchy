@@ -66,5 +66,6 @@ class HierarchyHelper
 	{
 		JText::script('JGLOBAL_VALIDATION_FORM_FAILED');
 		JText::script('COM_HIERARCHY_HIERARCHY_DELETE_CONF');
+		JText::script('COM_HIERARCHY_USERNAMES_DESC');
 	}
 }

@@ -122,6 +122,9 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$app->redirect($redirect, $this->msg);
 		}
 
+		// Clear the profile id from the session.
+		$app->setUserState('com_hierarchy.edit.hierarchy.id', null);
+
 		// Check in the profile.
 		if ($return)
 		{
@@ -131,5 +134,32 @@ class HierarchyControllerHierarchy extends JControllerForm
 		// Redirect to the list screen.
 		$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false);
 		$app->redirect($redirect, $this->msg);
+
+		// Flush the data from the session.
+		$app->setUserState('com_hierarchy.edit.hierarchy.data', null);
+	}
+
+	/**
+	 * Method to get users to manage hierarchy.
+	 *
+	 * @return  array
+	 *
+	 * @since    1.6
+	 */
+	public function getUsersToManageHierarchy()
+	{
+		$jinput = JFactory::getApplication()->input;
+		$userId = $jinput->get('user_id', '', 'int');
+
+		// Get the model.
+		$model = $this->getModel('Hierarchy', 'HierarchyModel');
+
+		// Get the list
+		$list = $model->getUsersToManageHierarchy($userId);
+
+		// Output json response
+		header('Content-type: application/json');
+		echo json_encode($list);
+		jexit();
 	}
 }

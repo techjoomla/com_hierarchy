@@ -70,6 +70,18 @@ class JFormFieldContextList extends JFormFieldList
 
 		$options = array_unique($options, SORT_REGULAR);
 
+		foreach ($options as $elementKey => $element)
+		{
+			foreach ($element as $valueKey => $value)
+			{
+				if ($valueKey == 'text' && $value == '')
+				{
+					// Delete this particular object from the $array
+					unset($options[$elementKey]);
+				}
+			}
+		}
+
 		if (!$this->loadExternally)
 		{
 			// Merge any additional options in the XML definition.

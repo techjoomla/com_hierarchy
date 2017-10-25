@@ -299,4 +299,42 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		return $result;
 	}
+
+	/**
+	 * Method to get users to manage hierarchy.
+	 *
+	 * @param   integer  $userId  userId
+	 *
+	 * @return  array
+	 *
+	 * @since    1.6
+	 */
+	public function getUsersToManageHierarchy($userId)
+	{
+		$app = JFactory::getApplication();
+
+		// Get search term
+		$searchTerm = $app->input->get('search', '', 'STRING');
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		// Select the required fields from the table.
+		$query->select('u.id AS value, u.name AS text');
+		$query->from('`#__users` AS u');
+		$query->where('NOT u.id = ' . $userId);
+
+		// Search term
+		if (!empty($searchTerm))
+		{
+			$search = $db->Quote('%' . $db->escape($searchTerm, true) . '%');
+			$query->where('u.name LIKE ' . $search);
+			$query->order('u.name ASC');
+		}
+
+		$db->setQuery($query);
+		$allUsers = $db->loadObjectList();
+
+		return $allUsers;
+	}
 }

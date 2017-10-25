@@ -39,6 +39,18 @@ var hierarchyAdmin =
 					window.parent.location.reload();
 				}
 			}
+		},
+
+		getUsersToManageHierarchy: function() {
+			/** Invite user field tokenfield **/
+			inviteTaskUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchy.getUsersToManageHierarchy&user_id=' + userID;
+
+			jQuery('#jform_user_id').tokenize({
+				placeholder: Joomla.JText._('COM_HIERARCHY_USERNAMES_DESC'),
+				newElements: false,
+				searchMinLength: 1,
+				datas: inviteTaskUrl
+			});
 		}
 	},
 
