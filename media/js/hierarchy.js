@@ -84,6 +84,36 @@ var hierarchySite =
 			for(var i = 0; i < maxRow ; i++) {
 				jQuery("#popover_"+i).popover({ trigger: "hover" });
 			}
+		},
+		drillUpDrillDownList: function() {
+
+			var hierarchysData = JSON.parse(hierarchys);
+
+			jQuery.each(hierarchysData, function (key, val) {
+
+				reportsUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getAlsoReportsTo&user_id=' + val.user_id;
+
+				jQuery.ajax({
+					type:'POST',
+					url:reportsUrl,
+					data:hierarchys,
+					dataType: 'json',
+					success:function(data)
+					{
+						jQuery.each(data, function (dataKey, DataVal) {
+
+							var alsoRepoToList = new Array();
+							jQuery.each(DataVal.also, function(index, value) {
+								alsoRepoToList.push(value.reportsToName);
+							});
+
+							jQuery('#hierarchyList').append('<tr><td><img src="' + gravatar + '" class="img-rounded" alt="" width="30" height="30"><a href="#">' + DataVal.name +' </i><i class="fa fa-angle-down" onclick="hierarchySite.hierarchys.drillUpDrillDownList()"; aria-hidden="true"></i> </td><td>' + DataVal.context + '</td><td>' + DataVal.context_id + '</td><td><span id="popover" data-content="'+alsoRepoToList+'">'+alsoRepoToList+'</span></td><td>' + DataVal.user_id + '</td></tr>');
+
+							jQuery("#popover").popover({ trigger: "hover" });
+						});
+					}
+				});
+			});
 		}
 	}
 }

@@ -46,4 +46,35 @@ class HierarchyControllerHierarchys extends HierarchyController
 			$this->setRedirect('index.php?option=com_hierarchy&view=hierarchys&tmpl=component&tid='.$tid);
 		}
 	}
+
+	/**
+	 * Method to get users to manage hierarchy.
+	 *
+	 * @return  array
+	 *
+	 * @since    1.6
+	 */
+	public function getAlsoReportsTo()
+	{
+		$jinput = JFactory::getApplication()->input;
+		$userId = $jinput->get('user_id', '', 'int');
+
+		// Get the model.
+		$model = $this->getModel('Hierarchys', 'HierarchyModel');
+
+		// Get the list
+		$alsoReportsTo = $model->getReportsTo($userId);
+
+		foreach ($alsoReportsTo as $reportsTo)
+		{
+			$user = JFactory::getUser($reportsTo->user_id);
+			$reportsTo->name = $user->name;
+			$reportsTo->also = $model->getAlsoReportsTo($reportsTo->user_id);
+		}
+
+		// Output json response
+		header('Content-type: application/json');
+		echo json_encode($alsoReportsTo);
+		jexit();
+	}
 }

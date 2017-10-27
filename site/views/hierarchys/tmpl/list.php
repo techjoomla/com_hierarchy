@@ -10,6 +10,7 @@
 // No direct access
 defined('_JEXEC') or die;
 $user = JFactory::getUser();
+$JUriRoot = JUri::root();
 ?>
 <div class="alert alert-info" role="alert">
 <?php echo JText::_('COM_HIERARCHY_SHOW_LIST') . $user->name . '.'; ?>
@@ -98,7 +99,9 @@ $user = JFactory::getUser();
 					<tr class="row<?php echo $i % 2; ?> reports_to">
 						<td>
 							<img src="<?php echo $gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
-							<a href="#" title="<?php echo $user->name;?>"><?php  echo $user->name; ?></a>
+							<a href="#" title="<?php echo $user->name;?>"><?php  echo $user->name; ?>
+								<i class="fa fa-angle-down" onclick="hierarchySite.hierarchys.drillUpDrillDownList()"; aria-hidden="true"></i>
+							</a>
 						</td>
 						<td>
 						<?php
@@ -147,6 +150,12 @@ $user = JFactory::getUser();
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 	<?php echo JHtml::_('form.token'); ?>
 </form>
+<?php
+$hierarchys = json_encode($hierarchys);
+?>
 <script type="text/javascript">
+	var JUriRoot = "<?php echo $JUriRoot; ?>";
+	var gravatar = "<?php echo $gravatar; ?>";
+	var hierarchys = '<?php echo $hierarchys; ?>';
 	hierarchySite.hierarchys.showUserNames();
 </script>

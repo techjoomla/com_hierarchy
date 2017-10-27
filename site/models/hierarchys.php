@@ -212,7 +212,7 @@ class HierarchyModelHierarchys extends JModelList
 	/**
 	 * Method to get reports_to
 	 *
-	 * @param   INT  $reportsTo
+	 * @param   INT  $reportsTo  reportsTo
 	 *
 	 * @return  Array of data
 	 *
@@ -224,9 +224,37 @@ class HierarchyModelHierarchys extends JModelList
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->where($db->quoteName('reports_to') . ' = '. $db->quote($reportsTo));
+		$query->where($db->quoteName('reports_to') . ' = ' . $db->quote($reportsTo));
 		$db->setQuery($query);
 		$results = $db->loadObjectList();
+
+		return $results;
+	}
+
+	/**
+	 * Method to get reports_to
+	 *
+	 * @param   INT  $reportsTo  reportsTo
+	 *
+	 * @return  Array of data
+	 *
+	 * @since   1.0
+	 */
+	public function getAlsoReportsTo($reportsTo)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from($db->quoteName('#__hierarchy_users'));
+		$query->where($db->quoteName('reports_to') . ' = ' . $db->quote($reportsTo));
+		$db->setQuery($query);
+		$results = $db->loadObjectList();
+
+		foreach ($results as $res)
+		{
+			$user = JFactory::getUser($res->user_id);
+			$res->reportsToName = $user->name;
+		}
 
 		return $results;
 	}
@@ -272,7 +300,6 @@ class HierarchyModelHierarchys extends JModelList
 
 	public function store($data)
     {
-		//print_r($data);die;
 		$db      = $this->getDbo();
 
 		$insertObj             = new stdClass;
@@ -525,5 +552,4 @@ $amt = money_format('%!i', $amt);
 			return true;
 		}
 	}
-
 }

@@ -15,7 +15,7 @@ JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::stylesheet(JUri::root().'components/com_hierarchy/assets/css/confirmation.css');
-JHtml::script(JURI::root().'media/jui/js/jquery.min.js');
+// JHtml::script(JUri::root().'media/jui/js/jquery.min.js');
 
 $user       = JFactory::getUser();
 $listOrder  = $this->state->get('list.ordering');
