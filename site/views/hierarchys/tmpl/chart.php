@@ -12,9 +12,9 @@ defined('_JEXEC') or die;
 
 JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
-JHtml::stylesheet(JURI::root().'media/com_hierarchy/treant-js/Treant.css');
-JHtml::script(JUri::root() . 'media/com_hierarchy/treant-js/Treant.js');
-JHtml::script(JUri::root() . 'media/com_hierarchy/treant-js/vendor/raphael.js');
+JHtml::stylesheet(JURI::root().'media/com_hierarchy/vendors/treant-js/Treant.css');
+JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
+JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
 
 $JUriRoot = JUri::root();
 $user = JFactory::getUser();

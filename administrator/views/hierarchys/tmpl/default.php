@@ -17,7 +17,6 @@ JHTML::_('behavior.modal', 'a.modal');
 JHtml::_('behavior.keepalive');
 
 // Import CSS
-JHtml::stylesheet(JUri::root(). 'administrator/components/com_hierarchy/assets/css/hierarchy.css' );
 JHtml::_('script', 'jui/fielduser.min.js', array('version' => 'auto', 'relative' => true));
 
 $user      = JFactory::getUser();

@@ -16,15 +16,12 @@ JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
 $input   = JFactory::getApplication()->input;
 $user_id = $input->get('user_id', 0);
-
-// Import CSS
-$document = JFactory::getDocument();
-$document->addStyleSheet('components/com_hierarchy/assets/css/hierarchy.css');
 $JUriRoot = JUri::root(true) . '/administrator/';
 
 // Tokenize
-$document->addScript(JUri::root(true) . '/media/com_hierarchy/tokenize/jquery.tokenize.js');
-$document->addStylesheet(JUri::root(true) . '/media/com_hierarchy/tokenize/jquery.tokenize.css');
+$document = JFactory::getDocument();
+$document->addScript(JUri::root(true) . '/media/com_hierarchy/vendors/tokenize/jquery.tokenize.js');
+$document->addStylesheet(JUri::root(true) . '/media/com_hierarchy/vendors/tokenize/jquery.tokenize.css');
 
 // Call helper function
 HierarchyHelper::getLanguageConstant();

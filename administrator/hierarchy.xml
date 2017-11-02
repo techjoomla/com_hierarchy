@@ -29,7 +29,6 @@
 		<folder>models</folder>
 		<folder>controllers</folder>
 		<folder>helpers</folder>
-		<folder>assets</folder>
 	</files>
 	<languages folder="site/language">
 			<language tag="en-GB">en-GB/en-GB.com_hierarchy.ini</language>
@@ -38,8 +37,7 @@
 		<file>index.html</file>
 		<folder>samplecsv</folder>
 		<folder>js</folder>
-		<folder>tokenize</folder>
-		<folder>treant-js</folder>
+		<folder>vendors</folder>
 	</media>
 	<administration>
 		<menu img="components/com_hierarchy/assets/images/s_com_hierarchy.png" >COM_HIERARCHY</menu>
