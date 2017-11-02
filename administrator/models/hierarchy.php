@@ -115,13 +115,13 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		if ($item->user_id)
 		{
-			$hierarchyData = $this->getReportsTo($item->reports_to);
+			$hierarchyData = $this->getReportsTo($item->user_id);
 
-			$item->user_id = array();
+			$item->reports_to = array();
 
 			foreach ($hierarchyData as $hierarchy)
 			{
-				$item->user_id[] = $hierarchy->user_id;
+				$item->reports_to[] = $hierarchy->reports_to;
 			}
 		}
 
@@ -293,7 +293,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->where($db->quoteName('reports_to') . " = " . $db->quote($reportsTo));
+		$query->where($db->quoteName('user_id') . " = " . $db->quote($reportsTo));
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 

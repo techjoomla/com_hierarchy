@@ -36,7 +36,7 @@ HierarchyHelper::getLanguageConstant();
 				<fieldset class="adminform">
 					<input type="hidden" name="jform[id]" value="<?php echo $this->item->id; ?>" />
 					<?php
-						echo $this->form->renderField('user_id');
+						echo $this->form->renderField('reports_to');
 						echo $this->form->renderField('context');
 						echo $this->form->renderField('context_id');
 					?>

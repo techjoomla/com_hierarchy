@@ -96,11 +96,11 @@ $JUriRoot = JUri::root();
 				{
 					$user = JFactory::getUser($hierarchy->user_id);
 					?>
-					<tr class="row<?php echo $i % 2; ?> reports_to">
+					<tr class="row<?php echo $i % 2; ?> reports_to" id="row_<?php echo $hierarchy->user_id;?>">
 						<td>
 							<img src="<?php echo $gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
 							<a href="#" title="<?php echo $user->name;?>"><?php  echo $user->name; ?>
-								<i class="fa fa-angle-down" onclick="hierarchySite.hierarchys.drillUpDrillDownList()"; aria-hidden="true"></i>
+								<i class="fa fa-angle-down" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $hierarchy->user_id;?>')"; aria-hidden="true"></i>
 							</a>
 						</td>
 						<td>

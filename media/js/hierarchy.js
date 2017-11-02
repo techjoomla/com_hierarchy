@@ -45,7 +45,7 @@ var hierarchyAdmin =
 			/** Invite user field tokenfield **/
 			inviteTaskUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchy.getUsersToManageHierarchy&user_id=' + userID;
 
-			jQuery('#jform_user_id').tokenize({
+			jQuery('#jform_reports_to').tokenize({
 				placeholder: Joomla.JText._('COM_HIERARCHY_USERNAMES_DESC'),
 				newElements: false,
 				searchMinLength: 1,
@@ -85,35 +85,53 @@ var hierarchySite =
 				jQuery("#popover_"+i).popover({ trigger: "hover" });
 			}
 		},
-		drillUpDrillDownList: function() {
 
-			var hierarchysData = JSON.parse(hierarchys);
-
-			jQuery.each(hierarchysData, function (key, val) {
-
-				reportsUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getAlsoReportsTo&user_id=' + val.user_id;
-
-				jQuery.ajax({
-					type:'POST',
-					url:reportsUrl,
-					data:hierarchys,
-					dataType: 'json',
-					success:function(data)
-					{
-						jQuery.each(data, function (dataKey, DataVal) {
-
-							var alsoRepoToList = new Array();
-							jQuery.each(DataVal.also, function(index, value) {
-								alsoRepoToList.push(value.reportsToName);
-							});
-
-							jQuery('#hierarchyList').append('<tr><td><img src="' + gravatar + '" class="img-rounded" alt="" width="30" height="30"><a href="#">' + DataVal.name +' </i><i class="fa fa-angle-down" onclick="hierarchySite.hierarchys.drillUpDrillDownList()"; aria-hidden="true"></i> </td><td>' + DataVal.context + '</td><td>' + DataVal.context_id + '</td><td><span id="popover" data-content="'+alsoRepoToList+'">'+alsoRepoToList+'</span></td><td>' + DataVal.user_id + '</td></tr>');
-
-							jQuery("#popover").popover({ trigger: "hover" });
+		drillUpDrillDownList: function(userID) {
+		var hierarchysData = JSON.parse(hierarchys);
+			reportsUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getAlsoReportsTo&user_id=' + userID;
+			jQuery.ajax({
+				type:'POST',
+				url:reportsUrl,
+				data:hierarchys,
+				dataType: 'json',
+				success:function(data)
+				{
+					jQuery.each(data, function (dataKey, dataVal) {
+						var reportingToNames = new Array();
+						jQuery.each(dataVal.also, function(index, value) {
+							reportingToNames.push(value.reportsToName);
 						});
-					}
-				});
+
+						/*@TODO add this for reference
+						jQuery('#row_'+userID).after('<tr id="row_'+dataVal.user_id+'"><td><i class="fa fa-chevron-right" aria-hidden="true"></i> <img src="' + gravatar + '" class="img-rounded" alt="" width="30" height="30"><a href="#" >' + dataVal.name + ' <i class="fa fa-angle-down" onclick="hierarchySite.hierarchys.drillUpDrillDownList(' + dataVal.user_id + ')"; aria-hidden="true"></i></td><td>' + dataVal.context + '</td><td>' + dataVal.context_id + '</td><td><span id="popover" data-content="' +reportingToNames +'">'+ reportingToNames +'</span></td><td>' + dataVal.user_id + '</td></tr>');*/
+
+						jQuery('#row_'+ userID).after('<tr><td><i class="fa fa-chevron-right" aria-hidden="true"></i> <img src="' + gravatar + '" class="img-rounded" alt="" width="30" height="30"> ' + dataVal.name + '</td><td>' + dataVal.context + '</td><td>' + dataVal.context_id + '</td><td><span id="popover" data-content="' +reportingToNames +'">'+ reportingToNames +'</span></td><td>' + dataVal.user_id + '</td></tr>');
+
+						jQuery("#popover").popover({ trigger: "hover" });
+					});
+				}
 			});
+		},
+
+		displayHierarchyChart: function ()
+		{
+			hierarchy_chart_config = {
+				chart: {
+					container: "#hierarchy_chart",
+					connectors: {
+						type: 'step'
+					},
+					node:{
+						collapsable:true
+					}
+				},
+				nodeStructure: {
+					text: { name: userName },
+					children: childrenArrayObject
+				}
+			};
+
+			var my_chart = new Treant(hierarchy_chart_config);
 		}
 	}
 }

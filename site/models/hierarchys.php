@@ -143,7 +143,7 @@ class HierarchyModelHierarchys extends JModelList
 					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
 							)
 				);
-		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.reports_to') . ' = ' . $db->quoteName('a.id') . ')');
+		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.user_id') . ' = ' . $db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter_search');
@@ -227,6 +227,34 @@ class HierarchyModelHierarchys extends JModelList
 		$query->where($db->quoteName('reports_to') . ' = ' . $db->quote($reportsTo));
 		$db->setQuery($query);
 		$results = $db->loadObjectList();
+
+		return $results;
+	}
+
+	/**
+	 * Method to get reporting to users
+	 *
+	 * @param   INT  $userID  userID
+	 *
+	 * @return  Array of data
+	 *
+	 * @since   1.0
+	 */
+	public function getReportingTo($userID)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from($db->quoteName('#__hierarchy_users'));
+		$query->where($db->quoteName('user_id') . ' < ' . $db->quote($userID));
+		$db->setQuery($query);
+		$results = $db->loadObjectList();
+
+		foreach ($results as $res)
+		{
+			$user = JFactory::getUser($res->user_id);
+			$res->reportingTo = $user->name;
+		}
 
 		return $results;
 	}

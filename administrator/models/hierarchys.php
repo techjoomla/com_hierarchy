@@ -106,7 +106,7 @@ class HierarchyModelHierarchys extends JModelList
 					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
 							)
 				);
-		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.reports_to') . ' = ' . $db->quoteName('a.id') . ')');
+		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.user_id') . ' = ' . $db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -164,7 +164,7 @@ class HierarchyModelHierarchys extends JModelList
 			}
 		}
 
-		$query->group('hu.reports_to, hu.context, a.id');
+		$query->group('hu.user_id, hu.context, a.id');
 
 		return $query;
 	}
@@ -203,7 +203,7 @@ class HierarchyModelHierarchys extends JModelList
 			$db = JFactory::getDbo();
 			$deleteHierarchy = $db->getQuery(true);
 			$deleteHierarchy->delete($db->quoteName('#__hierarchy_users'));
-			$deleteHierarchy->where('reports_to IN (' . $id . ')');
+			$deleteHierarchy->where('user_id IN (' . $id . ')');
 			$db->setQuery($deleteHierarchy);
 			$confrim = $db->execute();
 

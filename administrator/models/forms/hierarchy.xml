@@ -9,7 +9,7 @@
 		class="readonly"
 		description="JGLOBAL_FIELD_ID_DESC" />
 
-		<field name="user_id"
+		<field name="reports_to"
 		type="users"
 		default=""
 		multiple="multiple"

@@ -76,33 +76,33 @@ class HierarchyControllerHierarchy extends JControllerForm
 		}
 
 		$jinput = JFactory::getApplication()->input;
-		$data['reports_to']  = $jinput->get('user_id', '', 'int');
+		$data['user_id']  = $jinput->get('user_id', '', 'int');
 		$data['created_by']  = $jinput->get('created_by', '', 'int');
 		$data['modified_by'] = $jinput->get('modified_by', '', 'int');
 
 		// To add new or remove manager from the selected managers list.
-		$hierarchysData = $model->getReportsTo($data['reports_to']);
+		$hierarchysData = $model->getReportsTo($data['user_id']);
 
 		$userIDs = array();
 
 		foreach ($hierarchysData as $hierarchy)
 		{
-			$userIDs[] = $hierarchy->user_id;
+			$userIDs[] = $hierarchy->reports_to;
 		}
 
-		$deleteUser = array_diff($userIDs, $data['user_id']);
+		$deleteUser = array_diff($userIDs, $data['reports_to']);
 
 		// Delete user from the existing list
 		foreach ($deleteUser as $key => $val)
 		{
-			$this->hierarchyTableObj->load(array('user_id' => (int) $val));
+			$this->hierarchyTableObj->load(array('reports_to' => (int) $val));
 			$id = $this->hierarchyTableObj->id;
-			$model->delete($id);
+			$return = $model->delete($id);
 		}
 
-		foreach ($data['user_id'] as $key => $val)
+		foreach ($data['reports_to'] as $key => $val)
 		{
-			$data['user_id'] = $val;
+			$data['reports_to'] = $val;
 			$return = $model->save($data);
 		}
 

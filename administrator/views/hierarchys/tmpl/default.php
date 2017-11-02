@@ -120,13 +120,13 @@ HierarchyHelper::getLanguageConstant();
 					{
 						JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
 						$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
-						$results = $hierarchyModel->getReportsTo($item->reports_to);
+						$results = $hierarchyModel->getReportsTo($item->user_id);
 
 						$name = array();
 
 						foreach($results as $res)
 						{
-							$user = JFactory::getUser($res->user_id);
+							$user = JFactory::getUser($res->reports_to);
 							$name[] = $user->name;
 						}
 
