@@ -91,7 +91,8 @@ class HierarchyModelHierarchys extends JModelList
 		// Select the required fields from the table.
 		$query->select(
 				$this->getState('list.select',
-				'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name') . ',' . $db->quoteName('a.username') . ',' . $db->quoteName('a.email', 'user_email')
+				'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name') .
+				',' . $db->quoteName('a.username') . ',' . $db->quoteName('a.email', 'user_email')
 				)
 				);
 		$query->from($db->quoteName('#__users', 'a'));
@@ -99,7 +100,8 @@ class HierarchyModelHierarchys extends JModelList
 		// Join over the user field 'user_id'
 		$query->select(
 				$db->quoteName(
-					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id','hu.created_by', 'hu.modified_by', 'hu.created_date', 'hu.modified_date', 'hu.state', 'hu.note')
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context','hu.context_id',
+					'hu.created_by', 'hu.modified_by', 'hu.created_date', 'hu.modified_date', 'hu.state', 'hu.note')
 							)
 				);
 		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.user_id') . ' = ' . $db->quoteName('a.id') . ')');

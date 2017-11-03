@@ -62,8 +62,8 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 
 			if ($ext != 'csv')
 			{
-				$msg = JText::_('NOT_CSV_MSG');
-				$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
+				$app->enqueueMessage(JText::_('COM_HIERARCHY_CSV_FORMAT_ERROR'), 'Message');
+				$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false));
 
 				return;
 			}
@@ -107,16 +107,15 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 		}
 
 		$model = $this->getModel();
+		$userID = JFactory::getUser()->id;
 
 		$data = array();
-
-		$userID = JFactory::getUser()->id;
 
 		foreach ($userData as $key => $val)
 		{
 			$data['id']         = '';
-			$data['user_id']    = $val['User_id'];
-			$data['reports_to'] = $val['Reports_to'];
+			$data['user_id']    = !empty($val['User_id']) ? $val['User_id'] : $this->getUserId($val['User_email']);
+			$data['reports_to'] = !empty($val['Reports_to']) ? $val['Reports_to'] : $this->getUserId($val['Reports_to_email']);
 			$data['context']    = $val['Context'];
 			$data['context_id'] = $val['Context_id'];
 			$data['created_by'] = $userID;
@@ -125,9 +124,30 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 		}
 
 		$msg = JText::_('COM_HIERARCHY_IMPORT_CSV_SUCCESS_MSG');
-		$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
+		$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), $msg);
 
 		return;
+	}
+
+	/**
+	 * Get user id from user email
+	 *
+	 * @param   string  $email  email.
+	 * 
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public static function getUserId($email)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select($db->quoteName('id'))
+			->from($db->quoteName('#__users'))
+			->where($db->quoteName('email') . ' = ' . $db->quote($email));
+		$db->setQuery($query, 0, 1);
+
+		return $db->loadResult();
 	}
 
 	/**
