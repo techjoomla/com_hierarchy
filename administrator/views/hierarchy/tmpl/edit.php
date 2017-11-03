@@ -50,30 +50,15 @@ $document->addStyleSheet('components/com_hierarchy/assets/css/hierarchy.css');
 			<div class="span10 form-horizontal">
 				<fieldset class="adminform">
 					<input type="hidden" name="jform[id]" value="<?php echo $this->item->id; ?>" />
-					<div class="control-group">
-						<div class="control-label"><?php echo $this->form->getLabel('user_id'); ?></div>
-						<div class="controls"><?php echo $this->form->getInput('user_id'); ?></div>
-					</div>
-					<div class="control-group">
-						<div class="control-label"><?php echo $this->form->getLabel('user_id'); ?></div>
-						<div class="controls"><?php echo $this->form->getInput('user_id'); ?></div>
-					</div>
-					<div class="control-group">
-						<div class="control-label"><?php echo $this->form->getLabel('subuser_id'); ?></div>
-						<div class="controls"><?php echo $this->form->getInput('subuser_id'); ?></div>
-					</div>
+					<?php
+						echo $this->form->renderField('users');
+						echo $this->form->renderField('context');
+						echo $this->form->renderField('context_id');
+					?>
 				</fieldset>
 			</div>
 		</div>
-		<?php
-		echo JHtml::_('bootstrap.endTab');
-		if (JFactory::getUser()->authorise('core.admin','hierarchy')) : 
-			echo JHtml::_('bootstrap.addTab', 'myTab', 'permissions', JText::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true));
-			echo $this->form->getInput('rules');
-			echo JHtml::_('bootstrap.endTab');
-		endif;
-			echo JHtml::_('bootstrap.endTabSet');
-		?>
+		<?php echo JHtml::_('bootstrap.endTab');?>
 		<input type="hidden" name="task" value="" />
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
