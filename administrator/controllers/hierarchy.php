@@ -95,7 +95,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 		// Delete user from the existing list
 		foreach ($deleteUser as $key => $val)
 		{
-			$this->hierarchyTableObj->load(array('reports_to' => (int) $val));
+			$this->hierarchyTableObj->load(array('reports_to' => (int) $val, 'user_id' => (int) $data['user_id']));
 			$id = $this->hierarchyTableObj->id;
 			$return = $model->delete($id);
 		}
@@ -146,7 +146,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 	 *
 	 * @since    1.6
 	 */
-	public function getUsersToManageHierarchy()
+	public function getAutoSuggestUsers()
 	{
 		$jinput = JFactory::getApplication()->input;
 		$userId = $jinput->get('user_id', '', 'int');
@@ -155,7 +155,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 		$model = $this->getModel('Hierarchy', 'HierarchyModel');
 
 		// Get the list
-		$list = $model->getUsersToManageHierarchy($userId);
+		$list = $model->getAutoSuggestUsers($userId);
 
 		// Output json response
 		header('Content-type: application/json');

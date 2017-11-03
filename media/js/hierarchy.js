@@ -19,31 +19,20 @@ var hierarchyAdmin =
 				}
 			});
 			Joomla.submitbutton = function (task) {
-				if (task == 'hierarchy.cancel') {
+				if (task == 'hierarchy.apply' && document.formvalidator.isValid(document.id('hierarchy-form'))) {
 					Joomla.submitform(task, document.getElementById('hierarchy-form'));
 				}
 				else {
-					if (task != 'hierarchy.cancel' && document.formvalidator.isValid(document.id('hierarchy-form'))) {
-						Joomla.submitform(task, document.getElementById('hierarchy-form'));
-					}
-					else {
-						alert(Joomla.JText._('JGLOBAL_VALIDATION_FORM_FAILED'));
-						return false;
-					}
+					alert(Joomla.JText._('JGLOBAL_VALIDATION_FORM_FAILED'));
+					return false;
 				}
-				if (task == 'hierarchy.apply') {
-					var validData = document.formvalidator.isValid(document.getElementById('hierarchy-form'));
-					if(validData == true) {
-						Joomla.submitform(task, document.getElementById('hierarchy-form'));
-					}
-					window.parent.location.reload();
-				}
+				window.parent.location.reload();
 			}
 		},
 
-		getUsersToManageHierarchy: function() {
+		getAutoSuggestUsers: function() {
 			/** Invite user field tokenfield **/
-			inviteTaskUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchy.getUsersToManageHierarchy&user_id=' + userID;
+			inviteTaskUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchy.getAutoSuggestUsers&user_id=' + userID;
 
 			jQuery('#jform_reports_to').tokenize({
 				placeholder: Joomla.JText._('COM_HIERARCHY_USERNAMES_DESC'),
@@ -107,6 +96,7 @@ var hierarchySite =
 
 						jQuery('#row_'+ userID).after('<tr><td><i class="fa fa-chevron-right" aria-hidden="true"></i> <img src="' + gravatar + '" class="img-rounded" alt="" width="30" height="30"> ' + dataVal.name + '</td><td>' + dataVal.context + '</td><td>' + dataVal.context_id + '</td><td><span id="popover" data-content="' +reportingToNames +'">'+ reportingToNames +'</span></td><td>' + dataVal.user_id + '</td></tr>');
 
+						jQuery('#click_off_'+userID).prop('onclick',null).off('click');
 						jQuery("#popover").popover({ trigger: "hover" });
 					});
 				}

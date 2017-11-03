@@ -113,21 +113,11 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$user       = JFactory::getUser();
+		$user = JFactory::getUser();
 
 		// Create a new query object.
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
-
-		/*$subQquery = $db->getQuery(true);
-		$subQquery->select(
-				$db->quoteName(
-					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
-							)
-				);
-
-		$subQquery->from($db->quoteName('#__hierarchy_users', 'hu'));
-		$subQquery->where('hu.user_id = ' . (int) $user->id);*/
 
 		// Select the required fields from the table.
 		$query->select(

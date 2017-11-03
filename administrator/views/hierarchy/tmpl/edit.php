@@ -15,7 +15,7 @@ JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
 $input   = JFactory::getApplication()->input;
-$user_id = $input->get('user_id', 0);
+$userId = $input->get('user_id', 0);
 $JUriRoot = JUri::root(true) . '/administrator/';
 
 // Tokenize
@@ -42,17 +42,17 @@ HierarchyHelper::getLanguageConstant();
 		</div>
 		<?php echo JHtml::_('bootstrap.endTab');?>
 		<input type="hidden" name="task" value="" />
-		<input type="hidden" id="user_id" name="user_id" value="<?php  echo $user_id; ?>">
-		<input type="hidden" id="created_by" name="created_by" value="<?php  echo $user_id; ?>">
-		<input type="hidden" id="modified_by" name="modified_by" value="<?php  echo $user_id; ?>">
+		<input type="hidden" id="user_id" name="user_id" value="<?php  echo $userId; ?>">
+		<input type="hidden" id="created_by" name="created_by" value="<?php  echo $userId; ?>">
+		<input type="hidden" id="modified_by" name="modified_by" value="<?php  echo $userId; ?>">
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
 </form>
 <script type="text/javascript">
 	var JUriRoot = "<?php echo $JUriRoot; ?>";
 	var client = "<?php echo $this->client; ?>";
-	var userID = "<?php echo $user_id; ?>";
+	var userID = "<?php echo $userId; ?>";
 	var clientID = "<?php echo $this->clientID; ?>";
 	hierarchyAdmin.hierarchy.initHierarchyJs();
-	hierarchyAdmin.hierarchy.getUsersToManageHierarchy();
+	hierarchyAdmin.hierarchy.getAutoSuggestUsers();
 </script>

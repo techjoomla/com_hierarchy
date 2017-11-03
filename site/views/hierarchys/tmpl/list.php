@@ -100,7 +100,7 @@ $JUriRoot = JUri::root();
 						<td>
 							<img src="<?php echo $gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
 							<a href="#" title="<?php echo $user->name;?>"><?php  echo $user->name; ?>
-								<i class="fa fa-angle-down" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $hierarchy->user_id;?>')"; aria-hidden="true"></i>
+								<i class="fa fa-angle-down" id="click_off_<?php echo $hierarchy->user_id;?>" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $hierarchy->user_id;?>')"; aria-hidden="true"></i>
 							</a>
 						</td>
 						<td>

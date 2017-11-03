@@ -309,7 +309,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 *
 	 * @since    1.6
 	 */
-	public function getUsersToManageHierarchy($userId)
+	public function getAutoSuggestUsers($userId)
 	{
 		$app = JFactory::getApplication();
 
@@ -323,6 +323,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		$query->select('u.id AS value, u.name AS text');
 		$query->from('`#__users` AS u');
 		$query->where('NOT u.id = ' . $userId);
+		$query->where('u.block=0');
 
 		// Search term
 		if (!empty($searchTerm))
