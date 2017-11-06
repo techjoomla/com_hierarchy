@@ -32,9 +32,8 @@ class HierarchyModelHierarchys extends JModelList
 		{
 			$config['filter_fields'] = array(
 				'id', 'a.id',
-				'user_id', 'a.user_id',
-				'subuser_id', 'a.subuser_id',
-				'created_by', 'a.created_by',
+				'name', 'a.name',
+				'context', 'a.context'
 			);
 		}
 
@@ -75,36 +74,8 @@ class HierarchyModelHierarchys extends JModelList
 		$contextName = $app->getUserStateFromRequest($this->context . 'filter_context', 'filter_context', '', 'string');
 		$this->setState('filter_context', $contextName);
 
-		// Receive & set filters
-		if ($filters = $app->getUserStateFromRequest($this->context . '.filter', 'filter', array(), 'array'))
-		{
-			foreach ($filters as $name => $value)
-			{
-				$this->setState('filter.' . $name, $value);
-			}
-		}
-
-		$ordering = $app->input->get('filter_order');
-
-		if (!empty($ordering))
-		{
-			$list             = $app->getUserState($this->context . '.list');
-			$list['ordering'] = $app->input->get('filter_order');
-			$app->setUserState($this->context . '.list', $list);
-		}
-
-		$orderingDirection = $app->input->get('filter_order_Dir');
-
-		if (!empty($orderingDirection))
-		{
-			$list              = $app->getUserState($this->context . '.list');
-			$list['direction'] = $app->input->get('filter_order_Dir');
-			$app->setUserState($this->context . '.list', $list);
-		}
-
-		$list = $app->getUserState($this->context . '.list');
-		$this->setState('list.ordering', $list['ordering']);
-		$this->setState('list.direction', $list['direction']);
+		// List state information.
+		parent::populateState('a.id', 'asc');
 	}
 
 	/**

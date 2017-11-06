@@ -195,7 +195,7 @@ class HierarchyModelHierarchys extends JModelList
 			$deleteHierarchy = $this->db->getQuery(true);
 			$deleteHierarchy->delete($this->db->quoteName('#__hierarchy_users'));
 			$deleteHierarchy->where('user_id IN (' . $id . ')');
-			$db->setQuery($deleteHierarchy);
+			$this->db->setQuery($deleteHierarchy);
 			$confrim = $this->db->execute();
 
 			if ($confrim)
