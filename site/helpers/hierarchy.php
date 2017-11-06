@@ -30,7 +30,6 @@ class HierarchyFrontendHelper
 	{
 		$searchTmpPath = ($searchTmpPath == 'SITE') ? JPATH_SITE : JPATH_ADMINISTRATOR;
 		$useViewpath   = ($useViewpath == 'SITE') ? JPATH_SITE : JPATH_ADMINISTRATOR;
-		$app           = JFactory::getApplication();
 
 		if (!empty($layout))
 		{
@@ -42,7 +41,6 @@ class HierarchyFrontendHelper
 		}
 
 		// Get templates from override folder
-
 		if ($searchTmpPath == JPATH_SITE)
 		{
 			$defTemplate = $this->getSiteDefaultTemplate(0);

@@ -38,6 +38,9 @@ class HierarchyModelHierarchys extends JModelList
 			);
 		}
 
+		// Create a new query object.
+		$this->db = JFactory::getDbo();
+
 		parent::__construct($config);
 	}
 
@@ -115,29 +118,28 @@ class HierarchyModelHierarchys extends JModelList
 	{
 		$user = JFactory::getUser();
 
-		// Create a new query object.
-		$db    = $this->getDbo();
-		$query = $db->getQuery(true);
+		// Create a new query object.+
+		$query = $this->db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select(
 				$this->getState('list.select',
-				'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name') . ',' . $db->quoteName('a.username')
+				'DISTINCT' . $this->db->quoteName('a.id', 'subuserId') . ',' . $this->db->quoteName('a.name') . ',' . $this->db->quoteName('a.username')
 				)
 				);
-		$query->from($db->quoteName('#__users', 'a'));
+		$query->from($this->db->quoteName('#__users', 'a'));
 
 		// Join over the user field 'user_id'
 		$query->select(
-				$db->quoteName(
+				$this->db->quoteName(
 					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
 							)
 				);
-		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.user_id') . ' = ' . $db->quoteName('a.id') . ')');
+		$query->join('LEFT', $this->db->quoteName('#__hierarchy_users', 'hu') . '
+		ON (' . $this->db->quoteName('hu.user_id') . ' = ' . $this->db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter_search');
-
 		$contextName = $this->getState('filter_context');
 
 		if ($user->id)
@@ -153,22 +155,15 @@ class HierarchyModelHierarchys extends JModelList
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $this->db->Quote('%' . $this->db->escape($search, true) . '%');
 				$query->where('( a.name LIKE ' . $search . ' )');
 			}
-		}
-
-		// Filter by user name
-		if (!empty($UserNames))
-		{
-			$UserNames = $db->Quote('%' . $db->escape($UserNames, true) . '%');
-			$query->where('( a.id LIKE ' . $UserNames . ' )');
 		}
 
 		// Filter by context
 		if (!empty($contextName))
 		{
-			$contextName = $db->Quote('%' . $db->escape($contextName, true) . '%');
+			$contextName = $this->db->Quote('%' . $this->db->escape($contextName, true) . '%');
 			$query->where('( hu.context LIKE ' . $contextName . ' )');
 		}
 
@@ -180,20 +175,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($orderCol && $orderDirn)
 		{
-			$query->order($db->escape($orderCol . ' ' . $orderDirn));
-		}
-
-		// Filter the items over the group id if set.
-		$groupId = $this->getState('usergroup');
-
-		if ($groupId)
-		{
-			$query->join('LEFT', '#__user_usergroup_map AS map2 ON map2.user_id = a.id');
-
-			if ($groupId)
-			{
-				$query->where('map2.group_id = ' . (int) $groupId);
-			}
+			$query->order($this->db->escape($orderCol . ' ' . $orderDirn));
 		}
 
 		return $query;
@@ -210,13 +192,12 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	public function getReportsTo($reportsTo)
 	{
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
+		$query = $this->db->getQuery(true);
 		$query->select('*');
-		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->where($db->quoteName('reports_to') . ' = ' . $db->quote($reportsTo));
-		$db->setQuery($query);
-		$results = $db->loadObjectList();
+		$query->from($this->db->quoteName('#__hierarchy_users'));
+		$query->where($this->db->quoteName('reports_to') . ' = ' . $this->db->quote($reportsTo));
+		$this->db->setQuery($query);
+		$results = $this->db->loadObjectList();
 
 		return $results;
 	}
@@ -232,13 +213,12 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	public function getReportingTo($userID)
 	{
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
+		$query = $this->db->getQuery(true);
 		$query->select('*');
-		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->where($db->quoteName('user_id') . ' < ' . $db->quote($userID));
-		$db->setQuery($query);
-		$results = $db->loadObjectList();
+		$query->from($this->db->quoteName('#__hierarchy_users'));
+		$query->where($this->db->quoteName('user_id') . ' < ' . $this->db->quote($userID));
+		$this->db->setQuery($query);
+		$results = $this->db->loadObjectList();
 
 		foreach ($results as $res)
 		{
@@ -260,13 +240,12 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	public function getAlsoReportsTo($reportsTo)
 	{
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
+		$query = $this->db->getQuery(true);
 		$query->select('*');
-		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->where($db->quoteName('reports_to') . ' = ' . $db->quote($reportsTo));
-		$db->setQuery($query);
-		$results = $db->loadObjectList();
+		$query->from($this->db->quoteName('#__hierarchy_users'));
+		$query->where($this->db->quoteName('reports_to') . ' = ' . $this->db->quote($reportsTo));
+		$this->db->setQuery($query);
+		$results = $this->db->loadObjectList();
 
 		foreach ($results as $res)
 		{

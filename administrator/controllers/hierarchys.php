@@ -111,13 +111,13 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 
 		$data = array();
 
-		foreach ($userData as $key => $val)
+		foreach ($userData as $user)
 		{
 			$data['id']         = '';
-			$data['user_id']    = !empty($val['User_id']) ? $val['User_id'] : $this->getUserId($val['User_email']);
-			$data['reports_to'] = !empty($val['Reports_to']) ? $val['Reports_to'] : $this->getUserId($val['Reports_to_email']);
-			$data['context']    = $val['Context'];
-			$data['context_id'] = $val['Context_id'];
+			$data['user_id']    = !empty($user['User_id']) ? $user['User_id'] : $this->getUserId($user['User_email']);
+			$data['reports_to'] = !empty($user['Reports_to']) ? $user['Reports_to'] : $this->getUserId($user['Reports_to_email']);
+			$data['context']    = $user['Context'];
+			$data['context_id'] = $user['Context_id'];
 			$data['created_by'] = $userID;
 
 			$result = $model->save($data);
