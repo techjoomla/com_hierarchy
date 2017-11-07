@@ -13,7 +13,7 @@ $user = JFactory::getUser();
 $JUriRoot = JUri::root();
 ?>
 <div class="alert alert-info" role="alert">
-<?php echo JText::_('COM_HIERARCHY_SHOW_LIST') . $user->name . '.'; ?>
+	<?php echo JText::_('COM_HIERARCHY_SHOW_LIST');?><b><?php echo $user->name . '.'; ?></b>
 </div>
 <form action="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchys'); ?>" method="post" name="adminForm" id="adminForm">
 	<div class=" col-lg-3 col-md-6 col-sm-6 col-xs-12">
@@ -46,7 +46,7 @@ $JUriRoot = JUri::root();
 	{
 		?>
 		<div class="alert alert-info" role="alert">
-			<?php echo JText::_('NODATA'); ?>
+			<?php echo JText::_('COM_HIERARCHY_NO_USER'); ?>
 		</div>
 		<?php
 	}
@@ -82,23 +82,13 @@ $JUriRoot = JUri::root();
 			</tfoot>
 			<body>
 				<?php
-				foreach ($this->items as $item)
-				{
-					JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
-					$hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
-					$hierarchys = $hierarchysModel->getReportsTo($item->reports_to);
-				}
-
-				$hierarchyFrontendHelper = new HierarchyFrontendHelper;
-				$gravatar = $hierarchyFrontendHelper->getUserAvatar($item->subuserId);
-
-				foreach ($hierarchys as $i => $hierarchy)
+				foreach ($this->hierarchys as $i => $hierarchy)
 				{
 					$user = JFactory::getUser($hierarchy->user_id);
 					?>
 					<tr class="row<?php echo $i % 2; ?> reports_to" id="row_<?php echo $hierarchy->user_id;?>">
 						<td>
-							<img src="<?php echo $gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
+							<img src="<?php echo $this->gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
 							<a href="#" title="<?php echo $user->name;?>"><?php  echo $user->name; ?>
 								<i class="fa fa-angle-down" id="click_off_<?php echo $hierarchy->user_id;?>" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $hierarchy->user_id;?>')"; aria-hidden="true"></i>
 							</a>
@@ -118,8 +108,7 @@ $JUriRoot = JUri::root();
 							if ($hierarchy->user_id)
 							{
 								$name = array();
-
-								$reportsTo = $hierarchysModel->getReportsTo($hierarchy->user_id);
+								$reportsTo = $this->hierarchysModel->getReportsTo($hierarchy->user_id);
 
 								foreach($reportsTo as $reportTo)
 								{
@@ -150,12 +139,8 @@ $JUriRoot = JUri::root();
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 	<?php echo JHtml::_('form.token'); ?>
 </form>
-<?php
-$hierarchys = json_encode($hierarchys);
-?>
 <script type="text/javascript">
 	var JUriRoot = "<?php echo $JUriRoot; ?>";
-	var gravatar = "<?php echo $gravatar; ?>";
-	var hierarchys = '<?php echo $hierarchys; ?>';
+	var gravatar = "<?php echo $this->gravatar; ?>";
 	hierarchySite.hierarchys.showUserNames();
 </script>

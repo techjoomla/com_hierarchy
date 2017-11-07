@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
+JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
 
 /**
  * View class for a list of Hierarchy.
@@ -58,12 +59,24 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$contextName = $app->getUserStateFromRequest($this->context . 'filter_context', 'filter_context', '', 'string');
 
 		$contextList = array();
-		$contextList[] = JHtml::_('select.option', '0', JText::_('Select context'));
+		$contextList[] = JHtml::_('select.option', '0', JText::_('COM_HIERARCHY_SELECT_CONTEXT'));
 
 		if (!empty($this->items))
 		{
 			foreach ($this->items as $item)
 			{
+				// Get list of people directly reporting to logged in user.
+				$this->hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
+				$this->hierarchys = $this->hierarchysModel->getReportsTo($item->reports_to);
+
+				// Get list of people who is managers of logged in user.
+				$this->reportingsTo = $this->hierarchysModel->getReportingTo($item->reports_to);
+
+				// Get avatar
+				$hierarchyFrontendHelper = new HierarchyFrontendHelper;
+				$this->gravatar = $hierarchyFrontendHelper->getUserAvatar($item->subuserId);
+
+				// Context filter
 				$context   = $item->context;
 				$contextList[] = JHtml::_('select.option', $context, $context);
 			}

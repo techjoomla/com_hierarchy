@@ -12,35 +12,51 @@ defined('_JEXEC') or die;
 
 JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
-JHtml::stylesheet(JURI::root().'media/com_hierarchy/vendors/treant-js/Treant.css');
+JHtml::stylesheet(JURI::root() . 'media/com_hierarchy/vendors/treant-js/Treant.css');
 JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
 JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
 
 $JUriRoot = JUri::root();
 $user = JFactory::getUser();
 $userName = $user->name;
-JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
-$hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
 
-foreach ($this->items as $item)
+foreach ($this->hierarchys as $hierarchy)
 {
-	$hierarchysRepo = $hierarchysModel->getReportsTo($item->reports_to);
-
-	foreach ($hierarchysRepo as $res)
-	{
-		$user = JFactory::getUser($res->user_id);
-		$res->repoToName = $user->name;
-	}
+	$user = JFactory::getUser($hierarchy->user_id);
+	$hierarchy->repoToName = $user->name;
 }
 ?>
+<div class="alert alert-info" role="alert">
+	<?php echo JText::_('COM_HIERARCHY_SHOW_CHART');?><b><?php echo $userName . '.'; ?></b>
+</div>
 <div id="hierarchy_chart" style="width:335px; height: 160px"></div>
 <script type="text/javascript">
 	var JUriRoot = "<?php echo $JUriRoot; ?>";
 	var userName = "<?php echo $userName; ?>";
 
+	/** Show people directly reporting to logged in user **/
 	var childrenArrayObject = [];
-	<?php foreach ($hierarchysRepo as $key => $data):?>
-		var user_id = "<?php echo $data->user_id; ?>";
+	<?php foreach ($this->hierarchys as $key => $data):?>
+		var user_id = "<?php echo $data->user_id;?>";
+
+			/** Get sub-user names and create node structure **/
+			<?php $hierarchys = $this->hierarchysModel->getReportsTo($data->user_id);
+				foreach ($hierarchys as $hierarchy) {
+					$user = JFactory::getUser($hierarchy->user_id);
+					$hierarchy->subUserName = $user->name;
+				} ?>
+				var subChildArrObj = [];
+				<?php foreach ($hierarchys as $subKey => $subData):?>
+					var subUserId = "<?php echo $subData->user_id;?>";
+					var tmpSubChild = {
+						text: {
+							name: '<?php echo $subData->subUserName; ?>'
+						},
+						id: subUserId,
+						collapsed: true
+					}
+					subChildArrObj.push(tmpSubChild);
+			<?php endforeach; ?>
 
 		/**CREATE A JAVASCRIPT OBJECT**/
 		var tmpChild = {
@@ -48,9 +64,9 @@ foreach ($this->items as $item)
 					name: '<?php echo $data->repoToName; ?>'
 				},
 				id: user_id,
-				collapsed: true
+				collapsed: true,
+				children:subChildArrObj
 			}
-
 		childrenArrayObject.push(tmpChild);
 	<?php endforeach; ?>
 	hierarchySite.hierarchys.displayHierarchyChart();

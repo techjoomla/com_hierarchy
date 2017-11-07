@@ -76,12 +76,11 @@ var hierarchySite =
 		},
 
 		drillUpDrillDownList: function(userID) {
-		var hierarchysData = JSON.parse(hierarchys);
 			reportsUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getAlsoReportsTo&user_id=' + userID;
 			jQuery.ajax({
 				type:'POST',
 				url:reportsUrl,
-				data:hierarchys,
+				data:{},
 				dataType: 'json',
 				success:function(data)
 				{
