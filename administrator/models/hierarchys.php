@@ -151,8 +151,6 @@ class HierarchyModelHierarchys extends JModelList
 			$query->order($this->db->escape($orderCol . ' ' . $orderDirn));
 		}
 
-		$query->group('hu.user_id, a.id');
-
 		return $query;
 	}
 
@@ -169,8 +167,11 @@ class HierarchyModelHierarchys extends JModelList
 
 		foreach ($items as $item)
 		{
-			$user = JFactory::getUser($item->reports_to);
-			$item->reports_to_email = $user->email;
+			if (!empty($item->reports_to))
+			{
+				$user = JFactory::getUser($item->reports_to);
+				$item->reports_to_email = $user->email;
+			}
 		}
 
 		return $items;

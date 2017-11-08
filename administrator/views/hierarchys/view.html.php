@@ -37,7 +37,23 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 
-		// $this->userlist = $this->get('UserList');
+		$tempArr = array();
+
+		// To remove duplicate users from the list
+		foreach ($this->items as $item)
+		{
+			if (isset($tempArr[$item->subuserId]))
+			{
+				// Found duplicate
+				continue;
+			}
+
+			// Remember unique item
+			$tempArr[$item->subuserId] = $item;
+		}
+
+		$this->items = array_values($tempArr);
+
 		$this->pagination = $this->get('Pagination');
 
 		// Get filter form.
