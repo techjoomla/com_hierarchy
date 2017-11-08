@@ -20,7 +20,7 @@ $JUriRoot = JUri::root();
 $user = JFactory::getUser();
 $userName = $user->name;
 
-foreach ($this->hierarchys as $hierarchy)
+foreach ($this->items as $hierarchy)
 {
 	$user = JFactory::getUser($hierarchy->user_id);
 	$hierarchy->repoToName = $user->name;
@@ -36,7 +36,7 @@ foreach ($this->hierarchys as $hierarchy)
 
 	/** Show people directly reporting to logged in user **/
 	var childrenArrayObject = [];
-	<?php foreach ($this->hierarchys as $key => $data):?>
+	<?php foreach ($this->items as $key => $data):?>
 		var user_id = "<?php echo $data->user_id;?>";
 
 			/** Get sub-user names and create node structure **/

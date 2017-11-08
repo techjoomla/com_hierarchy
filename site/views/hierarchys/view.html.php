@@ -65,11 +65,8 @@ class HierarchyViewHierarchys extends JViewLegacy
 		{
 			foreach ($this->items as $item)
 			{
-				// Get list of people directly reporting to logged in user.
-				$this->hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
-				$this->hierarchys = $this->hierarchysModel->getReportsTo($item->reports_to);
-
 				// Get list of people who is managers of logged in user.
+				$this->hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
 				$this->reportingsTo = $this->hierarchysModel->getReportingTo($item->reports_to);
 
 				// Get avatar

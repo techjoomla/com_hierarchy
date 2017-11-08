@@ -82,33 +82,32 @@ $JUriRoot = JUri::root();
 			</tfoot>
 			<body>
 				<?php
-				foreach ($this->hierarchys as $i => $hierarchy)
+				foreach ($this->items as $i => $item)
 				{
-					$user = JFactory::getUser($hierarchy->user_id);
 					?>
-					<tr class="row<?php echo $i % 2; ?> reports_to" id="row_<?php echo $hierarchy->user_id;?>">
+					<tr class="row<?php echo $i % 2; ?> reports_to" id="row_<?php echo $item->user_id;?>">
 						<td>
 							<img src="<?php echo $this->gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
-							<a href="#" title="<?php echo $user->name;?>"><?php  echo $user->name; ?>
-								<i class="fa fa-angle-down" id="click_off_<?php echo $hierarchy->user_id;?>" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $hierarchy->user_id;?>')"; aria-hidden="true"></i>
+							<a href="#" title="<?php echo $item->name;?>"><?php  echo $item->name; ?>
+								<i class="fa fa-angle-down" id="click_off_<?php echo $item->user_id;?>" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $item->user_id;?>')"; aria-hidden="true"></i>
 							</a>
 						</td>
 						<td>
 						<?php
-							echo $hierarchy->context = !empty($hierarchy->context) ? $hierarchy->context : '-';
+							echo $item->context = !empty($item->context) ? $item->context : '-';
 							?>
 						</td>
 						<td>
 						<?php
-							echo $hierarchy->context_id = !empty($hierarchy->context_id) ? $hierarchy->context_id : '-';
+							echo $item->context_id = !empty($item->context_id) ? $item->context_id : '-';
 							?>
 						</td>
 						<td>
 						<?php
-							if ($hierarchy->user_id)
+							if ($item->user_id)
 							{
 								$name = array();
-								$reportsTo = $this->hierarchysModel->getReportsTo($hierarchy->user_id);
+								$reportsTo = $this->hierarchysModel->getReportsTo($item->user_id);
 
 								foreach($reportsTo as $reportTo)
 								{
@@ -123,7 +122,7 @@ $JUriRoot = JUri::root();
 							}
 							?>
 						</td>
-						<td><?php echo $hierarchy->user_id; ?></td>
+						<td><?php echo $item->user_id; ?></td>
 					</tr>
 					<?php 
 				}
