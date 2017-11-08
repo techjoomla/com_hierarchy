@@ -44,7 +44,7 @@ class HierarchyControllerHierarchys extends HierarchyController
 	 *
 	 * @since    1.6
 	 */
-	public function getAlsoReportsTo()
+	public function getReportsTo()
 	{
 		$jinput = JFactory::getApplication()->input;
 		$userId = $jinput->get('user_id', '', 'int');
@@ -53,18 +53,18 @@ class HierarchyControllerHierarchys extends HierarchyController
 		$model = $this->getModel('Hierarchys', 'HierarchyModel');
 
 		// Get the list
-		$alsoReportsTo = $model->getReportsTo($userId);
+		$reportsTo = $model->getReportsTo($userId);
 
-		foreach ($alsoReportsTo as $reportsTo)
+		foreach ($reportsTo as $reportTo)
 		{
-			$user = JFactory::getUser($reportsTo->user_id);
-			$reportsTo->name = $user->name;
-			$reportsTo->also = $model->getAlsoReportsTo($reportsTo->user_id);
+			$user = JFactory::getUser($reportTo->user_id);
+			$reportTo->name = $user->name;
+			$reportTo->also = $model->getReportsTo($reportTo->user_id);
 		}
 
 		// Output json response
 		header('Content-type: application/json');
-		echo json_encode($alsoReportsTo);
+		echo json_encode($reportsTo);
 		jexit();
 	}
 }

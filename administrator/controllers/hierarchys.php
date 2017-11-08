@@ -138,14 +138,14 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	 *
 	 * @since   1.0
 	 */
-	public static function getUserId($email)
+	public function getUserId($email)
 	{
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
 			->from($db->quoteName('#__users'))
 			->where($db->quoteName('email') . ' = ' . $db->quote($email));
-		$db->setQuery($query, 0, 1);
+		$db->setQuery($query);
 
 		return $db->loadResult();
 	}

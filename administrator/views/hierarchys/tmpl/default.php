@@ -111,9 +111,9 @@ HierarchyHelper::getLanguageConstant();
 					$canEdit    = $user->authorise('core.edit', 'com_hierarchy');
 					$canCheckin = $user->authorise('core.manage', 'com_hierarchy');
 					$canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
-					$canChart   = $user->authorise('core.edit.chart', 'com_hierarchy');
-					$canImportCSV = $user->authorise('core.edit.importcsv', 'com_hierarchy');
-					$canExportCSV = $user->authorise('core.edit.exportcsv', 'com_hierarchy');
+					$canViewChart = $user->authorise('core.chart.view', 'com_hierarchy');
+					$canImportCSV = $user->authorise('core.csv.import', 'com_hierarchy');
+					$canExportCSV = $user->authorise('core.csv.export', 'com_hierarchy');
 
 					if ($item->subuserId)
 					{

@@ -76,7 +76,7 @@ var hierarchySite =
 		},
 
 		drillUpDrillDownList: function(userID) {
-			reportsUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getAlsoReportsTo&user_id=' + userID;
+			reportsUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getReportsTo&user_id=' + userID;
 			jQuery.ajax({
 				type:'POST',
 				url:reportsUrl,
@@ -116,6 +116,7 @@ var hierarchySite =
 				},
 				nodeStructure: {
 					text: { name: userName },
+					image: gravatar,
 					children: childrenArrayObject
 				}
 			};

@@ -170,6 +170,12 @@ class HierarchyModelHierarchys extends JModelList
 		$this->db->setQuery($query);
 		$results = $this->db->loadObjectList();
 
+		foreach ($results as $res)
+		{
+			$user = JFactory::getUser($res->user_id);
+			$res->reportsToName = $user->name;
+		}
+
 		return $results;
 	}
 
@@ -195,33 +201,6 @@ class HierarchyModelHierarchys extends JModelList
 		{
 			$user = JFactory::getUser($res->user_id);
 			$res->reportingTo = $user->name;
-		}
-
-		return $results;
-	}
-
-	/**
-	 * Method to get reports_to
-	 *
-	 * @param   INT  $reportsTo  reportsTo
-	 *
-	 * @return  Array of data
-	 *
-	 * @since   1.0
-	 */
-	public function getAlsoReportsTo($reportsTo)
-	{
-		$query = $this->db->getQuery(true);
-		$query->select('*');
-		$query->from($this->db->quoteName('#__hierarchy_users'));
-		$query->where($this->db->quoteName('reports_to') . ' = ' . $this->db->quote($reportsTo));
-		$this->db->setQuery($query);
-		$results = $this->db->loadObjectList();
-
-		foreach ($results as $res)
-		{
-			$user = JFactory::getUser($res->user_id);
-			$res->reportsToName = $user->name;
 		}
 
 		return $results;

@@ -70,13 +70,14 @@ class JFormFieldContextList extends JFormFieldList
 
 		$options = array_unique($options, SORT_REGULAR);
 
+		// To remove blank context name object from $options
 		foreach ($options as $elementKey => $element)
 		{
 			foreach ($element as $valueKey => $value)
 			{
 				if ($valueKey == 'text' && $value == '')
 				{
-					// Delete this particular object from the $array
+					// Delete this particular object from the $options
 					unset($options[$elementKey]);
 				}
 			}

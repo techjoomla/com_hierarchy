@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 
 JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
-JHtml::stylesheet(JURI::root() . 'media/com_hierarchy/vendors/treant-js/Treant.css');
-JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
+JHtml::stylesheet(JUri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.css');
+JHtml::stylesheet(JUri::root() . 'media/com_hierarchy/vendors/treant-js/collapsable.css');
 JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
-
+JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
 $JUriRoot = JUri::root();
 $user = JFactory::getUser();
 $userName = $user->name;
@@ -29,7 +29,7 @@ foreach ($this->items as $hierarchy)
 <div class="alert alert-info" role="alert">
 	<?php echo JText::_('COM_HIERARCHY_SHOW_CHART');?><b><?php echo $userName . '.'; ?></b>
 </div>
-<div id="hierarchy_chart" style="width:335px; height: 160px"></div>
+<div id="hierarchy_chart"></div>
 <script type="text/javascript">
 	var JUriRoot = "<?php echo $JUriRoot; ?>";
 	var userName = "<?php echo $userName; ?>";
@@ -37,7 +37,7 @@ foreach ($this->items as $hierarchy)
 	/** Show people directly reporting to logged in user **/
 	var childrenArrayObject = [];
 	<?php foreach ($this->items as $key => $data):?>
-		var user_id = "<?php echo $data->user_id;?>";
+		var gravatar = "<?php echo $this->gravatar;?>";
 
 			/** Get sub-user names and create node structure **/
 			<?php $hierarchys = $this->hierarchysModel->getReportsTo($data->user_id);
@@ -47,12 +47,11 @@ foreach ($this->items as $hierarchy)
 				} ?>
 				var subChildArrObj = [];
 				<?php foreach ($hierarchys as $subKey => $subData):?>
-					var subUserId = "<?php echo $subData->user_id;?>";
 					var tmpSubChild = {
 						text: {
 							name: '<?php echo $subData->subUserName; ?>'
 						},
-						id: subUserId,
+						image: gravatar,
 						collapsed: true
 					}
 					subChildArrObj.push(tmpSubChild);
@@ -63,7 +62,7 @@ foreach ($this->items as $hierarchy)
 				text: {
 					name: '<?php echo $data->repoToName; ?>'
 				},
-				id: user_id,
+				image: gravatar,
 				collapsed: true,
 				children:subChildArrObj
 			}
