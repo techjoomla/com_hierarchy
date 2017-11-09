@@ -90,7 +90,18 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$this->HierarchyFrontendHelper     = new HierarchyFrontendHelper;
 
 		// Get component params
-		$this->params     = JComponentHelper::getParams('com_jticketing');
+		$this->params     = JComponentHelper::getParams('com_hierarchy');
+
+		// Get permissions
+		$this->canCreate  = $user->authorise('core.create', 'com_hierarchy');
+		$this->canEdit    = $user->authorise('core.edit', 'com_hierarchy');
+		$this->canCheckin = $user->authorise('core.manage', 'com_hierarchy');
+		$this->canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
+		$this->canDelete  = $user->authorise('core.delete', 'com_hierarchy');
+		$this->canViewChart = $user->authorise('core.chart.view', 'com_hierarchy');
+		$this->canImportCSV = $user->authorise('core.csv.import', 'com_hierarchy');
+		$this->canExportCSV = $user->authorise('core.csv.export', 'com_hierarchy');
+
 		parent::display($tpl);
 	}
 }

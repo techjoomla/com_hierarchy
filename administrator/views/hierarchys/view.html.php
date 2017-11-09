@@ -34,6 +34,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		$user = JFactory::getUser();
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 
@@ -79,6 +80,15 @@ class HierarchyViewHierarchys extends JViewLegacy
 
 		$this->sidebar = JHtmlSidebar::render();
 
+		// Get permissions
+		$this->canCreate  = $user->authorise('core.create', 'com_hierarchy');
+		$this->canEdit    = $user->authorise('core.edit', 'com_hierarchy');
+		$this->canCheckin = $user->authorise('core.manage', 'com_hierarchy');
+		$this->canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
+		$this->canViewChart = $user->authorise('core.chart.view', 'com_hierarchy');
+		$this->canImportCSV = $user->authorise('core.csv.import', 'com_hierarchy');
+		$this->canExportCSV = $user->authorise('core.csv.export', 'com_hierarchy');
+
 		parent::display($tpl);
 	}
 
@@ -91,20 +101,15 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
+		require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
+
 		// Import Csv export button
 		jimport('techjoomla.tjtoolbar.button.csvexport');
 
-		require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
+		$bar = JToolBar::getInstance('toolbar');
 
 		$state = $this->get('State');
 		$canDo = HierarchyHelper::getActions($state->get('filter.category_id'));
-
-		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
-
-		// Check if the form exists before showing the add/edit buttons
-		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/hierarchy';
-
-		$bar = JToolBar::getInstance('toolbar');
 
 		$message = array();
 		$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
@@ -112,10 +117,24 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
 		$message['btn-name'] = JText::_("COM_HIERARCHY_EXPORT_CSV");
 
-		$bar->appendButton('CsvExport',  $message);		
+		if ($canDo->get('core.csv.export'))
+		{
+			$bar->appendButton('CsvExport',  $message);
+		}
+
+		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
+
+		// Check if the form exists before showing the add/edit buttons
+		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/hierarchy';
+
+		$bar = JToolBar::getInstance('toolbar');
 		$buttonImport = '<a href="#import_append" class="btn button modal" rel="{size: {x: 800, y: 200}, ajaxOptions: {method: &quot;get&quot;}}">
 		<span class="icon-upload icon-white"></span>' . JText::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
-		$bar->appendButton('Custom', $buttonImport);
+
+		if ($canDo->get('core.csv.import'))
+		{
+			$bar->appendButton('Custom', $buttonImport);
+		}
 
 		JToolbarHelper::deleteList('', 'hierarchys.remove', 'JTOOLBAR_DELETE');
 

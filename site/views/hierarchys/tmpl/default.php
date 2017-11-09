@@ -15,17 +15,8 @@ JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('formbehavior.chosen', 'select');
 
-$user       = JFactory::getUser();
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
-$canCreate  = $user->authorise('core.create', 'com_hierarchy');
-$canEdit    = $user->authorise('core.edit', 'com_hierarchy');
-$canCheckin = $user->authorise('core.manage', 'com_hierarchy');
-$canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
-$canDelete  = $user->authorise('core.delete', 'com_hierarchy');
-$canViewChart = $user->authorise('core.chart.view', 'com_hierarchy');
-$canImportCSV = $user->authorise('core.csv.import', 'com_hierarchy');
-$canExportCSV = $user->authorise('core.csv.export', 'com_hierarchy');
 $saveOrder  = $listOrder == 'a.ordering';
 
 if ($saveOrder)

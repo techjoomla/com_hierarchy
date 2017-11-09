@@ -107,13 +107,6 @@ HierarchyHelper::getLanguageConstant();
 			<?php
 				foreach ($this->items as $i => $item) :
 					$ordering   = ($listOrder == 'a.+ordering');
-					$canCreate  = $user->authorise('core.create', 'com_hierarchy');
-					$canEdit    = $user->authorise('core.edit', 'com_hierarchy');
-					$canCheckin = $user->authorise('core.manage', 'com_hierarchy');
-					$canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
-					$canViewChart = $user->authorise('core.chart.view', 'com_hierarchy');
-					$canImportCSV = $user->authorise('core.csv.import', 'com_hierarchy');
-					$canExportCSV = $user->authorise('core.csv.export', 'com_hierarchy');
 
 					if ($item->subuserId)
 					{
@@ -155,7 +148,7 @@ HierarchyHelper::getLanguageConstant();
 									$clientUrl = '&client=' . $this->client . '&client_id=' . $this->clientId;
 								}
 
-								if ($canEdit) :
+								if ($this->canEdit) :
 									$url = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id='.(int) $item->id . '&user_id=' .(int) $item->subuserId . $clientUrl);
 									$text = JText::_('COM_HIERARCHY_SET_MANAGER');
 								else :
@@ -168,7 +161,7 @@ HierarchyHelper::getLanguageConstant();
 								<?php echo $text;?>
 							</a>
 							<?php
-								if ($canEdit)
+								if ($this->canEdit)
 								{
 									?>
 									<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $userName; ?>"><?php echo $userName = strlen($userName) > 20 ? substr($userName, 0, 20) . "..." : $userName; ?></span>

@@ -46,7 +46,8 @@ class HierarchyHelper
 
 		$assetName = 'com_hierarchy';
 
-		$actions = array('core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete');
+		$actions = array('core.admin', 'core.manage', 'core.create', 'core.edit',
+		'core.edit.own', 'core.edit.state', 'core.delete', 'core.csv.export', 'core.csv.import');
 
 		foreach ($actions as $action)
 		{
