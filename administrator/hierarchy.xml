@@ -35,6 +35,7 @@
 	</languages>
 	<media destination="com_hierarchy" folder="media">
 		<file>index.html</file>
+		<folder>images</folder>
 		<folder>samplecsv</folder>
 		<folder>js</folder>
 		<folder>vendors</folder>
@@ -63,4 +64,15 @@
 			<language tag="en-GB">en-GB/en-GB.com_hierarchy.sys.ini</language>
 		</languages>
 	</administration>
+
+	<!-- Default component params values backend -->
+	<config>
+		<fields>
+			<fieldset>
+				<!--general_settings-->
+				<field name="integration" default="2" />
+				<field name="gravatar" default="0" />
+			</fieldset>
+		</fields>
+	</config>
 </extension>

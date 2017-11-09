@@ -17,6 +17,37 @@ defined('_JEXEC') or die;
 class HierarchyFrontendHelper
 {
 	/**
+	 * HierarchyFrontendHelper constructor
+	 *
+	 * @since   1.0
+	 */
+	public function __construct()
+	{
+		$this->params      = JComponentHelper::getParams('com_hierarchy');
+		$this->integration = $this->params->get('integration') ? $this->params->get('integration') : $this->params->get('integration');
+
+		if ($this->integration != 'none')
+		{
+			if ($this->integration == '2')
+			{
+				jimport('techjoomla.jsocial.joomla');
+			}
+			elseif ($this->integration == '1')
+			{
+				jimport('techjoomla.jsocial.jomsocial');
+			}
+			elseif ($this->integration == '4')
+			{
+				jimport('techjoomla.jsocial.easysocial');
+			}
+			elseif($this->integration == '6')
+			{
+				jimport('techjoomla.jsocial.cb');
+			}
+		}
+	}
+
+	/**
 	 * Get layout html
 	 *
 	 * @param   string  $viewName       name of view
@@ -95,29 +126,62 @@ class HierarchyFrontendHelper
 	/**
 	 * Get user Avatar
 	 *
-	 * @param   integer  $userid  userid
+	 * @param   integer  $userid    userid
+	 * @param   integer  $relative  relative
 	 *
 	 * @return  string  profile url
 	 *
 	 * @since   1.0
 	 */
-	public function getUserAvatar($userid)
+	public function getUserAvatar($userid, $relative = false)
 	{
 		$user        = JFactory::getUser($userid);
-		$params      = JComponentHelper::getParams('com_hierarchy');
-		$integration = $params->get('integration') ? $params->get('integration') : $params->get('integration');
+		$gravatar    = $this->params->get('gravatar');
 		$uimage      = '';
 
-		if ($integration == "2")
+		if ($this->integration == '2')
 		{
-			$user     = JFactory::getUser($userid);
-			$usermail = $user->get('email');
+			if ($gravatar)
+			{
+				$user     = JFactory::getUser($userid);
+				$usermail = $user->get('email');
 
-			// Refer https://en.gravatar.com/site/implement/images/php/
-			$hash     = md5(strtolower(trim($usermail)));
-			$uimage   = 'http://www.gravatar.com/avatar/' . $hash . '?s=32';
+				// Refer https://en.gravatar.com/site/implement/images/php/
+				$hash     = md5(strtolower(trim($usermail)));
+				$uimage   = 'http://www.gravatar.com/avatar/' . $hash . '?s=32';
 
-			return $uimage;
+				return $uimage;
+			}
+			else
+			{
+				if ($relative)
+				{
+					$uimage = 'media/com_hierarchy/images/default_avatar.png';
+				}
+				else
+				{
+					$uimage = JUri::root() . 'media/com_hierarchy/images/default_avatar.png';
+				}
+			}
 		}
+		else
+		{
+			if ($this->integration == '6')
+			{
+				$this->integration = new JSocialCB;
+			}
+			elseif ($this->integration == '1')
+			{
+				$this->integration = new JSocialJomsocial;
+			}
+			elseif ($this->integration == '4')
+			{
+				$this->integration = new JSocialEasysocial;
+			}
+
+			$uimage = $this->integration->getAvatar($user, '', $relative);
+		}
+
+		return $uimage;
 	}
 }
