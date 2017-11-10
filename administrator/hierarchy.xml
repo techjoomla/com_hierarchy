@@ -29,20 +29,21 @@
 		<folder>models</folder>
 		<folder>controllers</folder>
 		<folder>helpers</folder>
-		<folder>assets</folder>
 	</files>
 	<languages folder="site/language">
 			<language tag="en-GB">en-GB/en-GB.com_hierarchy.ini</language>
 	</languages>
 	<media destination="com_hierarchy" folder="media">
 		<file>index.html</file>
+		<folder>images</folder>
 		<folder>samplecsv</folder>
+		<folder>js</folder>
+		<folder>vendors</folder>
 	</media>
 	<administration>
 		<menu img="components/com_hierarchy/assets/images/s_com_hierarchy.png" >COM_HIERARCHY</menu>
 		<submenu>
 			<menu link="option=com_hierarchy&amp;view=hierarchys" view="hierarchys" img="components/com_hierarchy/assets/images/s_hierarchys.png" alt="Hierarchy/Hierarchys">COM_HIERARCHY_TITLE_HIERARCHYS</menu>
-			<menu link="option=com_hierarchy&amp;view=catimpexp" view="catimpexp" img="components/com_hierarchy/assets/images/s_hierarchys.png" alt="Hierarchy/CSV Import/Export">COM_HIERARCHY_CATIMPORTEXPORT</menu>
 		</submenu>
 		<files folder="administrator">
 			<filename>access.xml</filename>
@@ -63,4 +64,15 @@
 			<language tag="en-GB">en-GB/en-GB.com_hierarchy.sys.ini</language>
 		</languages>
 	</administration>
+
+	<!-- Default component params values backend -->
+	<config>
+		<fields>
+			<fieldset>
+				<!--general_settings-->
+				<field name="integration" default="2" />
+				<field name="gravatar" default="0" />
+			</fieldset>
+		</fields>
+	</config>
 </extension>

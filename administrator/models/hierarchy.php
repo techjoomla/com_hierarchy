@@ -115,13 +115,13 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		if ($item->user_id)
 		{
-			$hierarchyData = $this->getReportsTo($item->reports_to);
+			$hierarchyData = $this->getReportsTo($item->user_id);
 
-			$item->user_id = array();
+			$item->reports_to = array();
 
 			foreach ($hierarchyData as $hierarchy)
 			{
-				$item->user_id[] = $hierarchy->user_id;
+				$item->reports_to[] = $hierarchy->reports_to;
 			}
 		}
 
@@ -293,10 +293,49 @@ class HierarchyModelHierarchy extends JModelAdmin
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->where($db->quoteName('reports_to') . " = " . $db->quote($reportsTo));
+		$query->where($db->quoteName('user_id') . " = " . $db->quote($reportsTo));
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 
 		return $result;
+	}
+
+	/**
+	 * Method to get users to manage hierarchy.
+	 *
+	 * @param   integer  $userId  userId
+	 *
+	 * @return  array
+	 *
+	 * @since    1.6
+	 */
+	public function getAutoSuggestUsers($userId)
+	{
+		$app = JFactory::getApplication();
+
+		// Get search term
+		$searchTerm = $app->input->get('search', '', 'STRING');
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		// Select the required fields from the table.
+		$query->select('u.id AS value, u.name AS text');
+		$query->from('`#__users` AS u');
+		$query->where('NOT u.id = ' . $userId);
+		$query->where('u.block=0');
+
+		// Search term
+		if (!empty($searchTerm))
+		{
+			$search = $db->Quote('%' . $db->escape($searchTerm, true) . '%');
+			$query->where('u.name LIKE ' . $search);
+			$query->order('u.name ASC');
+		}
+
+		$db->setQuery($query);
+		$allUsers = $db->loadObjectList();
+
+		return $allUsers;
 	}
 }

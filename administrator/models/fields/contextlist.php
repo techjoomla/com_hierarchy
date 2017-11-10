@@ -61,14 +61,27 @@ class JFormFieldContextList extends JFormFieldList
 
 		if (!empty($contextList))
 		{
-			foreach ($contextList as $key => $val)
+			foreach ($contextList as $context)
 			{
-				$context   = $val->context;
+				$context   = $context->context;
 				$options[] = JHtml::_('select.option', $context, $context);
 			}
 		}
 
 		$options = array_unique($options, SORT_REGULAR);
+
+		// To remove blank context name object from $options
+		foreach ($options as $elementKey => $element)
+		{
+			foreach ($element as $valueKey => $value)
+			{
+				if ($valueKey == 'text' && $value == '')
+				{
+					// Delete this particular object from the $options
+					unset($options[$elementKey]);
+				}
+			}
+		}
 
 		if (!$this->loadExternally)
 		{

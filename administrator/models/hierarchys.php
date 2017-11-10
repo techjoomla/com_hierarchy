@@ -32,8 +32,13 @@ class HierarchyModelHierarchys extends JModelList
 		{
 			$config['filter_fields'] = array(
 				'name', 'a.name',
+				'hierarchy_users', 'a.hierarchy_users',
+				'context', 'a.context',
 			);
 		}
+
+		// Create a new query object.
+		$this->db    = JFactory::getDbo();
 
 		parent::__construct($config);
 	}
@@ -65,10 +70,6 @@ class HierarchyModelHierarchys extends JModelList
 		$contextName = $app->getUserStateFromRequest($this->context . '.filter.context', 'filter_context', '', 'string');
 		$this->setState('filter.context', $contextName);
 
-		// Filtering usergroup
-		$groupId = $this->getUserStateFromRequest($this->context . '.usergroup', 'usergroup', null, 'int');
-		$this->setState('usergroup', $groupId);
-
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_hierarchy');
 		$this->setState('params', $params);
@@ -86,25 +87,26 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		// Create a new query object.
-		$db    = $this->getDbo();
-		$query = $db->getQuery(true);
+		$query = $this->db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select(
 				$this->getState('list.select',
-				'DISTINCT' . $db->quoteName('a.id', 'subuserId') . ',' . $db->quoteName('a.name') . ',' . $db->quoteName('a.username')
+				'DISTINCT' . $this->db->quoteName('a.id', 'subuserId') . ',' . $this->db->quoteName('a.name') .
+				',' . $this->db->quoteName('a.username') . ',' . $this->db->quoteName('a.email', 'user_email')
 				)
 				);
-		$query->from($db->quoteName('#__users', 'a'));
+		$query->from($this->db->quoteName('#__users', 'a'));
 
 		// Join over the user field 'user_id'
 		$query->select(
-				$db->quoteName(
-					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context', 'hu.context_id', 'hu.state', 'hu.note')
+				$this->db->quoteName(
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context','hu.context_id',
+					'hu.created_by', 'hu.modified_by', 'hu.created_date', 'hu.modified_date', 'hu.state', 'hu.note')
 							)
 				);
-		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.reports_to') . ' = ' . $db->quoteName('a.id') . ')');
+		$query->join('LEFT', $this->db->quoteName('#__hierarchy_users', 'hu') . '
+		ON (' . $this->db->quoteName('hu.user_id') . ' = ' . $this->db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -119,7 +121,7 @@ class HierarchyModelHierarchys extends JModelList
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $this->db->Quote('%' . $this->db->escape($search, true) . '%');
 				$query->where('( a.name LIKE ' . $search . ' )');
 			}
 		}
@@ -127,14 +129,14 @@ class HierarchyModelHierarchys extends JModelList
 		// Filter by user name
 		if (!empty($userNames))
 		{
-			$userNames = $db->Quote('%' . $db->escape($userNames, true) . '%');
+			$userNames = $this->db->Quote('%' . $this->db->escape($userNames, true) . '%');
 			$query->where('( a.id LIKE ' . $userNames . ' )');
 		}
 
 		// Filter by context
 		if (!empty($contextName))
 		{
-			$contextName = $db->Quote('%' . $db->escape($contextName, true) . '%');
+			$contextName = $this->db->Quote('%' . $this->db->escape($contextName, true) . '%');
 			$query->where('( hu.context LIKE ' . $contextName . ' )');
 		}
 
@@ -146,23 +148,33 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($orderCol && $orderDirn)
 		{
-			$query->order($db->escape($orderCol . ' ' . $orderDirn));
-		}
-
-		// Filter the items over the group id if set.
-		$groupId = $this->getState('usergroup');
-
-		if ($groupId)
-		{
-			$query->join('LEFT', '#__user_usergroup_map AS map2 ON map2.user_id = a.id');
-
-			if ($groupId)
-			{
-				$query->where('map2.group_id = ' . (int) $groupId);
-			}
+			$query->order($this->db->escape($orderCol . ' ' . $orderDirn));
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Method to get a list of users.
+	 *
+	 * @return  mixed  An array of data items on success, false on failure.
+	 *
+	 * @since   1.6.1
+	 */
+	public function getItems()
+	{
+		$items = parent::getItems();
+
+		foreach ($items as $item)
+		{
+			if (!empty($item->reports_to))
+			{
+				$user = JFactory::getUser($item->reports_to);
+				$item->reports_to_email = $user->email;
+			}
+		}
+
+		return $items;
 	}
 
 	/**
@@ -176,20 +188,18 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	public function delete($hierarchyID)
 	{
-		$db = JFactory::getDBO();
 		$id = implode(',', array_filter($hierarchyID));
 
 		if ($id)
 		{
 			// Delete the order item
-			$db = JFactory::getDbo();
-			$deleteHierarchy = $db->getQuery(true);
-			$deleteHierarchy->delete($db->quoteName('#__hierarchy_users'));
-			$deleteHierarchy->where('id IN (' . $id . ')');
-			$db->setQuery($deleteHierarchy);
-			$confrim = $db->execute();
+			$deleteHierarchy = $this->db->getQuery(true);
+			$deleteHierarchy->delete($this->db->quoteName('#__hierarchy_users'));
+			$deleteHierarchy->where('user_id IN (' . $id . ')');
+			$this->db->setQuery($deleteHierarchy);
+			$confirm = $this->db->execute();
 
-			if ($confrim)
+			if ($confirm)
 			{
 				return true;
 			}

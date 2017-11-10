@@ -37,6 +37,11 @@ class HierarchyViewHierarchy extends JViewLegacy
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
+		$jinput = JFactory::getApplication()->input;
+
+		$this->client = $jinput->get('client');
+		$this->clientID = $jinput->get('client_id');
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
@@ -70,33 +75,12 @@ class HierarchyViewHierarchy extends JViewLegacy
 		}
 
 		$canDo = HierarchyHelper::getActions();
-		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHY'), 'hierarchy.png');
+		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHY'), 'pencil-2');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
 			JToolBarHelper::apply('hierarchy.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('hierarchy.save', 'JTOOLBAR_SAVE');
-		}
-
-		if (!$checkedOut && ($canDo->get('core.create')))
-		{
-			JToolBarHelper::custom('hierarchy.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-		}
-
-		// If an existing item, can save to a copy.
-		if (!$isNew && $canDo->get('core.create'))
-		{
-			JToolBarHelper::custom('hierarchy.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
-		}
-
-		if (empty($this->item->id))
-		{
-			JToolBarHelper::cancel('hierarchy.cancel', 'JTOOLBAR_CANCEL');
-		}
-		else
-		{
-			JToolBarHelper::cancel('hierarchy.cancel', 'JTOOLBAR_CLOSE');
 		}
 	}
 }

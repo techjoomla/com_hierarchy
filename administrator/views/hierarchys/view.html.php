@@ -34,10 +34,27 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		$user = JFactory::getUser();
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 
-		// $this->userlist = $this->get('UserList');
+		$tempArr = array();
+
+		// To remove duplicate users from the list
+		foreach ($this->items as $item)
+		{
+			if (isset($tempArr[$item->subuserId]))
+			{
+				// Found duplicate
+				continue;
+			}
+
+			// Remember unique item
+			$tempArr[$item->subuserId] = $item;
+		}
+
+		$this->items = array_values($tempArr);
+
 		$this->pagination = $this->get('Pagination');
 
 		// Get filter form.
@@ -45,6 +62,11 @@ class HierarchyViewHierarchys extends JViewLegacy
 
 		// Get active filters.
 		$this->activeFilters = $this->get('ActiveFilters');
+
+		// Fetch client and client ID from URL
+		$jinput = JFactory::getApplication()->input;
+		$this->client = $jinput->get('client');
+		$this->clientId = $jinput->get('client_id');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -57,6 +79,15 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$this->addToolbar();
 
 		$this->sidebar = JHtmlSidebar::render();
+
+		// Get permissions
+		$this->canCreate  = $user->authorise('core.create', 'com_hierarchy');
+		$this->canEdit    = $user->authorise('core.edit', 'com_hierarchy');
+		$this->canCheckin = $user->authorise('core.manage', 'com_hierarchy');
+		$this->canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
+		$this->canViewChart = $user->authorise('core.chart.view', 'com_hierarchy');
+		$this->canImportCSV = $user->authorise('core.csv.import', 'com_hierarchy');
+		$this->canExportCSV = $user->authorise('core.csv.export', 'com_hierarchy');
 
 		parent::display($tpl);
 	}
@@ -72,37 +103,43 @@ class HierarchyViewHierarchys extends JViewLegacy
 	{
 		require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
 
+		// Import Csv export button
+		jimport('techjoomla.tjtoolbar.button.csvexport');
+
+		$bar = JToolBar::getInstance('toolbar');
+
 		$state = $this->get('State');
 		$canDo = HierarchyHelper::getActions($state->get('filter.category_id'));
 
-		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'hierarchys.png');
+		$message = array();
+		$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
+		$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
+		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
+		$message['btn-name'] = JText::_("COM_HIERARCHY_EXPORT_CSV");
+
+		if ($canDo->get('core.csv.export'))
+		{
+			$bar->appendButton('CsvExport',  $message);
+		}
+
+		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/hierarchy';
 
 		$bar = JToolBar::getInstance('toolbar');
-		$layout = JFactory::getApplication()->input->get('layout', 'default');
-
-		if ($layout == 'default')
-		{
-			$button = "<a class='btn' class='button'
-			type='submit' id='export-submit' href='#usersCsv'><span title='Export'
-			class='icon-download icon-white'></span>" . JText::_('CSV_EXPORT') . "</a>";
-			$bar->appendButton('Custom', $button);
-		}
-
 		$buttonImport = '<a href="#import_append" class="btn button modal" rel="{size: {x: 800, y: 200}, ajaxOptions: {method: &quot;get&quot;}}">
 		<span class="icon-upload icon-white"></span>' . JText::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
-		$bar->appendButton('Custom', $buttonImport);
+
+		if ($canDo->get('core.csv.import'))
+		{
+			$bar->appendButton('Custom', $buttonImport);
+		}
+
+		JToolbarHelper::deleteList('', 'hierarchys.remove', 'JTOOLBAR_DELETE');
 
 		if ($canDo->get('core.edit.state'))
 		{
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::archiveList('hierarchys.archive', 'JTOOLBAR_ARCHIVE');
-			}
-
 			if (isset($this->items[0]->checked_out))
 			{
 				JToolBarHelper::custom('hierarchys.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);

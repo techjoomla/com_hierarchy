@@ -20,6 +20,22 @@ jimport('joomla.form.formfield');
 class JFormFieldIntegrations extends JFormField
 {
 	/**
+	 *Function to construct a hierarchy view
+	 *
+	 * @since  3.0
+	 */
+	public function __construct()
+	{
+		$this->communityMainFile = JPATH_SITE . '/components/com_community/community.php';
+		$this->jeventsMainFile   = JPATH_SITE . '/components/com_jevents/jevents.php';
+		$this->esMainFile        = JPATH_SITE . '/components/com_easysocial/easysocial.php';
+		$this->easyProMainFile   = JPATH_SITE . '/components/com_jsn/jsn.php';
+		$this->cbMainFile        = JPATH_SITE . '/components/com_comprofiler/comprofiler.php';
+
+		parent::__construct();
+	}
+
+	/**
 	 * Method to get the field input markup.
 	 *
 	 * @since  1.6
@@ -34,49 +50,42 @@ class JFormFieldIntegrations extends JFormField
 	/**
 	 * Method fetchElement
 	 *
-	 * @param   string  $name          name of element
-	 * @param   string  $value         value of element
-	 * @param   string  &$node         node
-	 * @param   string  $control_name  control name
+	 * @param   string  $name         name of element
+	 * @param   string  $value        value of element
+	 * @param   string  $controlName  control name
 	 *
-	 * @return  array country list
+	 * @return  array extensions list
 	 *
 	 * @since   1.0
 	 */
-	public function fetchElement ($name, $value, &$node, $control_name)
+	public function fetchElement ($name, $value, $controlName)
 	{
-		$communityMainFile = JPATH_SITE . '/components/com_community/community.php';
-		$jeventsMainFile   = JPATH_SITE . '/components/com_jevents/jevents.php';
-		$esMainFile        = JPATH_SITE . '/components/com_easysocial/easysocial.php';
-		$easyProMainFile   = JPATH_SITE . '/components/com_jsn/jsn.php';
-		$cbMainFile        = JPATH_SITE . '/components/com_comprofiler/comprofiler.php';
-
 		if ($name == 'jform[integration]')
 		{
 			$options = array();
-			$options[] = JHTML::_('select.option', '2', JText::_('COM_HIERARCHY_NATIVE'));
+			$options[] = JHtml::_('select.option', '2', JText::_('COM_HIERARCHY_NATIVE'));
 
-			if (JFile::exists($communityMainFile))
+			if (JFile::exists($this->communityMainFile))
 			{
 				$options[] = JHtml::_('select.option', '1', JText::_('COM_HIERARCHY_JOMSOCIAL'));
 			}
 
-			if (JFile::exists($jeventsMainFile))
+			if (JFile::exists($this->jeventsMainFile))
 			{
 				$options[] = JHtml::_('select.option', '3', JText::_('COM_HIERARCHY_JEVENT'));
 			}
 
-			if (JFile::exists($esMainFile))
+			if (JFile::exists($this->esMainFile))
 			{
 				$options[] = JHtml::_('select.option', '4', JText::_('COM_HIERARCHY_EASYSOCIAL'));
 			}
 
-			if (JFile::exists($easyProMainFile))
+			if (JFile::exists($this->easyProMainFile))
 			{
 				$options[] = JHtml::_('select.option', '5', JText::_('COM_HIERARCHY_EASYPROFILE'));
 			}
 
-			if (JFile::exists($cbMainFile))
+			if (JFile::exists($this->cbMainFile))
 			{
 				$options[] = JHtml::_('select.option', '6', JText::_('COM_HIERARCHY_COMMUNITY_BUILDER'));
 			}
@@ -84,7 +93,7 @@ class JFormFieldIntegrations extends JFormField
 			$fieldName = $name;
 		}
 
-		$html = JHtml::_('select.genericlist',  $options, $fieldName, 'class="inputbox"', 'value', 'text', $value, $control_name . $name);
+		$html = JHtml::_('select.genericlist',  $options, $fieldName, 'class="inputbox"', 'value', 'text', $value, $controlName . $name);
 
 		return $html;
 	}

@@ -46,7 +46,8 @@ class HierarchyHelper
 
 		$assetName = 'com_hierarchy';
 
-		$actions = array('core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete');
+		$actions = array('core.admin', 'core.manage', 'core.create', 'core.edit',
+		'core.edit.own', 'core.edit.state', 'core.delete', 'core.csv.export', 'core.csv.import');
 
 		foreach ($actions as $action)
 		{
@@ -54,5 +55,18 @@ class HierarchyHelper
 		}
 
 		return $result;
+	}
+
+	/** Get all jtext for javascript
+	 *
+	 * @return   void
+	 *
+	 * @since   1.0
+	 */
+	public static function getLanguageConstant()
+	{
+		JText::script('JGLOBAL_VALIDATION_FORM_FAILED');
+		JText::script('COM_HIERARCHY_HIERARCHY_DELETE_CONF');
+		JText::script('COM_HIERARCHY_USERNAMES_DESC');
 	}
 }

@@ -23,27 +23,31 @@ class HierarchyControllerHierarchy extends JControllerForm
 	 * Constructor.
 	 *
 	 * @since   1.6
-	 * 
+	 *
 	 * @see     JController
 	 */
 	public function __construct()
 	{
 		$this->view_list = 'hierarchys';
 
+		$this->db = JFactory::getDbo();
+		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+		$this->hierarchyTableObj = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $this->db));
+
+		$this->msg   = JText::_('COM_HIERARCHY_REPORTEES_SAVE_MSG');
 		parent::__construct();
 	}
 
 	/**
 	 * Method to save a user's profile data.
 	 *
-	 * @param   string  $key     TO ADD
-	 * @param   string  $urlVar  TO ADD
+	 * @param   string  $key  TO ADD
 	 *
 	 * @return    void
 	 *
 	 * @since    1.6
 	 */
-	public function save($key = null, $urlVar = null)
+	public function save($key = null)
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -72,17 +76,36 @@ class HierarchyControllerHierarchy extends JControllerForm
 		}
 
 		$jinput = JFactory::getApplication()->input;
-		$data['userid']      = $jinput->get('user_id', '', 'int');
+		$data['user_id']  = $jinput->get('user_id', '', 'int');
 		$data['created_by']  = $jinput->get('created_by', '', 'int');
 		$data['modified_by'] = $jinput->get('modified_by', '', 'int');
 
-		foreach ($data['users'] as $key => $val)
+		// To add new or remove manager from the selected managers list.
+		$hierarchysData = $model->getReportsTo($data['user_id']);
+
+		$userIDs = array();
+
+		foreach ($hierarchysData as $hierarchy)
 		{
-			$data['users'] = $val;
+			$userIDs[] = $hierarchy->reports_to;
+		}
+
+		$deleteUser = array_diff($userIDs, $data['reports_to']);
+
+		// Delete user from the existing list
+		foreach ($deleteUser as $key => $val)
+		{
+			$this->hierarchyTableObj->load(array('reports_to' => (int) $val, 'user_id' => (int) $data['user_id']));
+			$id = $this->hierarchyTableObj->id;
+			$return = $model->delete($id);
+		}
+
+		foreach ($data['reports_to'] as $key => $val)
+		{
+			$data['reports_to'] = $val;
 			$return = $model->save($data);
 		}
 
-		$msg   = JText::_('COM_HIERARCHY_REPORTEES_SAVE_MSG');
 		$input = JFactory::getApplication()->input;
 		$id    = $input->get('id');
 
@@ -96,14 +119,11 @@ class HierarchyControllerHierarchy extends JControllerForm
 		if ($task == 'apply')
 		{
 			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id=' . $id, false);
-			$app->redirect($redirect, $msg);
+			$app->redirect($redirect, $this->msg);
 		}
 
-		if ($task == 'save2new')
-		{
-			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit', false);
-			$app->redirect($redirect, $msg);
-		}
+		// Clear the profile id from the session.
+		$app->setUserState('com_hierarchy.edit.hierarchy.id', null);
 
 		// Check in the profile.
 		if ($return)
@@ -113,6 +133,33 @@ class HierarchyControllerHierarchy extends JControllerForm
 
 		// Redirect to the list screen.
 		$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false);
-		$app->redirect($redirect, $msg);
+		$app->redirect($redirect, $this->msg);
+
+		// Flush the data from the session.
+		$app->setUserState('com_hierarchy.edit.hierarchy.data', null);
+	}
+
+	/**
+	 * Method to get users to manage hierarchy.
+	 *
+	 * @return  array
+	 *
+	 * @since    1.6
+	 */
+	public function getAutoSuggestUsers()
+	{
+		$jinput = JFactory::getApplication()->input;
+		$userId = $jinput->get('user_id', '', 'int');
+
+		// Get the model.
+		$model = $this->getModel('Hierarchy', 'HierarchyModel');
+
+		// Get the list
+		$list = $model->getAutoSuggestUsers($userId);
+
+		// Output json response
+		header('Content-type: application/json');
+		echo json_encode($list);
+		jexit();
 	}
 }
