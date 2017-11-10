@@ -37,6 +37,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		$input = JFactory::getApplication()->input;
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
 
@@ -54,9 +55,10 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
+		$option = $input->get('option');
 
 		// Filter by Context
-		$contextName = $app->getUserStateFromRequest($this->context . 'filter_context', 'filter_context', '', 'string');
+		$contextName = $app->getUserStateFromRequest($option . 'filter_context', 'filter_context', '', 'string');
 
 		$contextList = array();
 		$contextList[] = JHtml::_('select.option', '0', JText::_('COM_HIERARCHY_SELECT_CONTEXT'));
@@ -83,7 +85,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$lists['contextList'] = $contextName;
 
 		// Search filter
-		$search = $app->getUserStateFromRequest($this->context . 'filter_search', 'filter_search');
+		$search = $app->getUserStateFromRequest($option . 'filter_search', 'filter_search');
 		$lists['search'] = $search;
 		$this->lists          = $lists;
 

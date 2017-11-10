@@ -41,13 +41,15 @@ class HierarchyControllerHierarchy extends JControllerForm
 	/**
 	 * Method to save a user's profile data.
 	 *
-	 * @param   string  $key  TO ADD
+	 * @param   string  $key     TO ADD
+	 * 
+	 * @param   string  $urlVar  urlVar
 	 *
 	 * @return    void
 	 *
 	 * @since    1.6
 	 */
-	public function save($key = null)
+	public function save($key = null, $urlVar = null)
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
