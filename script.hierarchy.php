@@ -60,7 +60,8 @@ class Com_HierarchyInstallerScript
 	{
 		$this->installSqlFiles($parent);
 
-		$this->fixDbOnUpdate();
+		// @TODO will remove this method in next minor release after checking dependency.
+		// $this->fixDbOnUpdate();
 	}
 
 	/**
@@ -77,11 +78,11 @@ class Com_HierarchyInstallerScript
 		// Obviously you may have to change the path and name if your installation SQL file ;)
 		if (method_exists($parent, 'extension_root'))
 		{
-			$sqlfile = $parent->getPath('extension_root') . DS . 'admin' . DS . 'sql' . DS . 'install.mysql.utf8.sql';
+			$sqlfile = $parent->getPath('extension_root') . '/admin/sql/install.mysql.utf8.sql';
 		}
 		else
 		{
-			$sqlfile = $parent->getParent()->getPath('extension_root') . DS . 'sql' . DS . 'install.mysql.utf8.sql';
+			$sqlfile = $parent->getParent()->getPath('extension_root') . '/sql/install.mysql.utf8.sql';
 		}
 
 		// Don't modify below this line
