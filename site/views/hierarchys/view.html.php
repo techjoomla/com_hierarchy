@@ -37,8 +37,8 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$input = JFactory::getApplication()->input;
 		$app = JFactory::getApplication();
+		$input = $app->input;
 		$user = JFactory::getUser();
 
 		// Validate user login.
