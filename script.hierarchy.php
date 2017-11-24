@@ -59,8 +59,6 @@ class Com_HierarchyInstallerScript
 	public function update($parent)
 	{
 		$this->installSqlFiles($parent);
-
-		$this->fixDbOnUpdate();
 	}
 
 	/**
@@ -112,53 +110,5 @@ class Com_HierarchyInstallerScript
 				}
 			}
 		}
-	}
-
-	/**
-	 * function to make necessary changes on update
-	 *
-	 * @return  void
-	 *
-	 * @since  1.0.0
-	 */
-	protected function fixDbOnUpdate()
-	{
-		$db = JFactory::getDBO();
-
-		$query = "SHOW COLUMNS FROM #__hierarchy_users";
-		$db->setQuery($query);
-		$res = $db->loadColumn();
-
-		if (!in_array('client', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column client VARCHAR(255);";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		if (!in_array('client_id', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column client_id INT(11);";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		if (!in_array('state', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column state INT(11);";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		if (!in_array('note', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column note TEXT;";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		$query = "ALTER TABLE #__hierarchy_users modify subuser_id int(11);";
-		$db->setQuery($query);
-		$db->execute();
 	}
 }
