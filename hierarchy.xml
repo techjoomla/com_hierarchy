@@ -42,6 +42,9 @@
     <media destination="com_hierarchy" folder="media">
 		<file>index.html</file>
 		<folder>samplecsv</folder>
+		<folder>images</folder>
+		<folder>js</folder>
+		<folder>vendors</folder>
 	</media>
     <administration>
         <menu img="components/com_hierarchy/assets/images/s_com_hierarchy.png" >COM_HIERARCHY</menu>
