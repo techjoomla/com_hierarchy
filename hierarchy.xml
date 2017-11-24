@@ -30,7 +30,6 @@
         <folder>models</folder>
         <folder>controllers</folder>
         <folder>helpers</folder>
-        <folder>assets</folder>
     </files>
     <languages folder="site/language">
 			<language tag="en-GB">en-GB/en-GB.com_hierarchy.ini</language>
