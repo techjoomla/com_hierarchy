@@ -1,4 +1,4 @@
-ALTER TABLE `#__hierarchy_users` CHANGE `reports_to` `user_id` INT(11);
+ALTER TABLE `#__hierarchy_users` CHANGE `user_id` `reports_to`  INT(11);
 ALTER TABLE `#__hierarchy_users` CHANGE `subuser_id` `user_id` INT(11);
 ALTER TABLE `#__hierarchy_users` CHANGE `client` `context` varchar(255);
 ALTER TABLE `#__hierarchy_users` CHANGE `client_id` `context_id` varchar(255);
