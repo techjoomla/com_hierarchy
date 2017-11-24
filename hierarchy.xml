@@ -20,6 +20,11 @@
             <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
         </sql>
     </uninstall>
+    <update> 
+		<schemas> 
+			<schemapath type="mysql">sql/updates/mysql</schemapath> 
+		</schemas> 
+	</update>
 	<scriptfile>script.hierarchy.php</scriptfile>
     <files folder="site">
         <filename>index.html</filename>
