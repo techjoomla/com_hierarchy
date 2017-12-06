@@ -26,7 +26,7 @@ var hierarchyAdmin =
 					alert(Joomla.JText._('JGLOBAL_VALIDATION_FORM_FAILED'));
 					return false;
 				}
-				window.parent.location.reload();
+				parent.location.reload();
 			}
 		},
 
