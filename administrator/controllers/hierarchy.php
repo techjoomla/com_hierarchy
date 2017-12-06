@@ -47,7 +47,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 	 *
 	 * @since    1.6
 	 */
-	public function save($key = null)
+	public function save($key = null, $urlVar = null)
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
