@@ -61,6 +61,8 @@ class Com_HierarchyInstallerScript
 		$this->installSqlFiles($parent);
 
 		$this->fixDbOnUpdate();
+
+		$this->deleteUnexistingFiles();
 	}
 
 	/**
@@ -129,6 +131,13 @@ class Com_HierarchyInstallerScript
 		$db->setQuery($query);
 		$res = $db->loadColumn();
 
+		if (!in_array('subuser_id', $res))
+		{
+			$query = "ALTER TABLE #__hierarchy_users add column subuser_id int(11);";
+			$db->setQuery($query);
+			$db->execute();
+		}
+		
 		if (!in_array('client', $res))
 		{
 			$query = "ALTER TABLE #__hierarchy_users add column client VARCHAR(255);";
@@ -160,5 +169,35 @@ class Com_HierarchyInstallerScript
 		$query = "ALTER TABLE #__hierarchy_users modify subuser_id int(11);";
 		$db->setQuery($query);
 		$db->execute();
+	}
+
+	/**
+	 * Delete files that should not exist
+	 *
+	 * @return  void
+	 */
+	public function deleteUnexistingFiles()
+	{
+		include JPATH_ADMINISTRATOR . '/components/com_hierarchy/deletelist.php';
+
+		jimport('joomla.filesystem.file');
+
+		foreach ($files as $file)
+		{
+			if (JFile::exists(JPATH_ROOT . $file) && !JFile::delete(JPATH_ROOT . $file))
+			{
+				$app->enqueueMessage(JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file));
+			}
+		}
+
+		jimport('joomla.filesystem.folder');
+
+		foreach ($folders as $folder)
+		{
+			if (JFolder::exists(JPATH_ROOT . $folder) && !JFolder::delete(JPATH_ROOT . $folder))
+			{
+				$app->enqueueMessage(JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder));
+			}
+		}
 	}
 }
