@@ -1,7 +1,7 @@
 <?php
 /**
  * @version    SVN: <svn_id>
- * @package    Com_Tjlms
+ * @package    Com_Hierarchy
  * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  * Shika is free software. This version may have been modified pursuant
