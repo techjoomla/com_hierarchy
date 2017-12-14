@@ -131,6 +131,13 @@ class Com_HierarchyInstallerScript
 		$db->setQuery($query);
 		$res = $db->loadColumn();
 
+		if (!in_array('subuser_id', $res))
+		{
+			$query = "ALTER TABLE #__hierarchy_users add column subuser_id int(11);";
+			$db->setQuery($query);
+			$db->execute();
+		}
+		
 		if (!in_array('client', $res))
 		{
 			$query = "ALTER TABLE #__hierarchy_users add column client VARCHAR(255);";
@@ -171,12 +178,7 @@ class Com_HierarchyInstallerScript
 	 */
 	public function deleteUnexistingFiles()
 	{
-		$files = array(
-		);
-
-		$folders = array(
-			'/components/com_hierarchy'
-		);
+		include JPATH_ADMINISTRATOR . '/components/com_hierarchy/deletelist.php';
 
 		jimport('joomla.filesystem.file');
 
