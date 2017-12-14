@@ -47,20 +47,36 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	public function csvImport()
 	{
 		jimport('joomla.filesystem.file');
+		jimport('joomla.filesystem.folder');
 		$mainframe = JFactory::getApplication();
-		$rs1       = @mkdir(JPATH_COMPONENT_ADMINISTRATOR . '/csv', 0777);
+		JFolder::create(JPATH_COMPONENT_ADMINISTRATOR . '/csv', 0777);
+		$fileArray = $mainframe->input->files->get('csvfile');
 
 		// Start file heandling functionality *
-		$fname       = $_FILES['csvfile']['name'];
+		$fname       = $fileArray['name'];
 		$uploads_dir = JPATH_COMPONENT_ADMINISTRATOR . '/csv/' . $fname;
-		move_uploaded_file($_FILES['csvfile']['tmp_name'], $uploads_dir);
+		JFile::makeSafe($fname);
+
+		if ($fileArray['type'] != 'text/csv')
+		{
+			$mainframe->enqueueMessage(JText::_('NOT_CSV_MSG'), 'warning');
+			$mainframe->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false));
+
+			return;
+		}
+
+		if (!JFile::upload($fileArray['tmp_name'], $uploads_dir, false, true))
+		{
+			$mainframe->enqueueMessage(JText::_('COM_HIERARCHY_ERROR_IN_MOVING'), 'warning');
+
+			return false;
+		}
 
 		$file      = fopen($uploads_dir, "r");
 		$contentsc = "";
-		$info      = pathinfo($uploads_dir);
 		$rowNum    = 0;
 
-		if ($info['extension'] != 'csv')
+		if (JFile::getExt($uploads_dir) != 'csv')
 		{
 			$msg = JText::_('NOT_CSV_MSG');
 			$mainframe->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), "<b>" . $msg . "</b>");
