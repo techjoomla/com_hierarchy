@@ -212,11 +212,12 @@ class HierarchyModelHierarchy extends JModelAdmin
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $id  user id whose sub users we need to get
+	 * @param   integer  $id       user id whose sub users we need to get
+	 * @param   boolean  $onlyIds  Fetch only users id
 	 *
 	 * @return  mixed  Object on success, false on failure.
 	 */
-	public function getSubUsers($id)
+	public function getSubUsers($id, $onlyIds = false)
 	{
 		$user = JFactory::getuser($id);
 
@@ -227,11 +228,28 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select('*');
+
+		if ($onlyIds)
+		{
+			$query->select('distinct user_id');
+		}
+		else
+		{
+			$query->select('*');
+		}
+
 		$query->from($db->quoteName('#__hierarchy_users'));
 		$query->where($db->quoteName('reports_to') . " = " . $db->quote($id));
 		$db->setQuery($query);
-		$result = $db->loadObjectList();
+
+		if ($onlyIds)
+		{
+			$result = $db->loadColumn();
+		}
+		else
+		{
+			$result = $db->loadObjectList();
+		}
 
 		if ($result)
 		{

@@ -24,7 +24,7 @@ class HierarchyFrontendHelper
 	public function __construct()
 	{
 		$this->params      = JComponentHelper::getParams('com_hierarchy');
-		$this->integration = $this->params->get('integration') ? $this->params->get('integration') : $this->params->get('integration');
+		$this->integration = $this->params->get('integration', 2);
 
 		if ($this->integration != 'none')
 		{

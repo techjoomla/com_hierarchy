@@ -13,7 +13,7 @@ JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
 
 /**
  * View class for a list of Hierarchy.
- * 
+ *
  * @since  1.6
  */
 class HierarchyViewHierarchys extends JViewLegacy
@@ -56,7 +56,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 
 		// Filter by Context
-		$contextName = $app->getUserStateFromRequest($this->context . 'filter_context', 'filter_context', '', 'string');
+		$contextName = $this->state->get('filter_context');
 
 		$contextList = array();
 		$contextList[] = JHtml::_('select.option', '0', JText::_('COM_HIERARCHY_SELECT_CONTEXT'));
@@ -83,7 +83,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$lists['contextList'] = $contextName;
 
 		// Search filter
-		$search = $app->getUserStateFromRequest($this->context . 'filter_search', 'filter_search');
+		$search = $this->state->get('filter_search');
 		$lists['search'] = $search;
 		$this->lists          = $lists;
 
