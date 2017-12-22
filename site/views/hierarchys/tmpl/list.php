@@ -80,54 +80,58 @@ $JUriRoot = JUri::root();
 					</td>
 				</tr>
 			</tfoot>
-			<body>
+			<tbody>
 				<?php
 				foreach ($this->items as $i => $item)
 				{
-					?>
-					<tr class="row<?php echo $i % 2; ?> reports_to" id="row_<?php echo $item->user_id;?>">
-						<td>
-							<img src="<?php echo $this->gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
-							<a href="#" title="<?php echo $item->name;?>"><?php  echo $item->name; ?>
-								<i class="fa fa-angle-down" id="click_off_<?php echo $item->user_id;?>" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $item->user_id;?>')"; aria-hidden="true"></i>
-							</a>
-						</td>
-						<td>
-						<?php
-							echo $item->context = !empty($item->context) ? $item->context : '-';
-							?>
-						</td>
-						<td>
-						<?php
-							echo $item->context_id = !empty($item->context_id) ? $item->context_id : '-';
-							?>
-						</td>
-						<td>
-						<?php
-							if ($item->user_id)
+				?>
+				<tr class="row<?php echo $i % 2; ?> reports_to" id="row_<?php echo $item->user_id;?>">
+					<td>
+						<img src="<?php echo $this->gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
+						<a href="#" title="<?php echo $item->name;?>"><?php  echo $item->name; ?>
+							<i class="fa fa-angle-down" id="click_off_<?php echo $item->user_id;?>" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $item->user_id;?>')"; aria-hidden="true"></i>
+						</a>
+					</td>
+					<td>
+					<?php
+						echo $item->context = !empty($item->context) ? $item->context : '-';
+						?>
+					</td>
+					<td>
+					<?php
+						echo $item->context_id = !empty($item->context_id) ? $item->context_id : '-';
+						?>
+					</td>
+					<td>
+					<?php
+						if ($item->user_id)
+						{
+							$name = array();
+							$reportsTo = $this->hierarchysModel->getReportsTo($item->user_id);
+
+							foreach($reportsTo as $reportTo)
 							{
-								$name = array();
-								$reportsTo = $this->hierarchysModel->getReportsTo($item->user_id);
-
-								foreach($reportsTo as $reportTo)
-								{
-									$user = JFactory::getUser($reportTo->user_id);
-									$name[] = $user->name;
-								}
-
-								$userName = implode(', ', $name);
-								?>
-								<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $userName; ?>"><?php echo $userName = strlen($userName) > 20 ? substr($userName, 0, 20) . "..." : $userName; ?></span>
-								<?php
+								$user = JFactory::getUser($reportTo->user_id);
+								$name[] = $user->name;
 							}
+
+							$userName = implode(', ', $name);
 							?>
-						</td>
-						<td><?php echo $item->user_id; ?></td>
-					</tr>
-					<?php 
+							<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $userName; ?>">
+								<?php echo $userName = strlen($userName) > 20 ? substr($userName, 0, 20) . "..." : $userName; ?>
+							</span>
+							<?php
+						}
+						?>
+					</td>
+					<td>
+						<?php echo $item->user_id; ?>
+					</td>
+				</tr>
+				<?php
 				}
 				?>
-			</body>
+			</tbody>
 		</table>
 		<?php
 	}
