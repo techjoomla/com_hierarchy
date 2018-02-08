@@ -41,7 +41,8 @@ class HierarchyControllerHierarchy extends JControllerForm
 	/**
 	 * Method to save a user's profile data.
 	 *
-	 * @param   string  $key  TO ADD
+	 * @param   string  $key     TO ADD
+	 * @param   string  $urlVar  TO ADD
 	 *
 	 * @return    void
 	 *
