@@ -224,6 +224,8 @@ class HierarchyModelHierarchy extends JModelAdmin
 		if (!$user->id)
 		{
 			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+			
+			return false;
 		}
 
 		$db = JFactory::getDBO();
@@ -273,6 +275,8 @@ class HierarchyModelHierarchy extends JModelAdmin
 		if (!$user->id)
 		{
 			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+			
+			return false;
 		}
 
 		$db = JFactory::getDBO();
@@ -305,6 +309,8 @@ class HierarchyModelHierarchy extends JModelAdmin
 		if (!$user->id)
 		{
 			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+			
+			return false;
 		}
 
 		$db = JFactory::getDBO();
