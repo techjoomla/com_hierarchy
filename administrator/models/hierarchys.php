@@ -165,15 +165,6 @@ class HierarchyModelHierarchys extends JModelList
 	{
 		$items = parent::getItems();
 
-		foreach ($items as $item)
-		{
-			if (!empty($item->reports_to))
-			{
-				$user = JFactory::getUser($item->reports_to);
-				$item->reports_to_email = $user->email;
-			}
-		}
-
 		return $items;
 	}
 

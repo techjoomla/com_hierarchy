@@ -119,7 +119,10 @@ HierarchyHelper::getLanguageConstant();
 						foreach($results as $res)
 						{
 							$user = JFactory::getUser($res->reports_to);
-							$name[] = $user->name;
+							if(!empty($user->name))
+							{
+								$name[] = $user->name;
+							}
 						}
 
 						$userName = implode(', ', array_unique($name));
