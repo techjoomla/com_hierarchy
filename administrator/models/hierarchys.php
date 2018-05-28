@@ -179,12 +179,7 @@ class HierarchyModelHierarchys extends JModelList
 
 					foreach ($results as $res)
 					{
-						$user = JFactory::getUser($res->reports_to);
-
-						if (!empty($user->name))
-						{
-							$item->ReportsToUserName[] = $user->name;
-						}
+						$item->ReportsToUserName[] = $res->name;
 					}
 				}
 			}
