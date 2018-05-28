@@ -169,14 +169,13 @@ class HierarchyModelHierarchys extends JModelList
 		{
 			foreach ($items as $i => $item)
 			{
-				$item->userName = '';
+				$item->ReportsToUserName = array();
 
 				if ($item->subuserId)
 				{
 					JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
 					$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
 					$results = $hierarchyModel->getReportsTo($item->user_id);
-					$name = array();
 
 					foreach ($results as $res)
 					{
@@ -184,11 +183,9 @@ class HierarchyModelHierarchys extends JModelList
 
 						if (!empty($user->name))
 						{
-							$name[] = $user->name;
+							$item->ReportsToUserName[] = $user->name;
 						}
 					}
-
-					$item->userName = implode(', ', array_unique($name));
 				}
 			}
 		}

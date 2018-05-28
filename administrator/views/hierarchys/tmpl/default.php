@@ -108,6 +108,8 @@ HierarchyHelper::getLanguageConstant();
 
 				foreach ($this->items as $i => $item) :
 					$ordering   = ($listOrder == 'a.+ordering');
+
+					$userName = implode(', ', array_unique($item->ReportsToUserName));
 					?>
 					<tr class="row<?php echo $i % 2; ?> reports_to">
 						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->subuserId); ?></td>
@@ -148,7 +150,7 @@ HierarchyHelper::getLanguageConstant();
 								if ($this->canEdit)
 								{
 									?>
-									<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $item->userName; ?>"><?php echo $item->userName = strlen($item->userName) > 20 ? substr($item->userName, 0, 20) . "..." : $item->userName; ?></span>
+									<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $userName; ?>"><?php echo $userName = strlen($userName) > 20 ? substr($userName, 0, 20) . "..." : $userName; ?></span>
 									<?php
 								}
 								?>
