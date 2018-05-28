@@ -18,6 +18,8 @@ jimport('joomla.application.component.modellist');
  */
 class HierarchyModelHierarchys extends JModelList
 {
+	protected $db;
+
 	/**
 	 * Constructor.
 	 *
