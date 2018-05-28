@@ -133,7 +133,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 *
 	 * @param   array  $data  data
 	 *
-	 * @return  void
+	 * @return  mixed
 	 *
 	 * @since    1.6
 	 */

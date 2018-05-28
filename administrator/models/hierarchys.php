@@ -40,6 +40,9 @@ class HierarchyModelHierarchys extends JModelList
 		// Create a new query object.
 		$this->db    = JFactory::getDbo();
 
+		JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
+		$this->hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
+
 		parent::__construct($config);
 	}
 
@@ -167,15 +170,13 @@ class HierarchyModelHierarchys extends JModelList
 
 		if (!empty($items))
 		{
-			foreach ($items as $i => $item)
+			foreach ($items as $item)
 			{
 				$item->ReportsToUserName = array();
 
 				if ($item->subuserId)
 				{
-					JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
-					$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
-					$results = $hierarchyModel->getReportsTo($item->user_id);
+					$results = $this->hierarchyModel->getReportsTo($item->user_id);
 
 					foreach ($results as $res)
 					{
