@@ -105,28 +105,9 @@ HierarchyHelper::getLanguageConstant();
 			</tfoot>
 			<tbody>
 			<?php
+
 				foreach ($this->items as $i => $item) :
 					$ordering   = ($listOrder == 'a.+ordering');
-
-					if ($item->subuserId)
-					{
-						JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
-						$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
-						$results = $hierarchyModel->getReportsTo($item->user_id);
-
-						$name = array();
-
-						foreach($results as $res)
-						{
-							$user = JFactory::getUser($res->reports_to);
-							if(!empty($user->name))
-							{
-								$name[] = $user->name;
-							}
-						}
-
-						$userName = implode(', ', array_unique($name));
-					}
 					?>
 					<tr class="row<?php echo $i % 2; ?> reports_to">
 						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->subuserId); ?></td>
@@ -167,7 +148,7 @@ HierarchyHelper::getLanguageConstant();
 								if ($this->canEdit)
 								{
 									?>
-									<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $userName; ?>"><?php echo $userName = strlen($userName) > 20 ? substr($userName, 0, 20) . "..." : $userName; ?></span>
+									<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $item->userName; ?>"><?php echo $item->userName = strlen($item->userName) > 20 ? substr($item->userName, 0, 20) . "..." : $item->userName; ?></span>
 									<?php
 								}
 								?>

@@ -165,6 +165,34 @@ class HierarchyModelHierarchys extends JModelList
 	{
 		$items = parent::getItems();
 
+		if (!empty($items))
+		{
+			foreach ($items as $i => $item)
+			{
+				$item->userName = '';
+
+				if ($item->subuserId)
+				{
+					JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
+					$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
+					$results = $hierarchyModel->getReportsTo($item->user_id);
+					$name = array();
+
+					foreach ($results as $res)
+					{
+						$user = JFactory::getUser($res->reports_to);
+
+						if (!empty($user->name))
+						{
+							$name[] = $user->name;
+						}
+					}
+
+					$item->userName = implode(', ', array_unique($name));
+				}
+			}
+		}
+
 		return $items;
 	}
 
