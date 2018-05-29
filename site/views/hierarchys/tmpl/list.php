@@ -76,7 +76,10 @@ $JUriRoot = JUri::root();
 			<tfoot>
 				<tr>
 					<td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
-						<?php echo $this->pagination->getListFooter(); ?>
+						<?php $options = array("showLimitBox" => false);?>
+						<div class="pager">
+							<?php echo $this->pagination->getPaginationLinks(null, $options); ?>
+						</div>
 					</td>
 				</tr>
 			</tfoot>
