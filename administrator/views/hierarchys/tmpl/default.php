@@ -109,7 +109,7 @@ HierarchyHelper::getLanguageConstant();
 				foreach ($this->items as $i => $item) :
 					$ordering   = ($listOrder == 'a.+ordering');
 
-					$userName = implode(', ', array_unique($item->ReportsToUserName));
+					$userName = implode(', ', $item->ReportsToUserName);
 					?>
 					<tr class="row<?php echo $i % 2; ?> reports_to">
 						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->subuserId); ?></td>

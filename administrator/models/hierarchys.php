@@ -18,8 +18,6 @@ jimport('joomla.application.component.modellist');
  */
 class HierarchyModelHierarchys extends JModelList
 {
-	protected $db;
-
 	/**
 	 * Constructor.
 	 *
@@ -39,10 +37,7 @@ class HierarchyModelHierarchys extends JModelList
 			);
 		}
 
-		// Create a new query object.
-		$this->db    = JFactory::getDbo();
-
-		JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
+		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/models');
 		$this->hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
 
 		parent::__construct($config);
@@ -92,26 +87,26 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$query = $this->db->getQuery(true);
+		$query = $this->_db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select(
 				$this->getState('list.select',
-				'DISTINCT' . $this->db->quoteName('a.id', 'subuserId') . ',' . $this->db->quoteName('a.name') .
-				',' . $this->db->quoteName('a.username') . ',' . $this->db->quoteName('a.email', 'user_email')
+				'DISTINCT' . $this->_db->quoteName('a.id', 'subuserId') . ',' . $this->_db->quoteName('a.name') .
+				',' . $this->_db->quoteName('a.username') . ',' . $this->_db->quoteName('a.email', 'user_email')
 				)
 				);
-		$query->from($this->db->quoteName('#__users', 'a'));
+		$query->from($this->_db->quoteName('#__users', 'a'));
 
 		// Join over the user field 'user_id'
 		$query->select(
-				$this->db->quoteName(
+				$this->_db->quoteName(
 					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context','hu.context_id',
 					'hu.created_by', 'hu.modified_by', 'hu.created_date', 'hu.modified_date', 'hu.state', 'hu.note')
 							)
 				);
-		$query->join('LEFT', $this->db->quoteName('#__hierarchy_users', 'hu') . '
-		ON (' . $this->db->quoteName('hu.user_id') . ' = ' . $this->db->quoteName('a.id') . ')');
+		$query->join('LEFT', $this->_db->quoteName('#__hierarchy_users', 'hu') . '
+		ON (' . $this->_db->quoteName('hu.user_id') . ' = ' . $this->_db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -126,7 +121,7 @@ class HierarchyModelHierarchys extends JModelList
 			}
 			else
 			{
-				$search = $this->db->Quote('%' . $this->db->escape($search, true) . '%');
+				$search = $this->_db->Quote('%' . $this->_db->escape($search, true) . '%');
 				$query->where('( a.name LIKE ' . $search . ' )');
 			}
 		}
@@ -134,14 +129,14 @@ class HierarchyModelHierarchys extends JModelList
 		// Filter by user name
 		if (!empty($userNames))
 		{
-			$userNames = $this->db->Quote('%' . $this->db->escape($userNames, true) . '%');
+			$userNames = $this->_db->Quote('%' . $this->_db->escape($userNames, true) . '%');
 			$query->where('( a.id LIKE ' . $userNames . ' )');
 		}
 
 		// Filter by context
 		if (!empty($contextName))
 		{
-			$contextName = $this->db->Quote('%' . $this->db->escape($contextName, true) . '%');
+			$contextName = $this->_db->Quote('%' . $this->_db->escape($contextName, true) . '%');
 			$query->where('( hu.context LIKE ' . $contextName . ' )');
 		}
 
@@ -153,7 +148,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		if ($orderCol && $orderDirn)
 		{
-			$query->order($this->db->escape($orderCol . ' ' . $orderDirn));
+			$query->order($this->_db->escape($orderCol . ' ' . $orderDirn));
 		}
 
 		return $query;
@@ -182,7 +177,10 @@ class HierarchyModelHierarchys extends JModelList
 
 					foreach ($results as $res)
 					{
-						$item->ReportsToUserName[] = $res->name;
+						if (!empty($res->name))
+						{
+							$item->ReportsToUserName[] = $res->name;
+						}
 					}
 				}
 			}
@@ -207,11 +205,11 @@ class HierarchyModelHierarchys extends JModelList
 		if ($id)
 		{
 			// Delete the order item
-			$deleteHierarchy = $this->db->getQuery(true);
-			$deleteHierarchy->delete($this->db->quoteName('#__hierarchy_users'));
+			$deleteHierarchy = $this->_db->getQuery(true);
+			$deleteHierarchy->delete($this->_db->quoteName('#__hierarchy_users'));
 			$deleteHierarchy->where('user_id IN (' . $id . ')');
-			$this->db->setQuery($deleteHierarchy);
-			$confirm = $this->db->execute();
+			$this->_db->setQuery($deleteHierarchy);
+			$confirm = $this->_db->execute();
 
 			if ($confirm)
 			{

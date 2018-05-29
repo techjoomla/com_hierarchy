@@ -315,7 +315,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select('*');
+		$query->select($db->quoteName(array('user_id','reports_to','name','username','email')));
 		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
 		$query->join('INNER', $db->quoteName('#__users', 'u') . ' ON (' . $db->quoteName('u.id') . ' = ' . $db->quoteName('hu.reports_to') . ')');
 		$query->where($db->quoteName('hu.user_id') . " = " . $db->quote($reportsTo));
