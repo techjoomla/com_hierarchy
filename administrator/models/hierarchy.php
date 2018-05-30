@@ -133,7 +133,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 *
 	 * @param   array  $data  data
 	 *
-	 * @return  void
+	 * @return  mixed
 	 *
 	 * @since    1.6
 	 */
@@ -186,7 +186,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 *
 	 * @param   array  $data  data
 	 *
-	 * @return  void
+	 * @return  mixed
 	 *
 	 * @since    1.6
 	 */
@@ -224,7 +224,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		if (!$user->id)
 		{
 			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
-			
+
 			return false;
 		}
 
@@ -275,7 +275,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		if (!$user->id)
 		{
 			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
-			
+
 			return false;
 		}
 
@@ -309,15 +309,16 @@ class HierarchyModelHierarchy extends JModelAdmin
 		if (!$user->id)
 		{
 			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
-			
+
 			return false;
 		}
 
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select('*');
-		$query->from($db->quoteName('#__hierarchy_users'));
-		$query->where($db->quoteName('user_id') . " = " . $db->quote($reportsTo));
+		$query->select($db->quoteName(array('user_id','reports_to','name','username','email')));
+		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
+		$query->join('INNER', $db->quoteName('#__users', 'u') . ' ON (' . $db->quoteName('u.id') . ' = ' . $db->quoteName('hu.reports_to') . ')');
+		$query->where($db->quoteName('hu.user_id') . " = " . $db->quote($reportsTo));
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 

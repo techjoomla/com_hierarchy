@@ -105,25 +105,11 @@ HierarchyHelper::getLanguageConstant();
 			</tfoot>
 			<tbody>
 			<?php
+
 				foreach ($this->items as $i => $item) :
 					$ordering   = ($listOrder == 'a.+ordering');
 
-					if ($item->subuserId)
-					{
-						JLoader::import('components.com_hierarchy.models.hierarchy', JPATH_ADMINISTRATOR);
-						$hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
-						$results = $hierarchyModel->getReportsTo($item->user_id);
-
-						$name = array();
-
-						foreach($results as $res)
-						{
-							$user = JFactory::getUser($res->reports_to);
-							$name[] = $user->name;
-						}
-
-						$userName = implode(', ', array_unique($name));
-					}
+					$userName = implode(', ', $item->ReportsToUserName);
 					?>
 					<tr class="row<?php echo $i % 2; ?> reports_to">
 						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->subuserId); ?></td>
