@@ -180,6 +180,7 @@ class HierarchyModelHierarchys extends JModelList
 						if (!empty($res->name))
 						{
 							$item->ReportsToUserName[] = $res->name;
+							$item->ReportsTo[] = $res;
 						}
 					}
 				}
