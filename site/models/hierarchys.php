@@ -71,9 +71,6 @@ class HierarchyModelHierarchys extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . 'filter_search', 'filter_search');
 		$this->setState('filter_search', $search);
 
-		$contextName = $app->getUserStateFromRequest($this->context . 'filter_context', 'filter_context', '', 'string');
-		$this->setState('filter_context', $contextName);
-
 		// List state information.
 		parent::populateState('a.id', 'asc');
 	}
@@ -111,7 +108,6 @@ class HierarchyModelHierarchys extends JModelList
 
 		// Filter by search in title
 		$search = $this->getState('filter_search');
-		$contextName = $this->getState('filter_context');
 
 		if ($user->id)
 		{
@@ -129,13 +125,6 @@ class HierarchyModelHierarchys extends JModelList
 				$search = $this->db->Quote('%' . $this->db->escape($search, true) . '%');
 				$query->where('( a.name LIKE ' . $search . ' )');
 			}
-		}
-
-		// Filter by context
-		if (!empty($contextName))
-		{
-			$contextName = $this->db->Quote('%' . $this->db->escape($contextName, true) . '%');
-			$query->where('( hu.context LIKE ' . $contextName . ' )');
 		}
 
 		$query->where('a.block=0');
