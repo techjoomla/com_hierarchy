@@ -16,17 +16,17 @@ $JUriRoot = JUri::root();
 	<?php echo JText::_('COM_HIERARCHY_SHOW_LIST');?><b><?php echo $user->name . '.'; ?></b>
 </div>
 <form action="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchys'); ?>" method="post" name="adminForm" id="adminForm">
-	<div class=" col-lg-3 col-md-6 col-sm-6 col-xs-12">
+	<div class=" col-lg-4 col-md-6 col-sm-6 col-xs-12">
 		<div class="input-group">
-			<input type="text" placeholder="<?php echo JText::_('COM_HIERARCHY_ENTER_USER_NAME'); ?>" name="filter_search" id="filter_search" value="<?php echo $srch = ($this->lists['search'])?$this->lists['search']:''; ?>" class="form-control" style="margin-top: 10px;" onchange="document.adminForm.submit();" />
+			<input type="text" placeholder="<?php echo JText::_('COM_HIERARCHY_ENTER_USER_NAME'); ?>" name="filter_search" id="filter_search" value="<?php echo $srch = ($this->lists['search'])?$this->lists['search']:''; ?>" class="form-control"  onchange="document.adminForm.submit();" />
 			<span class="input-group-btn">
 				<button type="button" onclick="this.form.submit();" class="btn btn-success tip hasTooltip" data-original-title="Search"><i class="fa fa-search"></i>Search</button>
 				<button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();" class="btn btn-primary tip hasTooltip" data-original-title="Clear"><i class="fa fa-remove"></i>Clear</button>
 			</span>
 		</div>
 	</div>
-	<div class=" col-lg-1 col-md-6 col-sm-6 col-xs-12">
-		<div class="btn-group pull-right hidden-xs">
+	<div class=" col-lg-4 col-md-6 col-sm-6 col-xs-12 pull-right">
+		<div class="btn-group pull-right">
 			<label for="limit" class="element-invisible">
 				<?php echo JText::_('JGLOBAL_DISPLAY_NUM'); ?>
 			</label>
