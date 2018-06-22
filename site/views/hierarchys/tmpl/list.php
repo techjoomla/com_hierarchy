@@ -27,8 +27,8 @@ $JUriRoot = JUri::root();
 	</div>
 	<div class=" col-lg-8 col-md-6 col-sm-6 col-xs-12">
 		<div class="input-group pull-right">
-			<?php echo JHtml::_('select.genericlist', $this->contextList, "filter_context", 'style="display:inline-block;" class="selectpicker" data-style="btn-primary" size="1" data-live-search="true"
-				onchange="document.adminForm.submit();" name="filter_context"',"value", "text", $this->lists['contextList']);
+			<?php //echo JHtml::_('select.genericlist', $this->contextList, "filter_context", 'style="display:inline-block;" class="selectpicker" data-style="btn-primary" size="1" data-live-search="true"
+				//onchange="document.adminForm.submit();" name="filter_context"',"value", "text", $this->lists['contextList']);
 			?>
 		</div>
 	</div>
@@ -59,12 +59,14 @@ $JUriRoot = JUri::root();
 					<th class='left'>
 						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_NAME', 'a.name', $listDirn, $listOrder); ?>
 					</th>
+<!--
 					<th class='left'>
-						<?php echo JText::_('COM_HIERARCHY_CONTEXT'); ?>
+						<?php //echo JText::_('COM_HIERARCHY_CONTEXT'); ?>
 					</th>
 					<th class='left'>
-						<?php echo JText::_('COM_HIERARCHY_CONTEXT_ID'); ?>
+						<?php //echo JText::_('COM_HIERARCHY_CONTEXT_ID'); ?>
 					</th>
+-->
 					<th class='left'>
 						<?php echo JText::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
 					</th>
@@ -90,21 +92,25 @@ $JUriRoot = JUri::root();
 				?>
 				<tr class="row<?php echo $i % 2; ?> reports_to" id="row_<?php echo $item->user_id;?>">
 					<td>
-						<img src="<?php echo $this->gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
+<!--
+						<img src="<?php //echo $this->gravatar; ?>" class="img-rounded" alt="" width="30" height="30">
+-->
 						<a href="#" title="<?php echo $item->name;?>"><?php  echo $item->name; ?>
 							<i class="fa fa-angle-down" id="click_off_<?php echo $item->user_id;?>" onclick="hierarchySite.hierarchys.drillUpDrillDownList('<?php echo $item->user_id;?>')"; aria-hidden="true"></i>
 						</a>
 					</td>
+<!--
 					<td>
 					<?php
-						echo $item->context = !empty($item->context) ? $item->context : '-';
+						//echo $item->context = !empty($item->context) ? $item->context : '-';
 						?>
 					</td>
 					<td>
 					<?php
-						echo $item->context_id = !empty($item->context_id) ? $item->context_id : '-';
+						//echo $item->context_id = !empty($item->context_id) ? $item->context_id : '-';
 						?>
 					</td>
+-->
 					<td>
 					<?php
 						if ($item->user_id)
