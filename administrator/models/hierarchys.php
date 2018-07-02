@@ -125,13 +125,14 @@ class HierarchyModelHierarchys extends JModelList
 		$query->from($db->quoteName('#__users', 'a'));
 
 		// Join over the user field 'user_id'
-$query->select(
+		$query->select(
 				$db->quoteName(
 					array('hu.id', 'hu.user_id', 'hu.subuser_id', 'hu.client', 'hu.client_id', 'hu.state', 'hu.note'),
 					array(null, 'bossId', 'empId', null, null, null, null)
 							)
 				);
-		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.subuser_id') . ' = ' . $db->quoteName('a.id') . ')');
+		$query->join('LEFT', $db->quoteName('#__hierarchy_users', 'hu') . ' ON (' . $db->quoteName('hu.subuser_id') . ' = ' . $db->quoteName('a.id') .
+		') AND (' . $this->db->quoteName('hu.reports_to') . ' = ' . $this->db->quoteName('a.id') . ')');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
