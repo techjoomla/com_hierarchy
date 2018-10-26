@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.4" type="plugin" group="actionlog" method="upgrade">
 	<name>plg_actionlog_hierarchy</name>
-	<version>1.5.0</version>
-	<creationDate>17th Sep 2018</creationDate>
+	<version>__DEPLOY_VERSION__</version>
+	<creationDate>__RELEASE_DATE__</creationDate>
 	<author>Techjoomla</author>
 	<authorEmail>extensions@techjoomla.com</authorEmail>
 	<authorUrl>https://techjoomla.com</authorUrl>
