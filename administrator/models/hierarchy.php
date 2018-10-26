@@ -169,9 +169,23 @@ class HierarchyModelHierarchy extends JModelAdmin
 			$data['created_date'] = $date->toSql(true);
 		}
 
+		$isNew = empty($data['id']) ? false : true;
+
+		// On before assigning manager
+		$dispatcher = JDispatcher::getInstance();
+		JPluginHelper::importPlugin("system");
+		JPluginHelper::importPlugin("actionlog");
+		$dispatcher->trigger("hierarchyOnBeforeSaveHierarchy", array($data, $isNew));
+
 		if (parent::save($data))
 		{
 			$id = (int) $this->getState($this->getName() . '.id');
+
+			// On after assigning manager
+			$dispatcher = JDispatcher::getInstance();
+			JPluginHelper::importPlugin("system");
+			JPluginHelper::importPlugin("actionlog");
+			$dispatcher->trigger("hierarchyOnAfterSaveHierarchy", array($data, $isNew));
 
 			return $id;
 		}
@@ -313,9 +327,9 @@ class HierarchyModelHierarchy extends JModelAdmin
 			return false;
 		}
 
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('user_id','reports_to','name','username','email')));
+		$query->select($db->quoteName(array('hu.id', 'user_id','reports_to','name','username','email')));
 		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
 		$query->join('INNER', $db->quoteName('#__users', 'u') . ' ON (' . $db->quoteName('u.id') . ' = ' . $db->quoteName('hu.reports_to') . ')');
 		$query->where($db->quoteName('hu.user_id') . " = " . $db->quote($reportsTo));
@@ -326,7 +340,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	}
 
 	/**
-	 * Method to get users to manage hierarchy.
+	 * Method to get users to manager hierarchy.
 	 *
 	 * @param   integer  $userId  userId
 	 *
@@ -362,5 +376,78 @@ class HierarchyModelHierarchy extends JModelAdmin
 		$allUsers = $db->loadObjectList();
 
 		return $allUsers;
+	}
+
+	/**
+	 * Method to delete a row from the database table by primary key value.
+	 *
+	 * @param   array  $items  An array of primary key value to delete.
+	 *
+	 * @return  int  Returns count of success
+	 */
+	public function delete($items)
+	{
+		$user = JFactory::getUser();
+		$db   = JFactory::getDbo();
+
+		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+
+		if (is_array($items))
+		{
+			foreach ($items as $id)
+			{
+				$hierarchyTable = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
+				$hierarchyTable->load(array('id' => $id));
+
+				$data = $hierarchyTable->getProperties();
+
+				// On before removing manager
+				JPluginHelper::importPlugin("system");
+				JPluginHelper::importPlugin("actionlog");
+				$dispatcher = JDispatcher::getInstance();
+				$dispatcher->trigger("hierarchyOnBeforeDeleteHierarchy", array($data));
+
+				if ($hierarchyTable->delete($data['id']))
+				{
+					// On after removing manager
+					JPluginHelper::importPlugin("system");
+					JPluginHelper::importPlugin("actionlog");
+					$dispatcher = JDispatcher::getInstance();
+					$dispatcher->trigger("hierarchyOnAfterDeleteHierarchy", array($data));
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+		else
+		{
+			$hierarchyTable = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
+			$hierarchyTable->load(array('id' => $items));
+
+			$data = $hierarchyTable->getProperties();
+
+			// On before removing manager
+			$dispatcher = JDispatcher::getInstance();
+			JPluginHelper::importPlugin("system");
+			JPluginHelper::importPlugin("actionlog");
+			$dispatcher->trigger("hierarchyOnBeforeDeleteHierarchy", array($data));
+
+			if ($hierarchyTable->delete($data['id']))
+			{
+				// On after removing manager
+				$dispatcher = JDispatcher::getInstance();
+				JPluginHelper::importPlugin("system");
+				JPluginHelper::importPlugin("actionlog");
+				$dispatcher->trigger("hierarchyOnAfterDeleteHierarchy", array($data));
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

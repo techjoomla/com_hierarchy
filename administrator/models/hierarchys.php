@@ -190,37 +190,4 @@ class HierarchyModelHierarchys extends JModelList
 
 		return $items;
 	}
-
-	/**
-	 * Delete order
-	 *
-	 * @param   integer  $hierarchyID  id of jticketing_order table to delete
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
-	 */
-	public function delete($hierarchyID)
-	{
-		$id = implode(',', array_filter($hierarchyID));
-
-		if ($id)
-		{
-			// Delete the order item
-			$deleteHierarchy = $this->_db->getQuery(true);
-			$deleteHierarchy->delete($this->_db->quoteName('#__hierarchy_users'));
-			$deleteHierarchy->where('user_id IN (' . $id . ')');
-			$this->_db->setQuery($deleteHierarchy);
-			$confirm = $this->_db->execute();
-
-			if ($confirm)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
 }
