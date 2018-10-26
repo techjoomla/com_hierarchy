@@ -26,6 +26,28 @@ class Com_HierarchyInstallerScript
 	/** @var array The list of extra modules and plugins to install */
 	private $oldversion = "";
 
+	private $installation_queue = array(
+		'plugins'=>array(
+			'privacy'=>array(
+				'hierarchy'=>1,
+			),
+			'actionlog'=>array(
+				'hierarchy'=>1,
+			)
+		)
+	);
+
+	private $uninstall_queue = array(
+		'plugins'=>array(
+			'privacy'=>array(
+				'hierarchy'=>1
+			),
+			'actionlog'=>array(
+				'hierarchy'=>1
+			)
+		)
+	);
+
 	/**
 	 * method to run before an install/update/uninstall method
 	 *
@@ -110,5 +132,157 @@ class Com_HierarchyInstallerScript
 				}
 			}
 		}
+	}
+
+	/**
+	 * Runs after install, update or discover_update
+	 *
+	 * @param   string      $type    install, update or discover_update
+	 * @param   JInstaller  $parent
+	 *
+	 */
+	public function postflight($type, $parent)
+	{
+		// Install subextensions
+		$status = $this->_installSubextensions($parent);
+	}
+
+	/**
+	 * Installs subextensions (modules, plugins) bundled with the main extension
+	 *
+	 * @param JInstaller $parent
+	 * @return JObject The subextension installation status
+	 */
+	private function _installSubextensions($parent)
+	{
+		$src = $parent->getParent()->getPath('source');
+		$db  = JFactory::getDbo();
+
+		$status = new JObject();
+		$status->modules = array();
+
+		// Plugins installation
+		if (count($this->installation_queue['plugins']))
+		{
+			foreach ($this->installation_queue['plugins'] as $folder => $plugins)
+			{
+				if (count($plugins))
+				{
+					foreach ($plugins as $plugin => $published)
+					{
+						$path = "$src/plugins/$folder/$plugin";
+
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/$folder/plg_$plugin";
+						}
+
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/$plugin";
+						}
+
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/plg_$plugin";
+						}
+
+						if (!is_dir($path)) continue;
+
+						// Was the plugin already installed?
+						$query = $db->getQuery(true)
+							->select('COUNT(*)')
+							->from($db->qn('#__extensions'))
+							->where('( ' . ($db->qn('name') . ' = ' . $db->q($plugin)) . ' OR ' . ($db->qn('element') . ' = ' . $db->q($plugin)) . ' )')
+							->where($db->qn('folder') . ' = ' . $db->q($folder));
+						$db->setQuery($query);
+						$count = $db->loadResult();
+
+						$installer = new JInstaller;
+						$result = $installer->install($path);
+
+						$status->plugins[] = array('name'=>$plugin, 'group'=>$folder, 'result'=>$result, 'status'=>$published);
+
+						if ($published && !$count)
+						{
+							$query = $db->getQuery(true)
+								->update($db->qn('#__extensions'))
+								->set($db->qn('enabled') . ' = ' . $db->q('1'))
+								->where('( ' . ($db->qn('name') . ' = ' . $db->q($plugin)) . ' OR ' . ($db->qn('element') . ' = ' . $db->q($plugin)) . ' )')
+								->where($db->qn('folder') . ' = ' . $db->q($folder));
+							$db->setQuery($query);
+							$db->execute();
+						}
+					}
+				}
+			}
+		}
+
+		return $status;
+	}
+
+	/**
+	 * Runs on uninstallation
+	 *
+	 * @param JInstaller $parent
+	 */
+	function uninstall($parent)
+	{
+		// Uninstall subextensions
+		$status = $this->_uninstallSubextensions($parent);
+	}
+
+	/**
+	 * Uninstalls subextensions (modules, plugins) bundled with the main extension
+	 *
+	 * @param JInstaller $parent
+	 * @return JObject The subextension uninstallation status
+	 */
+	private function _uninstallSubextensions($parent)
+	{
+		jimport('joomla.installer.installer');
+
+		$db =  JFactory::getDbo();
+
+		$status = new JObject();
+		$status->modules = array();
+		$status->plugins = array();
+
+		$src = $parent->getParent()->getPath('source');
+
+		// Plugins uninstallation
+		if (count($this->uninstall_queue['plugins']))
+		{
+			foreach ($this->uninstall_queue['plugins'] as $folder => $plugins)
+			{
+				if (count($plugins))
+				{
+					foreach ($plugins as $plugin => $published)
+					{
+						$sql = $db->getQuery(true)
+							->select($db->qn('extension_id'))
+							->from($db->qn('#__extensions'))
+							->where($db->qn('type') . ' = ' . $db->q('plugin'))
+							->where($db->qn('element') . ' = ' . $db->q($plugin))
+							->where($db->qn('folder') . ' = ' . $db->q($folder));
+						$db->setQuery($sql);
+						$id = $db->loadResult();
+
+						if ($id)
+						{
+							$installer = new JInstaller;
+							$result = $installer->uninstall('plugin', $id);
+							$status->plugins[] = array(
+								'name'=>'plg_' . $plugin,
+								'group'=>$folder,
+								'result'=>$result
+							);
+						}
+					}
+				}
+			}
+		}
+
+		return $status;
 	}
 }

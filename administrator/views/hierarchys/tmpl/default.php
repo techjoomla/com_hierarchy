@@ -128,7 +128,7 @@ HierarchyHelper::getLanguageConstant();
 							<?php
 								$clientUrl = '';
 
-								// Client and client_id is passed to the form URL 
+								// Client and client_id is passed to the form URL
 								if ($this->client && $this->clientId)
 								{
 									$clientUrl = '&client=' . $this->client . '&client_id=' . $this->clientId;
