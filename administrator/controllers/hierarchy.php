@@ -94,7 +94,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 		// Get the list of removed managers for the user
 		$deleteUser = array_diff($userIDs, $data['reports_to']);
 
-		// Delete records for removed mangers for the user
+		// Delete records for removed managers for the user
 		foreach ($deleteUser as $key => $val)
 		{
 			$this->hierarchyTableObj->load(array('reports_to' => (int) $val, 'user_id' => (int) $data['user_id']));
@@ -102,7 +102,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$return = $model->delete($id);
 		}
 
-		// Save the records for new manages of the user
+		// Save the records for new managers of the user
 		foreach ($data['reports_to'] as $key => $val)
 		{
 			$data['reports_to'] = $val;

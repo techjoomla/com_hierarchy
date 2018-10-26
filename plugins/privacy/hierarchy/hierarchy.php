@@ -44,26 +44,6 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	protected $db;
 
 	/**
-	 * Reports the privacy related capabilities for this plugin to site administrators.
-	 *
-	 * @return  array
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function onPrivacyCollectAdminCapabilities()
-	{
-		$this->loadLanguage();
-
-		return array(
-			Text::_('PLG_PRIVACY_HIERARCHY') => array(
-				Text::_('PLG_PRIVACY_HIERARCHY_PRIVACY_CAPABILITY_USER_STORES_DETAIL'),
-				Text::_('PLG_PRIVACY_HIERARCHY_PRIVACY_CAPABILITY_USER_ORDERS_DETAIL'),
-				Text::_('PLG_PRIVACY_HIERARCHY_PRIVACY_CAPABILITY_COOKIES_DETAIL')
-			)
-		);
-	}
-
-	/**
 	 * Processes an export request for Hierarchy user data
 	 *
 	 * This event will collect data for the following tables:

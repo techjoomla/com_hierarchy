@@ -340,7 +340,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	}
 
 	/**
-	 * Method to get users to manage hierarchy.
+	 * Method to get users to manager hierarchy.
 	 *
 	 * @param   integer  $userId  userId
 	 *
@@ -402,7 +402,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 				$data = $hierarchyTable->getProperties();
 
 				// On before removing manager
-				//JPluginHelper::importPlugin("system");
+				JPluginHelper::importPlugin("system");
 				JPluginHelper::importPlugin("actionlog");
 				$dispatcher = JDispatcher::getInstance();
 				$dispatcher->trigger("hierarchyOnBeforeDeleteHierarchy", array($data));
