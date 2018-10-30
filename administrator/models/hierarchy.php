@@ -169,7 +169,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 			$data['created_date'] = $date->toSql(true);
 		}
 
-		$isNew = empty($data['id']) ? false : true;
+		$isNew = empty($data['id']) ? true : false;
 
 		// On before assigning manager
 		$dispatcher = JDispatcher::getInstance();
