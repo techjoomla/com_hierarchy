@@ -91,6 +91,9 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$userIDs[] = $hierarchy->reports_to;
 		}
 
+		// Get array of user ids of assigned managers
+		$data['reports_to'] = (array) $data['reports_to'];
+
 		// Get the list of removed managers for the user
 		$deleteUser = array_diff($userIDs, $data['reports_to']);
 
