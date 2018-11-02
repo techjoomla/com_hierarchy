@@ -381,20 +381,20 @@ class HierarchyModelHierarchy extends JModelAdmin
 	/**
 	 * Method to delete a row from the database table by primary key value.
 	 *
-	 * @param   array  $items  An array of primary key value to delete.
+	 * @param   array  &$pks  An array of primary key value to delete.
 	 *
 	 * @return  int  Returns count of success
 	 */
-	public function delete($items)
+	public function delete(&$pks)
 	{
 		$user = JFactory::getUser();
 		$db   = JFactory::getDbo();
 
 		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
 
-		if (is_array($items))
+		if (is_array($pks))
 		{
-			foreach ($items as $id)
+			foreach ($pks as $id)
 			{
 				$hierarchyTable = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
 				$hierarchyTable->load(array('id' => $id));
@@ -424,7 +424,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		else
 		{
 			$hierarchyTable = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
-			$hierarchyTable->load(array('id' => $items));
+			$hierarchyTable->load(array('id' => $pks));
 
 			$data = $hierarchyTable->getProperties();
 
