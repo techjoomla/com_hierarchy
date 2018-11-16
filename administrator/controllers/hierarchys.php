@@ -133,7 +133,7 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	 * Get user id from user email
 	 *
 	 * @param   string  $email  email.
-	 * 
+	 *
 	 * @return  void
 	 *
 	 * @since   1.0
@@ -159,12 +159,27 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	 */
 	public function remove()
 	{
-		$model = $this->getModel('hierarchys');
+		$model = $this->getModel();
 		$input = JFactory::getApplication()->input;
 		$post  = $input->post;
-		$hierarchyID = $post->get('cid', '', 'ARRAY');
+		$userIds = $post->get('cid', '', 'ARRAY');
 
-		if ($model->delete($hierarchyID))
+		$records = array();
+
+		foreach ($userIds as $userId)
+		{
+			$hierarchyData = $model->getReportsTo($userId);
+			$records = array_merge($records, $hierarchyData);
+		}
+
+		$hierarchyIds = array();
+
+		foreach ($records as $record)
+		{
+			$hierarchyIds[] = $record->id;
+		}
+
+		if ($model->delete($hierarchyIds))
 		{
 			$msg = JText::_('COM_HIERARCHY_HIERARCHY_DELETED_SCUSS');
 		}

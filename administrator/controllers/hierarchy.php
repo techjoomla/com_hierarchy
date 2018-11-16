@@ -81,7 +81,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 		$data['created_by']  = $jinput->get('created_by', '', 'int');
 		$data['modified_by'] = $jinput->get('modified_by', '', 'int');
 
-		// To add new or remove manager from the selected managers list.
+		// Get the existing managers of the user
 		$hierarchysData = $model->getReportsTo($data['user_id']);
 
 		$userIDs = array();
@@ -91,9 +91,13 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$userIDs[] = $hierarchy->reports_to;
 		}
 
+		// Get array of user ids of assigned managers
+		$data['reports_to'] = (array) $data['reports_to'];
+
+		// Get the list of removed managers for the user
 		$deleteUser = array_diff($userIDs, $data['reports_to']);
 
-		// Delete user from the existing list
+		// Delete records for removed managers for the user
 		foreach ($deleteUser as $key => $val)
 		{
 			$this->hierarchyTableObj->load(array('reports_to' => (int) $val, 'user_id' => (int) $data['user_id']));
@@ -101,6 +105,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$return = $model->delete($id);
 		}
 
+		// Save the records for new managers of the user
 		foreach ($data['reports_to'] as $key => $val)
 		{
 			$data['reports_to'] = $val;
