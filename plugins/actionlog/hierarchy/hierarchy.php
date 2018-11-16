@@ -20,7 +20,7 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 /**
  * Hierarchy Actions Logging Plugin.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.1.1
  */
 class PlgActionlogHierarchy extends CMSPlugin
 {
@@ -28,7 +28,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 * Application object.
 	 *
 	 * @var    JApplicationCms
-	 * @since  __DEPLOY_VERSION__
+	 * @since  1.1.1
 	 */
 	protected $app;
 
@@ -36,7 +36,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 * Database object.
 	 *
 	 * @var    JDatabaseDriver
-	 * @since  __DEPLOY_VERSION__
+	 * @since  1.1.1
 	 */
 	protected $db;
 
@@ -44,7 +44,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 * Load plugin language file automatically so that it can be used inside component
 	 *
 	 * @var    boolean
-	 * @since  __DEPLOY_VERSION__
+	 * @since  1.1.1
 	 */
 	protected $autoloadLanguage = true;
 
@@ -60,7 +60,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.1
 	 */
 	protected function addLog($messages, $messageLanguageKey, $context, $userId = null)
 	{
@@ -79,7 +79,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.1
 	 */
 	public function hierarchyOnAfterSaveHierarchy($data, $isNew)
 	{
@@ -118,7 +118,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.1
 	 */
 	public function hierarchyOnAfterDeleteHierarchy($data)
 	{

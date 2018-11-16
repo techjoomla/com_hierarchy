@@ -22,7 +22,7 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 /**
  * Hierarchy Privacy Plugin.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.1.1
  */
 class PlgPrivacyHierarchy extends PrivacyPlugin
 {
@@ -31,7 +31,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @var    boolean
 	 *
-	 * @since  __DEPLOY_VERSION__
+	 * @since  1.1.1
 	 */
 	protected $autoloadLanguage = true;
 
@@ -39,7 +39,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 * Database object
 	 *
 	 * @var    JDatabaseDriver
-	 * @since  __DEPLOY_VERSION__
+	 * @since  1.1.1
 	 */
 	protected $db;
 
@@ -55,7 +55,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @return  PrivacyExportDomain[]
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.1
 	 */
 	public function onPrivacyExportRequest(PrivacyTableRequest $request, JUser $user = null)
 	{
@@ -81,7 +81,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @return  PrivacyExportDomain
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.1
 	 */
 	private function createHierarchyUsers(JTableUser $user)
 	{
@@ -118,7 +118,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @return  PrivacyRemovalStatus
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.1
 	 */
 	public function onPrivacyCanRemoveData(PrivacyTableRequest $request, JUser $user = null)
 	{
@@ -140,7 +140,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.1
 	 */
 	public function onPrivacyRemoveData(PrivacyTableRequest $request, JUser $user = null)
 	{

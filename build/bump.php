@@ -48,9 +48,9 @@ $versionFile = 'PATH_OF_VERSION_FILE';
 
 // This file will vary from component to component
 $coreXmlFiles = array(
-	'/com_hierarchy/hierarchy.xml',
-	'/com_hierarchy/plugins/actionlog/hierarchy/hierarchy.xml',
-	'/com_hierarchy/plugins/privacy/hierarchy/hierarchy.xml'
+	'/hierarchy.xml',
+	'/plugins/actionlog/hierarchy/hierarchy.xml',
+	'/plugins/privacy/hierarchy/hierarchy.xml'
 );
 
 $antJobFile = '/build.xml';
@@ -245,7 +245,7 @@ foreach ($coreXmlFiles as $coreXmlFile)
 {
 	if (file_exists($rootPath . $coreXmlFile))
 	{
-		// @echo 'Processed xml file: ' .$rootPath . $coreXmlFile . PHP_EOL;
+		// echo 'Processed xml file: ' .$rootPath . $coreXmlFile . PHP_EOL;
 
 		$fileContents = file_get_contents($rootPath . $coreXmlFile);
 
