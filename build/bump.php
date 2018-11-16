@@ -48,10 +48,10 @@ $versionFile = 'PATH_OF_VERSION_FILE';
 
 // This file will vary from component to component
 $coreXmlFiles = array(
-						'/com_hierarchy/hierarchy.xml',
-						'/com_hierarchy/plugins/actionlog/hierarchy/hierarchy.xml',
-						'/com_hierarchy/plugins/privacy/hierarchy/hierarchy.xml'
-				);
+	'/com_hierarchy/hierarchy.xml',
+	'/com_hierarchy/plugins/actionlog/hierarchy/hierarchy.xml',
+	'/com_hierarchy/plugins/privacy/hierarchy/hierarchy.xml'
+);
 
 $antJobFile = '/build.xml';
 
