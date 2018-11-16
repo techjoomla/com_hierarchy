@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.4" type="plugin" group="privacy" method="upgrade">
 	<name>plg_privacy_hierarchy</name>
-	<version>__DEPLOY_VERSION__</version>
+	<version>1.1.1</version>
 	<creationDate>__RELEASE_DATE__</creationDate>
 	<author>Techjoomla</author>
 	<authorEmail>extensions@techjoomla.com</authorEmail>
