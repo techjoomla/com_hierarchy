@@ -105,21 +105,25 @@ class HierarchyViewHierarchys extends JViewLegacy
 
 		// Import Csv export button
 		jimport('techjoomla.tjtoolbar.button.csvexport');
-
+		$user      = JFactory::getUser();
+		$canExportCSV = $user->authorise('core.export', 'com_tjreports');
 		$bar = JToolBar::getInstance('toolbar');
 
 		$state = $this->get('State');
 		$canDo = HierarchyHelper::getActions($state->get('filter.category_id'));
 
-		$message = array();
-		$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
-		$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
-		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
-		$message['btn-name'] = JText::_("COM_HIERARCHY_EXPORT_CSV");
-
-		if ($canDo->get('core.csv.export'))
+		if (!empty($this->items) && $canExportCSV === true && $user->id)
 		{
-			$bar->appendButton('CsvExport',  $message);
+			$message = array();
+			$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
+			$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
+			$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
+			$message['btn-name'] = JText::_("COM_HIERARCHY_EXPORT_CSV");
+
+			if ($canDo->get('core.csv.export'))
+			{
+				$bar->appendButton('CsvExport',  $message);
+			}
 		}
 
 		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
