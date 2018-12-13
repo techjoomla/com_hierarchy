@@ -23,12 +23,38 @@ class HierarchyViewHierarchys extends TjExportCsv
 	/**
 	 * Display the Hierarchy view
 	 *
-	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+	 * @param   STRING  $tpl  template name
 	 *
-	 * @return  void
+	 * @return  Object|Boolean in case of success instance and failure - boolean
+	 *
+	 * @since   1.0
 	 */
 	public function display($tpl = null)
 	{
-		parent::display();
+		$input = JFactory::getApplication()->input;
+		$user  = JFactory::getUser();
+		$userAuthorisedExport = $user->authorise('core.export', 'com_hierarchy');
+
+		if ($userAuthorisedExport !== true || !$user->id)
+		{
+			// Redirect to the list screen.
+			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false);
+			JFactory::getApplication()->redirect($redirect, JText::_('JERROR_ALERTNOAUTHOR'));
+
+			return false;
+		}
+		else
+		{
+			if ($input->get('task') == 'download')
+			{
+				$fileName = $input->get('file_name');
+				$this->download($fileName);
+				JFactory::getApplication()->close();
+			}
+			else
+			{
+				parent::display();
+			}
+		}
 	}
 }
