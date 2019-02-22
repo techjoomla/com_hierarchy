@@ -26,6 +26,28 @@ class Com_HierarchyInstallerScript
 	/** @var array The list of extra modules and plugins to install */
 	private $oldversion = "";
 
+	private $installation_queue = array(
+		'plugins' => array(
+			'privacy' => array(
+				'hierarchy' => 1,
+			),
+			'actionlog' => array(
+				'hierarchy' => 1,
+			)
+		)
+	);
+
+	private $uninstall_queue = array(
+		'plugins' => array(
+			'privacy' => array(
+				'hierarchy' => 1
+			),
+			'actionlog' => array(
+				'hierarchy' => 1
+			)
+		)
+	);
+
 	/**
 	 * method to run before an install/update/uninstall method
 	 *
@@ -59,10 +81,6 @@ class Com_HierarchyInstallerScript
 	public function update($parent)
 	{
 		$this->installSqlFiles($parent);
-
-		$this->fixDbOnUpdate();
-
-		$this->deleteUnexistingFiles();
 	}
 
 	/**
@@ -117,87 +135,163 @@ class Com_HierarchyInstallerScript
 	}
 
 	/**
-	 * function to make necessary changes on update
+	 * Runs after install, update or discover_update
+	 *
+	 * @param   string      $type    install, update or discover_update
+	 *
+	 * @param   JInstaller  $parent  parent
 	 *
 	 * @return  void
-	 *
-	 * @since  1.0.0
 	 */
-	protected function fixDbOnUpdate()
+	public function postflight($type, $parent)
 	{
-		$db = JFactory::getDBO();
-
-		$query = "SHOW COLUMNS FROM #__hierarchy_users";
-		$db->setQuery($query);
-		$res = $db->loadColumn();
-
-		if (!in_array('subuser_id', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column subuser_id int(11);";
-			$db->setQuery($query);
-			$db->execute();
-		}
-		
-		if (!in_array('client', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column client VARCHAR(255);";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		if (!in_array('client_id', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column client_id INT(11);";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		if (!in_array('state', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column state INT(11);";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		if (!in_array('note', $res))
-		{
-			$query = "ALTER TABLE #__hierarchy_users add column note TEXT;";
-			$db->setQuery($query);
-			$db->execute();
-		}
-
-		$query = "ALTER TABLE #__hierarchy_users modify subuser_id int(11);";
-		$db->setQuery($query);
-		$db->execute();
+		// Install subextensions
+		$status = $this->_installSubextensions($parent);
 	}
 
 	/**
-	 * Delete files that should not exist
+	 * Installs subextensions (modules, plugins) bundled with the main extension
+	 *
+	 * @param   JInstaller  $parent  parent
+	 * 
+	 * @return JObject The subextension installation status
+	 */
+	private function _installSubextensions($parent)
+	{
+		$src = $parent->getParent()->getPath('source');
+		$db  = JFactory::getDbo();
+
+		$status = new JObject;
+		$status->modules = array();
+
+		// Plugins installation
+		if (count($this->installation_queue['plugins']))
+		{
+			foreach ($this->installation_queue['plugins'] as $folder => $plugins)
+			{
+				if (count($plugins))
+				{
+					foreach ($plugins as $plugin => $published)
+					{
+						$path = "$src/plugins/$folder/$plugin";
+
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/$folder/plg_$plugin";
+						}
+
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/$plugin";
+						}
+
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/plg_$plugin";
+						}
+
+						if (!is_dir($path))
+						{
+							continue;
+						}
+
+						// Was the plugin already installed?
+						$query = $db->getQuery(true)
+							->select('COUNT(*)')
+							->from($db->qn('#__extensions'))
+							->where('( ' . ($db->qn('name') . ' = ' . $db->q($plugin)) . ' OR ' . ($db->qn('element') . ' = ' . $db->q($plugin)) . ' )')
+							->where($db->qn('folder') . ' = ' . $db->q($folder));
+						$db->setQuery($query);
+						$count = $db->loadResult();
+
+						$installer = new JInstaller;
+						$result = $installer->install($path);
+
+						$status->plugins[] = array('name' => $plugin, 'group' => $folder, 'result' => $result, 'status' => $published);
+
+						if ($published && !$count)
+						{
+							$query = $db->getQuery(true)
+								->update($db->qn('#__extensions'))
+								->set($db->qn('enabled') . ' = ' . $db->q('1'))
+								->where('( ' . ($db->qn('name') . ' = ' . $db->q($plugin)) . ' OR ' . ($db->qn('element') . ' = ' . $db->q($plugin)) . ' )')
+								->where($db->qn('folder') . ' = ' . $db->q($folder));
+							$db->setQuery($query);
+							$db->execute();
+						}
+					}
+				}
+			}
+		}
+
+		return $status;
+	}
+
+	/**
+	 * Runs on uninstallation
+	 *
+	 * @param   JInstaller  $parent  parent
 	 *
 	 * @return  void
 	 */
-	public function deleteUnexistingFiles()
+	public function uninstall($parent)
 	{
-		include JPATH_ADMINISTRATOR . '/components/com_hierarchy/deletelist.php';
+		// Uninstall subextensions
+		$status = $this->_uninstallSubextensions($parent);
+	}
 
-		jimport('joomla.filesystem.file');
+	/**
+	 * Uninstalls subextensions (modules, plugins) bundled with the main extension
+	 *
+	 * @param   JInstaller  $parent  parent
+	 * 
+	 * @return JObject The subextension uninstallation status
+	 */
+	private function _uninstallSubextensions($parent)
+	{
+		jimport('joomla.installer.installer');
 
-		foreach ($files as $file)
+		$db = JFactory::getDbo();
+
+		$status = new JObject;
+		$status->modules = array();
+		$status->plugins = array();
+
+		$src = $parent->getParent()->getPath('source');
+
+		// Plugins uninstallation
+		if (count($this->uninstall_queue['plugins']))
 		{
-			if (JFile::exists(JPATH_ROOT . $file) && !JFile::delete(JPATH_ROOT . $file))
+			foreach ($this->uninstall_queue['plugins'] as $folder => $plugins)
 			{
-				$app->enqueueMessage(JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file));
+				if (count($plugins))
+				{
+					foreach ($plugins as $plugin => $published)
+					{
+						$sql = $db->getQuery(true)
+							->select($db->qn('extension_id'))
+							->from($db->qn('#__extensions'))
+							->where($db->qn('type') . ' = ' . $db->q('plugin'))
+							->where($db->qn('element') . ' = ' . $db->q($plugin))
+							->where($db->qn('folder') . ' = ' . $db->q($folder));
+						$db->setQuery($sql);
+						$id = $db->loadResult();
+
+						if ($id)
+						{
+							$installer = new JInstaller;
+							$result = $installer->uninstall('plugin', $id);
+							$status->plugins[] = array(
+								'name' => 'plg_' . $plugin,
+								'group' => $folder,
+								'result' => $result
+							);
+						}
+					}
+				}
 			}
 		}
 
-		jimport('joomla.filesystem.folder');
-
-		foreach ($folders as $folder)
-		{
-			if (JFolder::exists(JPATH_ROOT . $folder) && !JFolder::delete(JPATH_ROOT . $folder))
-			{
-				$app->enqueueMessage(JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder));
-			}
-		}
+		return $status;
 	}
 }

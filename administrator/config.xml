@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-    <fieldset label="COM_HIERARCHY" name="hierarchy" addfieldpath="/administrator/components/com_hierarchy/assets/elements">
-		<field name="groups_for_self_nomination" type="accesslevelsenroll" multiple="multiple" default="" label="COM_HIEARCHY_SELECT_ACCESS_LEVELS_FOR_ENROLLMENT" description="COM_HIEARCHY_SELECT_ACCESS_LEVELS_FOR_ENROLLMENT_DESC" />
-		<field name="groups_for_any_nomination" type="accesslevelsenroll" multiple="multiple" default="" label="COM_HIEARCHY_SELECT_ACCESS_LEVELS_FOR_ANY_ENROLLMENT" description="COM_HIEARCHY_SELECT_ACCESS_LEVELS_FOR_ANY_ENROLLMENT_DESC" />
-		<field name="nomination_end_date" type="calendar"  default="" label="COM_HIEARCHY_NOMINATOIN_END_DATE" description="COM_HIEARCHY_NOMINATOIN_END_DATE" />
-
-    </fieldset>
-    <fieldset label="COM_HIERARCHY_RESCHDULE" name="reschedule">
-		<field name="hrhead" type="text" label="COM_HIEARCHY_HR_HEAD" description="COM_HIEARCHY_HR_HEA_DESC" />
-		<field name="reschedule_perfix" type="text" label="COM_HIEARCHY_RESCHEDUL_PERFIX" description="COM_HIEARCHY_RESCHEDUL_PERFIX_DESC" />
-		<field name="groupid" type="text" label="COM_HIEARCHY_GROUP_ID" default="10" description="COM_HIEARCHY_GROUP_ID_DESC" />
-		<field name="reschedule_manager_email" type="text" label="COM_HIEARCHY_RESCHEDULE_MANAGER_EMAIL" default="" description="COM_HIEARCHY_RESCHEDULE_MANAGER_EMAIL" />
-		<field name="reschedule_approva_cc_email" type="text" label="COM_HIEARCHY_RESCHEDULE_APPROVE_CC_EMAILS" default="" description="COM_HIEARCHY_RESCHEDULE_APPROVE_CC_EMAILS_DESC" />
-		<field name="reschedule_email_from" type="text" label="COM_HIEARCHY_RESCHEDULE_EMAIL_FORM" default="" description="COM_HIEARCHY_RESCHEDULE_EMAIL_FORM" />
-		<field name="reschedule_email_Reply_To" type="text" label="COM_HIEARCHY_RESCHEDULE_EMAIL_REPLAY_TO" default="" description="COM_HIEARCHY_RESCHEDULE_EMAIL_REPLAY_TO" />
-	
-    </fieldset>
-    <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
+	<fieldset label="COM_HIERARCHY_GENERAL" name="hierarchy" addfieldpath="/administrator/components/com_hierarchy/assets/elements">
+		<field name="integration" class="radio btn-group" type="integrations" default="2" description="COM_HIERARCHY_INTEGRATIONS_DESC" label="COM_HIERARCHY_INTEGRATIONS" />
+		<field name="gravatar" class="btn-group" type="radio" default="0" label="COM_HIERARCHY_GRAVATAR_INT_CONF" description="COM_HIERARCHY_GRAVATAR_INT_CONF_DESC" >
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+	</fieldset>
+	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
 		<field name="rules" type="rules" component="com_hierarchy" class="inputbox" filter="rules" validate="rules" label="JCONFIG_PERMISSIONS_LABEL" section="component" />
 	</fieldset>
 </config>

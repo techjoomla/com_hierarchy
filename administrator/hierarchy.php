@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_hierarchy
- *
- * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version    SVN: <svn_id>
+ * @package    Com_Hierarchy
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (c) 2009-2017 TechJoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
  */
 
 // No direct access
@@ -18,6 +18,10 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_hierarchy'))
 
 // Include dependancies
 jimport('joomla.application.component.controller');
+
+// Initialize hierarchy js
+$document = JFactory::getDocument();
+$document->addScript(JUri::root(true) . '/media/com_hierarchy/js/hierarchy.js');
 
 $controller = JControllerLegacy::getInstance('Hierarchy');
 $controller->execute(JFactory::getApplication()->input->get('task'));

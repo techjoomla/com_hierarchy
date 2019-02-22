@@ -1,13 +1,13 @@
 <?php
 /**
- * @version     1.0.0
- * @package     com_hierarchy
- * @copyright   Copyright (C) 2015. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @author      Parth Lawate <contact@techjoomla.com> - http://techjoomla.com
+ * @version    SVN: <svn_id>
+ * @package    Com_Hierarchy
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (c) 2009-2017 TechJoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
  */
 
-// no direct access
+// No direct access
 defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
@@ -17,7 +17,6 @@ JHTML::_('behavior.modal', 'a.modal');
 JHtml::_('behavior.keepalive');
 
 // Import CSS
-JHtml::stylesheet(JUri::root(). 'administrator/components/com_hierarchy/assets/css/hierarchy.css' );
 JHtml::_('script', 'jui/fielduser.min.js', array('version' => 'auto', 'relative' => true));
 
 $user      = JFactory::getUser();
@@ -34,170 +33,138 @@ if ($saveOrder)
 }
 
 $sortFields = $this->getSortFields();
-?>
-<script type="text/javascript">
-	Joomla.orderTable = function(){
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
 
-		if (order != '<?php echo $listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-
-		Joomla.tableOrdering(order, dirn, '');
-	}
-
-	jQuery(document).ready(function () {
-		jQuery('#import_append').attr('style','height:196px !important;');
-		jQuery('#clear-search-button').on('click', function () {
-			jQuery('#filter_search').val('');
-			jQuery('#adminForm').submit();
-		});
-
-		jQuery('#export-submit').on('click', function () {
-			document.getElementById('task').value = 'hierarchys.csvexport';
-			document.adminForm.submit();
-			document.getElementById('task').value = '';
-		});
-	});
-</script>
-<?php
-// Joomla Component Creator code to allow adding non select list filters
-
-if (!empty($this->extra_sidebar))
-{
-    $this->sidebar .= $this->extra_sidebar;
-}
+// Call helper function
+HierarchyHelper::getLanguageConstant();
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchys'); ?>" method="post" name="adminForm" id="adminForm">
-
-<?php if(!empty($this->sidebar)): ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-<?php else : ?>
-	<div id="j-main-container">
-<?php endif;?>
-		<div id="filter-bar" class="btn-toolbar">
-
-			<div class="filter-search btn-group pull-left">
-				<label for="filter_search" class="element-invisible"><?php echo JText::_('JSEARCH_FILTER');?></label>
-				<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('JSEARCH_FILTER'); ?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" title="<?php echo JText::_('JSEARCH_FILTER'); ?>" />
-			</div>
-
-			<div class="btn-group pull-left">
-				<button class="btn hasTooltip" type="submit" title="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>">
-					<i class="icon-search"></i>
-				</button>
-				<button class="btn hasTooltip" id="clear-search-button" type="button" title="<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>">
-					<i class="icon-remove"></i>
-				</button>
-			</div>
-
-			<div class="btn-group pull-right hidden-phone">
-				<label for="limit" class="element-invisible">
-					<?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?>
-				</label>
-				<?php echo $this->pagination->getLimitBox(); ?>
-			</div>
+<?php
+	if(!empty($this->sidebar)):
+		?>
+		<div id="j-sidebar-container" class="span2">
+			<?php echo $this->sidebar; ?>
 		</div>
-		<div class="clearfix"> </div>
-		<?php if (empty($this->items)) : ?>
+		<div id="j-main-container" class="span10">
+		<?php
+	else :
+		?>
+		<div id="j-main-container">
+		<?php
+	endif;
+
+	// Search tools bar
+	echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+	?>
+	<div class="clearfix"> </div>
+	<?php
+		if (empty($this->items)) :
+			?>
 			<div class="alert alert-no-items">
 				<?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
 			</div>
-		<?php else : ?>
+			<?php
+		else :
+		?>
 		<table class="table table-striped" id="hierarchyList">
 			<thead>
 				<tr>
-					<th class='center'>
-						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
+					<th width="1%">
+						<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 					</th>
-
 					<th class='left'>
 						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_NAME', 'a.name', $listDirn, $listOrder); ?>
 					</th>
-
+					<th class='left'>
+						<?php echo JText::_('COM_HIERARCHY_CONTEXT'); ?>
+					</th>
+					<th class='left'>
+						<?php echo JText::_('COM_HIERARCHY_CONTEXT_ID'); ?>
+					</th>
 					<th class='left'>
 						<?php echo JText::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
 					</th>
+					<th class='right'>
+						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
+					</th>
 				</tr>
 			</thead>
-
-			<tfoot><?php
-					if(isset($this->items[0]))
-					{
-						$colspan = count(get_object_vars($this->items[0]));
-					}
-					else
-					{
-						$colspan = 10;
-					}
+			<tfoot>
+			<?php
+				if (isset($this->items[0]))
+				{
+					$colspan = count(get_object_vars($this->items[0]));
+				}
+				else
+				{
+					$colspan = 10;
+				}
 				?>
-
 				<tr>
 					<td colspan="<?php echo $colspan ?>"><?php echo $this->pagination->getListFooter(); ?></td>
 				</tr>
 			</tfoot>
 			<tbody>
-				<?php // echo "<pre>"; print_r($this->items); echo "</pre>"; ?>
+			<?php
 
-				<?php foreach ($this->items as $i => $item) :
-					$ordering   = ($listOrder == 'a.ordering');
-					$canCreate  = $user->authorise('core.create', 'com_hierarchy');
-					$canEdit    = $user->authorise('core.edit', 'com_hierarchy');
-					$canCheckin = $user->authorise('core.manage', 'com_hierarchy');
-					$canChange  = $user->authorise('core.edit.state', 'com_hierarchy');
+				foreach ($this->items as $i => $item) :
+					$ordering   = ($listOrder == 'a.+ordering');
 
-					$bossName = '';
-
-					if ($item->bossId)
-					{
-						$user = JFactory::getUser($item->bossId);
-						$bossName = $user->name;
-						$bossId = $item->bossId;
-					}
-					else
-					{
-						$bossName = '';
-						$bossId = '';
-					}?>
-
-					<tr class="row<?php echo $i % 2; ?>">
-						<td  class='center'><?php echo $item->subuserId; ?></td>
-
+					$userName = implode(', ', $item->ReportsToUserName);
+					?>
+					<tr class="row<?php echo $i % 2; ?> reports_to">
+						<td class='center'><?php echo JHtml::_('grid.id', $i, $item->subuserId); ?></td>
 						<td><?php  echo $item->name; ?></td>
-
 						<td>
-							<div class="controls">
-								<div class="input-append">
-									<input title="Report to id" type="text" class="resizedTextbox" id="jform_user_id_<?php echo $i;?>_id" readonly name="jform[user_id]" placeholder="Id" value="<?php echo $bossId;?>">
-									<input title="Report to name"  type="text" id="jform_user_id_<?php echo $i;?>" value="<?php echo $bossName;?>" placeholder="Name" readonly>
-									<a class="btn btn-primary modal_jform_user_id  modal" title="Select User." href="<?php echo JRoute::_('index.php?option=com_users&view=users&layout=modal&tmpl=component&field=jform_user_id_'.(int) $i); ?> " rel="{handler: 'iframe', size: {x: 800, y: 500}}">
-										<i class="icon-user"></i>
-									</a>
-								</div>
-							</div>
-							<input type="hidden" id="subuser_id_<?php echo $i;?>" name="subuser_id_<?php echo $i;?>" value="<?php  echo $item->subuserId; ?>">
+						<?php
+							echo $item->context = !empty($item->context) ? $item->context : '-';
+							?>
 						</td>
+						<td>
+						<?php
+							echo $item->context_id = !empty($item->context_id) ? $item->context_id : '-';
+							?>
+						</td>
+						<td>
+							<?php
+								$clientUrl = '';
+
+								// Client and client_id is passed to the form URL
+								if ($this->client && $this->clientId)
+								{
+									$clientUrl = '&client=' . $this->client . '&client_id=' . $this->clientId;
+								}
+
+								if ($this->canEdit) :
+									$url = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id='.(int) $item->id . '&user_id=' .(int) $item->subuserId . $clientUrl);
+									$text = JText::_('COM_HIERARCHY_SET_MANAGER');
+								else :
+									$url = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&user_id=' . (int) $item->subuserId . $clientUrl);
+									$text = JText::_('COM_HIERARCHY_SET_MANAGER');
+								endif;
+							?>
+							<a href="<?php echo $url;?>" class="btn button btn-success modal" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+								<span class="icon icon-users"></span>
+								<?php echo $text;?>
+							</a>
+							<?php
+								if ($this->canEdit)
+								{
+									?>
+									<span id="popover_<?php echo $i; ?>" data-toggle="popover" data-trigger="hover" data-placement="right"  data-content="<?php echo $userName; ?>"><?php echo $userName = strlen($userName) > 20 ? substr($userName, 0, 20) . "..." : $userName; ?></span>
+									<?php
+								}
+								?>
+						</td>
+						<td class='right'><?php echo $item->subuserId; ?></td>
 					</tr>
-					<?php endforeach; ?>
+					<?php
+				endforeach;
+				?>
 			</tbody>
 		</table>
-		<?php endif; ?>
-		<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
-			<p><?php echo JText::_('COM_HIERARCHY_CSV_HELP_TEXT'); ?></p>
-			<p><?php echo JText::_('COM_HIERARCHY_CSV_EXPORT_HELP_TEXT'); ?></p>
-			<p><?php echo JText::_('COM_HIERARCHY_CSV_IMPORT_HELP_TEXT'); ?></p>
-		</div>
-
+		<?php
+		endif;
+		?>
 		<input type="hidden" id="task" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
@@ -209,23 +176,24 @@ if (!empty($this->extra_sidebar))
 	<div id="import_append">
 		<form action="<?php echo JUri::base(); ?>index.php?option=com_hierarchy&task=hierarchys.csvImport&tmpl=component&format=html" id="uploadForm" class="form-inline center"  name="uploadForm" method="post" enctype="multipart/form-data">
 			<table>
-				<tr>
-					&nbsp;
-				</tr>
+				</br>
 				<tr>
 					<div id="uploadform">
 						<fieldset id="upload-noflash" class="actions">
-							<label for="upload-file" class="control-label"><?php echo JText::_('COM_HIERARCHY_UPLOADE_FILE'); ?></label>
+							<label for="upload-file" class="control-label">
+								<?php echo JText::_('COM_HIERARCHY_UPLOADE_FILE'); ?>
+							</label>
 							<input type="file" id="upload-file" name="csvfile" id="csvfile" />
 							<button class="btn btn-primary" id="upload-submit">
 								<i class="icon-upload icon-white"></i>
 								<?php echo JText::_('COM_HIERARCHY_IMPORT_CSV'); ?>
 							</button>
 							<hr class="hr hr-condensed">
-							<div class="alert alert-warning" role="alert"><i class="icon-info"></i>
-									<?php
+							<div class="alert alert-warning" role="alert">
+								<i class="icon-info"></i>
+								<?php
 									$link = '<a href="' . JUri::root() . 'media/com_hierarchy/samplecsv/userImport.csv' . '">' . JText::_("COM_HIERARCHY_CSV_SAMPLE") . '</a>';
-								echo JText::sprintf('COM_HIERARCHY_CSVHELP', $link);
+									echo JText::sprintf('COM_HIERARCHY_CSVHELP', $link);
 								?>
 							</div>
 						</fieldset>
@@ -235,24 +203,7 @@ if (!empty($this->extra_sidebar))
 		</form>
 	</div>
 </div>
-<script>
-jQuery("[name='jform[user_id]']").on("change",function(){
-	var bossUserId = jQuery(this).val();
-	var subuserId = jQuery(this).parents('tr').find('input[id^="subuser_id_"]').val();
-	jQuery.ajax(
-	{
-		url:"<?php echo Juri::base();?>index.php?option=com_hierarchy&task=hierarchys.setUser&subuserId=" + subuserId,
-		data:{user_id:bossUserId},
-		type:"POST",
-		datatype : "json",
-		success:function(resp)
-		{
-			console.log('Manager Set');
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown)
-		{
-			console.log('Something went wrong.');
-		}
-	});
-});
+<script type="text/javascript">
+	hierarchyAdmin.hierarchys.initHierarchysJs();
+	hierarchyAdmin.hierarchys.showUserNames();
 </script>

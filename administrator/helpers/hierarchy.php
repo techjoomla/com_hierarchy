@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_hierarchy
- *
- * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version    SVN: <svn_id>
+ * @package    Com_Hierarchy
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (c) 2009-2017 TechJoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
  */
 
 // No direct access
@@ -46,7 +46,8 @@ class HierarchyHelper
 
 		$assetName = 'com_hierarchy';
 
-		$actions = array('core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete');
+		$actions = array('core.admin', 'core.manage', 'core.create', 'core.edit',
+		'core.edit.own', 'core.edit.state', 'core.delete', 'core.csv.export', 'core.csv.import');
 
 		foreach ($actions as $action)
 		{
@@ -54,5 +55,18 @@ class HierarchyHelper
 		}
 
 		return $result;
+	}
+
+	/** Get all jtext for javascript
+	 *
+	 * @return   void
+	 *
+	 * @since   1.0
+	 */
+	public static function getLanguageConstant()
+	{
+		JText::script('JGLOBAL_VALIDATION_FORM_FAILED');
+		JText::script('COM_HIERARCHY_HIERARCHY_DELETE_CONF');
+		JText::script('COM_HIERARCHY_USERNAMES_DESC');
 	}
 }
