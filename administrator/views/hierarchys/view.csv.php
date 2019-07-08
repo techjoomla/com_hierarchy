@@ -29,6 +29,30 @@ class HierarchyViewHierarchys extends TjExportCsv
 	 */
 	public function display($tpl = null)
 	{
-		parent::display();
+		$input = JFactory::getApplication()->input;
+		$user  = JFactory::getUser();
+		$userAuthorisedExport = $user->authorise('core.create', 'com_hierarchy');
+
+		if ($userAuthorisedExport != 1 || !$user)
+		{
+			// Redirect to the list screen.
+			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false);
+			JFactory::getApplication()->redirect($redirect, JText::_('JERROR_ALERTNOAUTHOR'));
+
+			return false;
+		}
+		else
+		{
+			if ($input->get('task') == 'download')
+			{
+				$fileName = $input->get('file_name');
+				$this->download($fileName);
+				JFactory::getApplication()->close();
+			}
+			else
+			{
+				parent::display();
+			}
+		}
 	}
 }
