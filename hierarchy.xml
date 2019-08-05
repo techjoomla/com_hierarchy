@@ -23,7 +23,6 @@
 	</update>
 	<scriptfile>script.hierarchy.php</scriptfile>
     <files folder="site">
-        <filename>index.html</filename>
         <filename>hierarchy.php</filename>
         <filename>controller.php</filename>
         <filename>router.php</filename>
