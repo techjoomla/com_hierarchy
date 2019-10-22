@@ -70,6 +70,11 @@ class HierarchyModelHierarchys extends JModelList
 		$contextName = $app->getUserStateFromRequest($this->context . '.filter.context', 'filter_context', '', 'string');
 		$this->setState('filter.context', $contextName);
 
+		if (!empty($user_id))
+		{
+			$this->setState('filter.user_id', $app->getUserStateFromRequest($this->context . '.filter.user_id', 'filter_user_id', '', 'string'));
+		}
+		
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_hierarchy');
 		$this->setState('params', $params);
