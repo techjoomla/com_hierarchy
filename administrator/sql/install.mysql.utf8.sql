@@ -15,4 +15,4 @@ CREATE TABLE IF NOT EXISTS `#__hierarchy_users` (
 `state` INT(11)  NOT NULL,
 `note` TEXT NOT NULL,
 PRIMARY KEY (`id`)
-) DEFAULT COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
