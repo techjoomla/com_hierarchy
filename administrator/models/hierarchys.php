@@ -172,7 +172,7 @@ class HierarchyModelHierarchys extends JModelList
 				$item->ReportsToUserName = array();
 				$item->ReportsTo = array();
 
-				if ($item->subuserId)
+				if (isset($item->subuserId))
 				{
 					$results = $this->hierarchyModel->getReportsTo($item->user_id);
 					$item->ReportsTo = $results;
