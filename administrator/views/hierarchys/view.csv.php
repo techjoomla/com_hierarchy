@@ -51,47 +51,6 @@ class HierarchyViewHierarchys extends TjExportCsv
 			}
 			else
 			{
-				$this->items = $this->get('Items');
-
-				foreach ($this->items as $key => $item)
-				{
-					$this->data[$key]                = new stdClass;
-					$this->data[$key]->subuserId     = $item->subuserId;
-					$this->data[$key]->name          = $item->name;
-					$this->data[$key]->username      = $item->username;
-					$this->data[$key]->user_email    = $item->user_email;
-					$this->data[$key]->id            = $item->id;
-					$this->data[$key]->user_id       = $item->user_id;
-					$this->data[$key]->context       = $item->context;
-					$this->data[$key]->context_id    = $item->context_id;
-					$this->data[$key]->created_by    = $item->created_by;
-					$this->data[$key]->modified_by   = $item->modified_by;
-					$this->data[$key]->created_date  = $item->created_date;
-					$this->data[$key]->modified_date = $item->modified_date;
-					$this->data[$key]->state         = $item->state;
-					$this->data[$key]->note          = $item->note;
-
-					// Report to username formatting
-					if (!empty($item->ReportsToUserName))
-					{
-						$this->data[$key]->ReportsToUserName = implode(", ", $item->ReportsToUserName);
-					}
-					else
-					{
-						$this->data[$key]->ReportsToUserName = '';
-					}
-
-					// Report to formatting
-					if (!empty($item->ReportsTo))
-					{
-						$this->data[$key]->ReportsTo = implode(", ", array_column($item->ReportsTo, 'reports_to'));
-					}
-					else
-					{
-						$this->data[$key]->ReportsTo = '';
-					}
-				}
-
 				parent::display();
 			}
 		}

@@ -169,22 +169,23 @@ class HierarchyModelHierarchys extends JModelList
 		{
 			foreach ($items as $item)
 			{
-				$item->ReportsToUserName = array();
-				$item->ReportsTo = array();
+				$reportsToUserName = array();
 
 				if ($item->subuserId)
 				{
 					$results = $this->hierarchyModel->getReportsTo($item->user_id);
-					$item->ReportsTo = $results;
 
 					foreach ($results as $res)
 					{
 						if (!empty($res->name))
 						{
-							$item->ReportsToUserName[] = $res->name;
+							$reportsToUserName[] = $res->name;
 						}
 					}
 				}
+
+				$item->ReportsToUserNameStr = implode(", ", $reportsToUserName);
+				$item->ReportsToUserStr     = implode(", ", array_column($results, 'reports_to'));
 			}
 		}
 
