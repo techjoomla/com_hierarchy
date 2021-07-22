@@ -140,7 +140,39 @@ class HierarchyModelHierarchys extends JModelList
 			$query->where('( hu.context LIKE ' . $contextName . ' )');
 		}
 
-		$query->where('a.block=0');
+		// Filtering reports_to
+		$reports_to = $this->getState("filter.reports_to");
+
+		if (!empty($reports_to))
+		{
+			$query->where($this->_db->quoteName('hu.reports_to') . ' = ' . $this->_db->escape($reports_to));
+		}
+
+		// Filtering user_id
+		$filterUserId = $this->getState("filter.user_id");
+
+		if (!empty($filterUserId))
+		{
+			$query->where($this->_db->quoteName('hu.user_id') . ' = ' . $this->_db->escape($filterUserId));
+		}
+
+		// Filtering state
+		$filterState = $this->getState("filter.state");
+
+		if (isset($filterState))
+		{
+			$query->where($this->_db->quoteName('hu.state') . ' = ' . $this->_db->escape($filterState));
+		}
+
+		// Filtering context_id
+		$contextId = $this->getState("filter.context_id");
+
+		if (!empty($contextId))
+		{
+			$query->where($this->_db->quoteName('hu.context_id') . ' = ' . $this->_db->escape($contextId));
+		}
+
+		$query->where($this->_db->quoteName('a.block') . ' = ' . $this->_db->escape('0'));
 
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering');
