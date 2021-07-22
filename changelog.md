@@ -6,7 +6,7 @@
 - Feature Addition (+)
 - Improvement (^)
 
-## com_activitystream v1.1.3
+## com_hierarchy v1.1.3
 
 ##### - Bug Fixes:
 - #154556 Hierarchy Export > shows incorrect default data
