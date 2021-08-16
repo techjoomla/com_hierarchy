@@ -16,8 +16,8 @@ use Joomla\CMS\Uri\Uri;
 
 // Include dependancies
 jimport('joomla.application.component.controller');
-JHtml::_('bootstrap.loadcss');
-JHtml::_('bootstrap.framework');
+HTMLHelper::_('bootstrap.loadcss');
+HTMLHelper::_('bootstrap.framework');
 
 // Execute the task.
 $controller = BaseController::getInstance('Hierarchy');

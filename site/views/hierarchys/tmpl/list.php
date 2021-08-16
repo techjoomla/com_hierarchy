@@ -32,7 +32,7 @@ $UriRoot = Uri::root();
 	</div>
 	<div class=" col-lg-8 col-md-6 col-sm-6 col-xs-12">
 		<div class="input-group pull-right">
-			<?php //echo JHtml::_('select.genericlist', $this->contextList, "filter_context", 'style="display:inline-block;" class="selectpicker" data-style="btn-primary" size="1" data-live-search="true"
+			<?php //echo HTMLHelper::_('select.genericlist', $this->contextList, "filter_context", 'style="display:inline-block;" class="selectpicker" data-style="btn-primary" size="1" data-live-search="true"
 				//onchange="document.adminForm.submit();" name="filter_context"',"value", "text", $this->lists['contextList']);
 			?>
 		</div>

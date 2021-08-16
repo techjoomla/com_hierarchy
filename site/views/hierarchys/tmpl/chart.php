@@ -14,12 +14,12 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-JHtml::_('bootstrap.tooltip');
-JHtml::_('behavior.multiselect');
-JHtml::stylesheet(Uri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.css');
-JHtml::stylesheet(Uri::root() . 'media/com_hierarchy/vendors/treant-js/collapsable.css');
-JHtml::script(Uri::root() . 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
-JHtml::script(Uri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.multiselect');
+HTMLHelper::stylesheet(Uri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.css');
+HTMLHelper::stylesheet(Uri::root() . 'media/com_hierarchy/vendors/treant-js/collapsable.css');
+HTMLHelper::script(Uri::root() . 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
+HTMLHelper::script(Uri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
 $UriRoot = Uri::root();
 $user = Factory::getUser();
 $userName = $user->name;

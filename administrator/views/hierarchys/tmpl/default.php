@@ -16,14 +16,14 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('bootstrap.tooltip');
-JHtml::_('behavior.multiselect');
-JHTML::_('behavior.modal', 'a.modal');
-JHtml::_('behavior.keepalive');
+HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.multiselect');
+HTMLHelper::_('behavior.modal', 'a.modal');
+HTMLHelper::_('behavior.keepalive');
 
 // Import CSS
-JHtml::_('script', 'jui/fielduser.min.js', array('version' => 'auto', 'relative' => true));
+HTMLHelper::_('script', 'jui/fielduser.min.js', array('version' => 'auto', 'relative' => true));
 
 $user      = Factory::getUser();
 $userId    = $user->get('id');
