@@ -9,6 +9,9 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 
 // Import CSV library view
 jimport('techjoomla.view.csv');
@@ -29,15 +32,15 @@ class HierarchyViewHierarchys extends TjExportCsv
 	 */
 	public function display($tpl = null)
 	{
-		$input = JFactory::getApplication()->input;
-		$user  = JFactory::getUser();
+		$input = Factory::getApplication()->input;
+		$user  = Factory::getUser();
 		$userAuthorisedExport = $user->authorise('core.create', 'com_hierarchy');
 
 		if ($userAuthorisedExport != 1 || !$user)
 		{
 			// Redirect to the list screen.
-			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false);
-			JFactory::getApplication()->redirect($redirect, JText::_('JERROR_ALERTNOAUTHOR'));
+			$redirect = Route::_('index.php?option=com_hierarchy&view=hierarchys', false);
+			Factory::getApplication()->redirect($redirect, Text::_('JERROR_ALERTNOAUTHOR'));
 
 			return false;
 		}
@@ -47,7 +50,7 @@ class HierarchyViewHierarchys extends TjExportCsv
 			{
 				$fileName = $input->get('file_name');
 				$this->download($fileName);
-				JFactory::getApplication()->close();
+				Factory::getApplication()->close();
 			}
 			else
 			{

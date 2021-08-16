@@ -9,6 +9,7 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
 
 require_once JPATH_COMPONENT . '/controller.php';
 
@@ -46,7 +47,7 @@ class HierarchyControllerHierarchys extends HierarchyController
 	 */
 	public function getReportsTo()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$userId = $jinput->get('user_id', '', 'int');
 
 		// Get the model.
@@ -57,7 +58,7 @@ class HierarchyControllerHierarchys extends HierarchyController
 
 		foreach ($reportsTo as $reportTo)
 		{
-			$user = JFactory::getUser($reportTo->user_id);
+			$user = Factory::getUser($reportTo->user_id);
 			$reportTo->name = $user->name;
 			$reportTo->also = $model->getReportsTo($reportTo->user_id);
 		}

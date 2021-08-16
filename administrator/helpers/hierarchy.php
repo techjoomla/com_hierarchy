@@ -9,6 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * Hierarchys helper.
@@ -28,7 +32,7 @@ class HierarchyHelper
 	 */
 	public static function addSubmenu($vName = '')
 	{
-		JHtmlSidebar::addEntry(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'index.php?option=com_hierarchy&view=hierarchys', $vName == 'hierarchys');
+		JHtmlSidebar::addEntry(Text::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'index.php?option=com_hierarchy&view=hierarchys', $vName == 'hierarchys');
 	}
 
 	/**
@@ -41,8 +45,8 @@ class HierarchyHelper
 	 */
 	public static function getActions()
 	{
-		$user = JFactory::getUser();
-		$result = new JObject;
+		$user = Factory::getUser();
+		$result = new CMSObject;
 
 		$assetName = 'com_hierarchy';
 
@@ -65,8 +69,8 @@ class HierarchyHelper
 	 */
 	public static function getLanguageConstant()
 	{
-		JText::script('JGLOBAL_VALIDATION_FORM_FAILED');
-		JText::script('COM_HIERARCHY_HIERARCHY_DELETE_CONF');
-		JText::script('COM_HIERARCHY_USERNAMES_DESC');
+		Text::script('JGLOBAL_VALIDATION_FORM_FAILED');
+		Text::script('COM_HIERARCHY_HIERARCHY_DELETE_CONF');
+		Text::script('COM_HIERARCHY_USERNAMES_DESC');
 	}
 }

@@ -9,6 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 // Include dependancies
 jimport('joomla.application.component.controller');
@@ -16,10 +20,10 @@ JHtml::_('bootstrap.loadcss');
 JHtml::_('bootstrap.framework');
 
 // Execute the task.
-$controller = JControllerLegacy::getInstance('Hierarchy');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller = BaseController::getInstance('Hierarchy');
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();
 
 // Initialize hierarchy js
-$document = JFactory::getDocument();
-$document->addScript(JUri::root(true) . '/media/com_hierarchy/js/hierarchy.js');
+$document = Factory::getDocument();
+$document->addScript(Uri::root(true) . '/media/com_hierarchy/js/hierarchy.js');

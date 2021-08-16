@@ -9,6 +9,10 @@
 
 // No direct access.
 defined('_JEXEC') or die();
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 JFormHelper::loadFieldClass('list');
 
@@ -17,7 +21,7 @@ JFormHelper::loadFieldClass('list');
  *
  * @since  1.0.0
  */
-class JFormFieldContextList extends JFormFieldList
+class JFormFieldContextList extends FormFieldList
 {
 	/**
 	 * The form field type.
@@ -44,7 +48,7 @@ class JFormFieldContextList extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -57,14 +61,14 @@ class JFormFieldContextList extends JFormFieldList
 		$contextList = $db->loadObjectList();
 
 		$options = array();
-		$options[] = JHtml::_('select.option', '0', JText::_('COM_HIERARCHY_SELECT_CONTEXT'));
+		$options[] = HTMLHelper::_('select.option', '0', Text::_('COM_HIERARCHY_SELECT_CONTEXT'));
 
 		if (!empty($contextList))
 		{
 			foreach ($contextList as $context)
 			{
 				$context   = $context->context;
-				$options[] = JHtml::_('select.option', $context, $context);
+				$options[] = HTMLHelper::_('select.option', $context, $context);
 			}
 		}
 

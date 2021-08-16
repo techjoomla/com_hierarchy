@@ -8,6 +8,10 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.modellist');
 
@@ -16,7 +20,7 @@ jimport('joomla.application.component.modellist');
  *
  * @since  1.6
  */
-class HierarchyModelHierarchys extends JModelList
+class HierarchyModelHierarchys extends ListModel
 {
 	/**
 	 * Constructor.
@@ -37,8 +41,8 @@ class HierarchyModelHierarchys extends JModelList
 			);
 		}
 
-		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/models');
-		$this->hierarchyModel = JModelLegacy::getInstance('Hierarchy', 'HierarchyModel');
+		BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/models');
+		$this->hierarchyModel = BaseDatabaseModel::getInstance('Hierarchy', 'HierarchyModel');
 
 		parent::__construct($config);
 	}
@@ -58,7 +62,7 @@ class HierarchyModelHierarchys extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -71,7 +75,7 @@ class HierarchyModelHierarchys extends JModelList
 		$this->setState('filter.context', $contextName);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_hierarchy');
+		$params = ComponentHelper::getParams('com_hierarchy');
 		$this->setState('params', $params);
 
 		// List state information.

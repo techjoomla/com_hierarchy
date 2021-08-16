@@ -9,6 +9,11 @@
 
 // No direct access.
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 
 jimport('joomla.application.component.modeladmin');
 jimport('joomla.database.table');
@@ -18,7 +23,7 @@ jimport('joomla.database.table');
  *
  * @since  1.6
  */
-class HierarchyModelHierarchy extends JModelAdmin
+class HierarchyModelHierarchy extends AdminModel
 {
 	/**
 	 * @var string The prefix to use with controller messages.
@@ -38,9 +43,9 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function getTable($type = 'hierarchy', $prefix = 'HierarchyTable', $config = array())
 	{
-		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
+		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_hierarchy/tables');
 
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -56,7 +61,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the form.
 		$form = $this->loadForm('com_hierarchy.hierarchy', 'hierarchy', array('control' => 'jform', 'load_data' => $loadData));
@@ -79,7 +84,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_hierarchy.edit.hierarchy.data', array());
+		$data = Factory::getApplication()->getUserState('com_hierarchy.edit.hierarchy.data', array());
 
 		if (empty($data))
 		{
@@ -101,7 +106,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		$item = parent::getItem($pk);
 
 		// Get client and client_id from URL
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		if (empty($item->context) && $jinput->get('client'))
 		{
@@ -142,7 +147,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		// Validate if user_id is not specified
 		if (!$data['user_id'] || !$data['reports_to'])
 		{
-			$this->setError(JText::_('COM_HIERARCHY_INVALID_USER'));
+			$this->setError(Text::_('COM_HIERARCHY_INVALID_USER'));
 
 			return false;
 		}
@@ -155,7 +160,7 @@ class HierarchyModelHierarchy extends JModelAdmin
 		// Check hierarchy is already exist or not.
 		$hierarchyId = $this->checkIfHierarchyExist($data);
 
-		$date = JFactory::getDate();
+		$date = Factory::getDate();
 
 		if ($hierarchyId)
 		{
@@ -173,8 +178,8 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 		// On before assigning manager
 		$dispatcher = JDispatcher::getInstance();
-		JPluginHelper::importPlugin("system");
-		JPluginHelper::importPlugin("actionlog");
+		PluginHelper::importPlugin("system");
+		PluginHelper::importPlugin("actionlog");
 		$dispatcher->trigger("hierarchyOnBeforeSaveHierarchy", array($data, $isNew));
 
 		if (parent::save($data))
@@ -183,14 +188,14 @@ class HierarchyModelHierarchy extends JModelAdmin
 
 			// On after assigning manager
 			$dispatcher = JDispatcher::getInstance();
-			JPluginHelper::importPlugin("system");
-			JPluginHelper::importPlugin("actionlog");
+			PluginHelper::importPlugin("system");
+			PluginHelper::importPlugin("actionlog");
 			$dispatcher->trigger("hierarchyOnAfterSaveHierarchy", array($data, $isNew));
 
 			return $id;
 		}
 
-		$this->setError(JText::_('COM_HIERARCHY_SAVE_FAIL'));
+		$this->setError(Text::_('COM_HIERARCHY_SAVE_FAIL'));
 
 		return false;
 	}
@@ -233,16 +238,16 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function getSubUsers($id, $onlyIds = false)
 	{
-		$user = JFactory::getuser($id);
+		$user = Factory::getuser($id);
 
 		if (!$user->id)
 		{
-			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+			$this->setError(Text::_("COM_HIERARCHY_INVALID_USER"));
 
 			return false;
 		}
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 
 		if ($onlyIds)
@@ -284,16 +289,16 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function getManagers($id)
 	{
-		$user = JFactory::getuser($id);
+		$user = Factory::getuser($id);
 
 		if (!$user->id)
 		{
-			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+			$this->setError(Text::_("COM_HIERARCHY_INVALID_USER"));
 
 			return false;
 		}
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__hierarchy_users'));
@@ -318,16 +323,16 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function getReportsTo($reportsTo)
 	{
-		$user = JFactory::getuser($reportsTo);
+		$user = Factory::getuser($reportsTo);
 
 		if (!$user->id)
 		{
-			$this->setError(JText::_("COM_HIERARCHY_INVALID_USER"));
+			$this->setError(Text::_("COM_HIERARCHY_INVALID_USER"));
 
 			return false;
 		}
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName(array('hu.id', 'user_id','reports_to','name','username','email')));
 		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
@@ -350,12 +355,12 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function getAutoSuggestUsers($userId)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get search term
 		$searchTerm = $app->input->get('search', '', 'STRING');
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -387,31 +392,31 @@ class HierarchyModelHierarchy extends JModelAdmin
 	 */
 	public function delete(&$pks)
 	{
-		$user = JFactory::getUser();
-		$db   = JFactory::getDbo();
+		$user = Factory::getUser();
+		$db   = Factory::getDbo();
 
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
 
 		if (is_array($pks))
 		{
 			foreach ($pks as $id)
 			{
-				$hierarchyTable = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
+				$hierarchyTable = Table::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
 				$hierarchyTable->load(array('id' => $id));
 
 				$data = $hierarchyTable->getProperties();
 
 				// On before removing manager
-				JPluginHelper::importPlugin("system");
-				JPluginHelper::importPlugin("actionlog");
+				PluginHelper::importPlugin("system");
+				PluginHelper::importPlugin("actionlog");
 				$dispatcher = JDispatcher::getInstance();
 				$dispatcher->trigger("hierarchyOnBeforeDeleteHierarchy", array($data));
 
 				if ($hierarchyTable->delete($data['id']))
 				{
 					// On after removing manager
-					JPluginHelper::importPlugin("system");
-					JPluginHelper::importPlugin("actionlog");
+					PluginHelper::importPlugin("system");
+					PluginHelper::importPlugin("actionlog");
 					$dispatcher = JDispatcher::getInstance();
 					$dispatcher->trigger("hierarchyOnAfterDeleteHierarchy", array($data));
 				}
@@ -423,23 +428,23 @@ class HierarchyModelHierarchy extends JModelAdmin
 		}
 		else
 		{
-			$hierarchyTable = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
+			$hierarchyTable = Table::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $db));
 			$hierarchyTable->load(array('id' => $pks));
 
 			$data = $hierarchyTable->getProperties();
 
 			// On before removing manager
 			$dispatcher = JDispatcher::getInstance();
-			JPluginHelper::importPlugin("system");
-			JPluginHelper::importPlugin("actionlog");
+			PluginHelper::importPlugin("system");
+			PluginHelper::importPlugin("actionlog");
 			$dispatcher->trigger("hierarchyOnBeforeDeleteHierarchy", array($data));
 
 			if ($hierarchyTable->delete($data['id']))
 			{
 				// On after removing manager
 				$dispatcher = JDispatcher::getInstance();
-				JPluginHelper::importPlugin("system");
-				JPluginHelper::importPlugin("actionlog");
+				PluginHelper::importPlugin("system");
+				PluginHelper::importPlugin("actionlog");
 				$dispatcher->trigger("hierarchyOnAfterDeleteHierarchy", array($data));
 			}
 			else

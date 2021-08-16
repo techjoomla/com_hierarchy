@@ -9,6 +9,12 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Router\Route;
 
 jimport('joomla.application.component.controllerform');
 
@@ -17,7 +23,7 @@ jimport('joomla.application.component.controllerform');
  *
  * @since  1.6
  */
-class HierarchyControllerHierarchy extends JControllerForm
+class HierarchyControllerHierarchy extends FormController
 {
 	/**
 	 * Constructor.
@@ -30,11 +36,11 @@ class HierarchyControllerHierarchy extends JControllerForm
 	{
 		$this->view_list = 'hierarchys';
 
-		$this->db = JFactory::getDbo();
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
-		$this->hierarchyTableObj = JTable::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $this->db));
+		$this->db = Factory::getDbo();
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+		$this->hierarchyTableObj = Table::getInstance('Hierarchy', 'HierarchyTable', array('dbo', $this->db));
 
-		$this->msg   = JText::_('COM_HIERARCHY_REPORTEES_SAVE_MSG');
+		$this->msg   = Text::_('COM_HIERARCHY_REPORTEES_SAVE_MSG');
 		parent::__construct();
 	}
 
@@ -51,14 +57,14 @@ class HierarchyControllerHierarchy extends JControllerForm
 	public function save($key = null, $urlVar = null)
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$model = $this->getModel('hierarchy', 'HierarchyModel');
 
 		// Get the user data.
-		$data = JFactory::getApplication()->input->get('jform', array(), 'array');
+		$data = Factory::getApplication()->input->get('jform', array(), 'array');
 
 		// Validate the posted data.
 		$form = $model->getForm();
@@ -76,7 +82,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$data = $model->validate($form, $data);
 		}
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$data['user_id']  = $jinput->get('user_id', '', 'int');
 		$data['created_by']  = $jinput->get('created_by', '', 'int');
 		$data['modified_by'] = $jinput->get('modified_by', '', 'int');
@@ -112,7 +118,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 			$return = $model->save($data);
 		}
 
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$id    = $input->get('id');
 
 		if (empty($id))
@@ -124,7 +130,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 
 		if ($task == 'apply')
 		{
-			$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id=' . $id, false);
+			$redirect = Route::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id=' . $id, false);
 			$app->redirect($redirect, $this->msg);
 		}
 
@@ -138,7 +144,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 		}
 
 		// Redirect to the list screen.
-		$redirect = JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false);
+		$redirect = Route::_('index.php?option=com_hierarchy&view=hierarchys', false);
 		$app->redirect($redirect, $this->msg);
 
 		// Flush the data from the session.
@@ -154,7 +160,7 @@ class HierarchyControllerHierarchy extends JControllerForm
 	 */
 	public function getAutoSuggestUsers()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$userId = $jinput->get('user_id', '', 'int');
 
 		// Get the model.

@@ -9,20 +9,24 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 // Access check.
-if (!JFactory::getUser()->authorise('core.manage', 'com_hierarchy'))
+if (!Factory::getUser()->authorise('core.manage', 'com_hierarchy'))
 {
-	throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
+	throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
 }
 
 // Include dependancies
 jimport('joomla.application.component.controller');
 
 // Initialize hierarchy js
-$document = JFactory::getDocument();
-$document->addScript(JUri::root(true) . '/media/com_hierarchy/js/hierarchy.js');
+$document = Factory::getDocument();
+$document->addScript(Uri::root(true) . '/media/com_hierarchy/js/hierarchy.js');
 
-$controller = JControllerLegacy::getInstance('Hierarchy');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller = BaseController::getInstance('Hierarchy');
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();
