@@ -56,7 +56,9 @@ class HierarchyViewHierarchys extends HtmlView
 			// Get current url.
 			$current = Uri::getInstance()->toString();
 			$url     = base64_encode($current);
-			$app->redirect(Route::_('index.php?option=com_users&view=login&return=' . $url, false), $msg);
+
+			$app->enqueueMessage($msg, 'notice');
+			$app->redirect(Route::_('index.php?option=com_users&view=login&return=' . $url, false));
 		}
 
 		$this->state = $this->get('State');

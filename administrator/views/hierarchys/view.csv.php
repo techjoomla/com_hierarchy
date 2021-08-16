@@ -32,7 +32,8 @@ class HierarchyViewHierarchys extends TjExportCsv
 	 */
 	public function display($tpl = null)
 	{
-		$input = Factory::getApplication()->input;
+		$app   = Factory::getApplication();
+		$input = $app->input;
 		$user  = Factory::getUser();
 		$userAuthorisedExport = $user->authorise('core.create', 'com_hierarchy');
 
@@ -40,7 +41,9 @@ class HierarchyViewHierarchys extends TjExportCsv
 		{
 			// Redirect to the list screen.
 			$redirect = Route::_('index.php?option=com_hierarchy&view=hierarchys', false);
-			Factory::getApplication()->redirect($redirect, Text::_('JERROR_ALERTNOAUTHOR'));
+
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->redirect($redirect);
 
 			return false;
 		}
@@ -50,7 +53,7 @@ class HierarchyViewHierarchys extends TjExportCsv
 			{
 				$fileName = $input->get('file_name');
 				$this->download($fileName);
-				Factory::getApplication()->close();
+				$app->close();
 			}
 			else
 			{

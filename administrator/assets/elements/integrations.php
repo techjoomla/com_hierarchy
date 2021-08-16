@@ -21,7 +21,7 @@ jimport('joomla.form.formfield');
  * @subpackage  component
  * @since       1.0
  */
-class FormFieldIntegrations extends FormField
+class JFormFieldIntegrations extends FormField
 {
 	/**
 	 *Function to construct a hierarchy view

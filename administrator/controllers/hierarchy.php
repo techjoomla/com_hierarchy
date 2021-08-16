@@ -131,7 +131,8 @@ class HierarchyControllerHierarchy extends FormController
 		if ($task == 'apply')
 		{
 			$redirect = Route::_('index.php?option=com_hierarchy&view=hierarchy&layout=edit&id=' . $id, false);
-			$app->redirect($redirect, $this->msg);
+			$app->enqueueMessage($this->msg);
+			$app->redirect($redirect);
 		}
 
 		// Clear the profile id from the session.
@@ -145,6 +146,7 @@ class HierarchyControllerHierarchy extends FormController
 
 		// Redirect to the list screen.
 		$redirect = Route::_('index.php?option=com_hierarchy&view=hierarchys', false);
+		$app->enqueueMessage($this->msg);
 		$app->redirect($redirect, $this->msg);
 
 		// Flush the data from the session.

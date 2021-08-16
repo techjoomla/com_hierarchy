@@ -129,6 +129,8 @@ class HierarchyControllerHierarchys extends AdminController
 		}
 
 		$msg = Text::_('COM_HIERARCHY_IMPORT_CSV_SUCCESS_MSG');
+
+ 		$app->enqueueMessage($msg, 'success');
 		$app->redirect(Route::_('index.php?option=com_hierarchy&view=hierarchys', false), $msg);
 
 		return;
