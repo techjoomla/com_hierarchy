@@ -58,7 +58,7 @@ class HierarchyControllerHierarchys extends AdminController
 		// Start file heandling functionality
 		$fname       = $_FILES['csvfile']['name'];
 		$rowNum      = 0;
-		$uploadsDir = Factory::getApplication()->getCfg('tmp_path') . '/' . $fname;
+		$uploadsDir = Factory::getApplication()->get('tmp_path') . '/' . $fname;
 		File::upload($_FILES['csvfile']['tmp_name'], $uploadsDir);
 
 		if ($file = fopen($uploadsDir, "r"))

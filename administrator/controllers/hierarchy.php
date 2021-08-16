@@ -71,7 +71,7 @@ class HierarchyControllerHierarchy extends FormController
 
 		if (!$form)
 		{
-			JError::raiseError(500, $model->getError());
+			$app->enqueueMessage($model->getError(), 'error');
 
 			return false;
 		}

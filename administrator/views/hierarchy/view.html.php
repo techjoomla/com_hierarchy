@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+
 jimport('joomla.application.component.view');
 
 /**
@@ -78,12 +80,12 @@ class HierarchyViewHierarchy extends HtmlView
 		}
 
 		$canDo = HierarchyHelper::getActions();
-		JToolBarHelper::title(Text::_('COM_HIERARCHY_TITLE_HIERARCHY'), 'pencil-2');
+		ToolbarHelper::title(Text::_('COM_HIERARCHY_TITLE_HIERARCHY'), 'pencil-2');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
-			JToolBarHelper::apply('hierarchy.apply', 'JTOOLBAR_APPLY');
+			ToolbarHelper::apply('hierarchy.apply', 'JTOOLBAR_APPLY');
 		}
 	}
 }

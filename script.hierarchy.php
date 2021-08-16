@@ -128,7 +128,7 @@ class Com_HierarchyInstallerScript
 
 						if (!$db->query())
 						{
-							JError::raiseWarning(1, Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+							$this->setMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), 'error');
 
 							return false;
 						}

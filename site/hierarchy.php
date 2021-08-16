@@ -26,4 +26,4 @@ $controller->redirect();
 
 // Initialize hierarchy js
 $document = Factory::getDocument();
-$document->addScript(Uri::root(true) . '/media/com_hierarchy/js/hierarchy.js');
+HTMLHelper::_('script', '/media/com_hierarchy/js/hierarchy.js');

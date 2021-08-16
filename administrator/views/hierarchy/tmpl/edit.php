@@ -24,8 +24,8 @@ $UriRoot = Uri::root(true) . '/administrator/';
 
 // Tokenize
 $document = Factory::getDocument();
-$document->addScript(Uri::root(true) . '/media/com_hierarchy/vendors/tokenize/jquery.tokenize.js');
-$document->addStylesheet(Uri::root(true) . '/media/com_hierarchy/vendors/tokenize/jquery.tokenize.css');
+HTMLHelper::_('script', '/media/com_hierarchy/vendors/tokenize/jquery.tokenize.js');
+HTMLHelper::_('stylesheet','/media/com_hierarchy/vendors/tokenize/jquery.tokenize.css');
 
 // Call helper function
 HierarchyHelper::getLanguageConstant();

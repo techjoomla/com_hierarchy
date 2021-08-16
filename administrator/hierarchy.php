@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 // Access check.
@@ -25,7 +26,7 @@ jimport('joomla.application.component.controller');
 
 // Initialize hierarchy js
 $document = Factory::getDocument();
-$document->addScript(Uri::root(true) . '/media/com_hierarchy/js/hierarchy.js');
+HTMLHelper::_('script', '/media/com_hierarchy/js/hierarchy.js');
 
 $controller = BaseController::getInstance('Hierarchy');
 $controller->execute(Factory::getApplication()->input->get('task'));

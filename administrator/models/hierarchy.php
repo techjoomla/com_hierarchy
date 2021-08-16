@@ -177,20 +177,18 @@ class HierarchyModelHierarchy extends AdminModel
 		$isNew = empty($data['id']) ? true : false;
 
 		// On before assigning manager
-		$dispatcher = JDispatcher::getInstance();
 		PluginHelper::importPlugin("system");
 		PluginHelper::importPlugin("actionlog");
-		$dispatcher->trigger("hierarchyOnBeforeSaveHierarchy", array($data, $isNew));
+		Factory::getApplication()->triggerEvent("hierarchyOnBeforeSaveHierarchy", array($data, $isNew));
 
 		if (parent::save($data))
 		{
 			$id = (int) $this->getState($this->getName() . '.id');
 
 			// On after assigning manager
-			$dispatcher = JDispatcher::getInstance();
 			PluginHelper::importPlugin("system");
 			PluginHelper::importPlugin("actionlog");
-			$dispatcher->trigger("hierarchyOnAfterSaveHierarchy", array($data, $isNew));
+			Factory::getApplication()->triggerEvent("hierarchyOnAfterSaveHierarchy", array($data, $isNew));
 
 			return $id;
 		}
@@ -409,16 +407,14 @@ class HierarchyModelHierarchy extends AdminModel
 				// On before removing manager
 				PluginHelper::importPlugin("system");
 				PluginHelper::importPlugin("actionlog");
-				$dispatcher = JDispatcher::getInstance();
-				$dispatcher->trigger("hierarchyOnBeforeDeleteHierarchy", array($data));
+				Factory::getApplication()->triggerEvent("hierarchyOnBeforeDeleteHierarchy", array($data));
 
 				if ($hierarchyTable->delete($data['id']))
 				{
 					// On after removing manager
 					PluginHelper::importPlugin("system");
 					PluginHelper::importPlugin("actionlog");
-					$dispatcher = JDispatcher::getInstance();
-					$dispatcher->trigger("hierarchyOnAfterDeleteHierarchy", array($data));
+					Factory::getApplication()->triggerEvent("hierarchyOnAfterDeleteHierarchy", array($data));
 				}
 				else
 				{
@@ -434,18 +430,16 @@ class HierarchyModelHierarchy extends AdminModel
 			$data = $hierarchyTable->getProperties();
 
 			// On before removing manager
-			$dispatcher = JDispatcher::getInstance();
 			PluginHelper::importPlugin("system");
 			PluginHelper::importPlugin("actionlog");
-			$dispatcher->trigger("hierarchyOnBeforeDeleteHierarchy", array($data));
+			Factory::getApplication()->triggerEvent("hierarchyOnBeforeDeleteHierarchy", array($data));
 
 			if ($hierarchyTable->delete($data['id']))
 			{
 				// On after removing manager
-				$dispatcher = JDispatcher::getInstance();
 				PluginHelper::importPlugin("system");
 				PluginHelper::importPlugin("actionlog");
-				$dispatcher->trigger("hierarchyOnAfterDeleteHierarchy", array($data));
+				Factory::getApplication()->triggerEvent("hierarchyOnAfterDeleteHierarchy", array($data));
 			}
 			else
 			{
