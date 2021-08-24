@@ -15,9 +15,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 
-jimport('joomla.application.component.modeladmin');
-jimport('joomla.database.table');
-
 /**
  * Methods supporting a list of Hierarchy records.
  *

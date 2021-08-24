@@ -11,7 +11,7 @@
 // No direct access.
 defined('_JEXEC') or die();
 use Joomla\CMS\User\User;
-use Joomla\CMS\Table\User;
+use Joomla\CMS\Table\User as UserTable;
 
 JLoader::register('PrivacyPlugin', JPATH_ADMINISTRATOR . '/components/com_privacy/helpers/plugin.php');
 JLoader::register('PrivacyRemovalStatus', JPATH_ADMINISTRATOR . '/components/com_privacy/helpers/removal/status.php');
@@ -66,7 +66,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 		}
 
 		/** @var JTableUser $user */
-		$userTable = User::getTable();
+		$userTable = UserTable::getTable();
 		$userTable->load($user->id);
 
 		$domains = array();
@@ -84,7 +84,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @since   1.1.1
 	 */
-	private function createHierarchyUsers(User $user)
+	private function createHierarchyUsers(UserTable $user)
 	{
 		$domain = $this->createDomain('Hierarchy Users', 'Users hierarchy details');
 

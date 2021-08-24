@@ -13,8 +13,6 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 
-jimport('joomla.application.component.modellist');
-
 /**
  * Methods supporting a list of Hierarchy records.
  *

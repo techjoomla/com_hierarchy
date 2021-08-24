@@ -15,9 +15,6 @@ use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-jimport('joomla.application.component.controlleradmin');
-jimport('joomla.filesystem.file');
-
 /**
  * The Hierarchys List Controller
  *
@@ -52,7 +49,6 @@ class HierarchyControllerHierarchys extends AdminController
 	 */
 	public function csvImport()
 	{
-		jimport('joomla.filesystem.file');
 		$app = Factory::getApplication();
 
 		// Start file heandling functionality
