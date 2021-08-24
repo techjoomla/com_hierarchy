@@ -145,7 +145,7 @@ class HierarchyControllerHierarchy extends FormController
 		// Redirect to the list screen.
 		$redirect = Route::_('index.php?option=com_hierarchy&view=hierarchys', false);
 		$app->enqueueMessage($this->msg);
-		$app->redirect($redirect, $this->msg);
+		$app->redirect($redirect);
 
 		// Flush the data from the session.
 		$app->setUserState('com_hierarchy.edit.hierarchy.data', null);
