@@ -15,7 +15,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 // Include dependancies
-jimport('joomla.application.component.controller');
 HTMLHelper::_('bootstrap.loadcss');
 HTMLHelper::_('bootstrap.framework');
 

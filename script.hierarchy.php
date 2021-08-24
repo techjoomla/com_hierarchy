@@ -17,9 +17,6 @@ use Joomla\CMS\Installer\InstallerHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
-
 /**
  * Hierarchy Installer
  *
@@ -113,8 +110,7 @@ class Com_HierarchyInstallerScript
 
 		if ($buffer !== false)
 		{
-			jimport('joomla.installer.helper');
-			$queries = InstallerHelper::splitSql($buffer);
+			$queries = \JDatabaseDriver::splitSql($buffer)
 
 			if (count($queries) != 0)
 			{

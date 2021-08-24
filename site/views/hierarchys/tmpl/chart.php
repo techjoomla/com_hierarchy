@@ -16,10 +16,10 @@ use Joomla\CMS\Language\Text;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::stylesheet(Uri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.css');
-HTMLHelper::stylesheet(Uri::root() . 'media/com_hierarchy/vendors/treant-js/collapsable.css');
-HTMLHelper::script(Uri::root() . 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
-HTMLHelper::script(Uri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
+HTMLHelper::_('stylesheet', 'media/com_hierarchy/vendors/treant-js/Treant.css');
+HTMLHelper::_('stylesheet', 'media/com_hierarchy/vendors/treant-js/collapsable.css');
+HTMLHelper::_('script', 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
+HTMLHelper::_('script', 'media/com_hierarchy/vendors/treant-js/Treant.js');
 $UriRoot = Uri::root();
 $user = Factory::getUser();
 $userName = $user->name;

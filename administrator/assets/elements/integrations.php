@@ -12,7 +12,6 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Filesystem\File;
-jimport('joomla.form.formfield');
 
 /**
  * JFormFieldIntegrations class

@@ -157,7 +157,7 @@ $UriRoot = Uri::root();
 	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
 <script type="text/javascript">
-	var UriRoot = "<?php echo $UriRoot; ?>";
+	var JUriRoot = "<?php echo $JUriRoot; ?>";
 	var gravatar = "<?php echo $this->gravatar; ?>";
 	hierarchySite.hierarchys.showUserNames();
 </script>

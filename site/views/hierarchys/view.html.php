@@ -16,7 +16,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Component\ComponentHelper;
 
-jimport('joomla.application.component.view');
 JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
 
 /**

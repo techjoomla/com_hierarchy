@@ -198,7 +198,7 @@ HierarchyHelper::getLanguageConstant();
 							<div class="alert alert-warning" role="alert">
 								<i class="icon-info"></i>
 								<?php
-									$link = '<a href="' . Uri::root() . 'media/com_hierarchy/samplecsv/userImport.csv' . '">' . Text::_("COM_HIERARCHY_CSV_SAMPLE") . '</a>';
+									$link = '<a href="' . Uri::root() . 'media/com_hierarchy/samplecsv/userImport.csv' . '" download>' . Text::_("COM_HIERARCHY_CSV_SAMPLE") . '</a>';
 									echo Text::sprintf('COM_HIERARCHY_CSVHELP', $link);
 								?>
 							</div>

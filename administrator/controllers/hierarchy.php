@@ -16,8 +16,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Router\Route;
 
-jimport('joomla.application.component.controllerform');
-
 /**
  * The Hierarchy Controller
  *
