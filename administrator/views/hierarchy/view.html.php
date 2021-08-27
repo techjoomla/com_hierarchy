@@ -9,14 +9,17 @@
 
 // No direct access
 defined('_JEXEC') or die;
-jimport('joomla.application.component.view');
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * hierarchy View
  *
  * @since  0.0.1
  */
-class HierarchyViewHierarchy extends JViewLegacy
+class HierarchyViewHierarchy extends HtmlView
 {
 	protected $state;
 
@@ -37,7 +40,7 @@ class HierarchyViewHierarchy extends JViewLegacy
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		$this->client = $jinput->get('client');
 		$this->clientID = $jinput->get('client_id');
@@ -61,8 +64,8 @@ class HierarchyViewHierarchy extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
-		$user  = JFactory::getUser();
+		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
 		if (isset($this->item->checked_out))
@@ -75,12 +78,12 @@ class HierarchyViewHierarchy extends JViewLegacy
 		}
 
 		$canDo = HierarchyHelper::getActions();
-		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHY'), 'pencil-2');
+		ToolbarHelper::title(Text::_('COM_HIERARCHY_TITLE_HIERARCHY'), 'pencil-2');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
-			JToolBarHelper::apply('hierarchy.apply', 'JTOOLBAR_APPLY');
+			ToolbarHelper::apply('hierarchy.apply', 'JTOOLBAR_APPLY');
 		}
 	}
 }

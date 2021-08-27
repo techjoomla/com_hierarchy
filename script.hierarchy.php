@@ -12,9 +12,10 @@
 
 // No direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Installer\InstallerHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * Hierarchy Installer
@@ -92,7 +93,7 @@ class Com_HierarchyInstallerScript
 	 */
 	public function installSqlFiles($parent)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		// Obviously you may have to change the path and name if your installation SQL file ;)
 		if (method_exists($parent, 'extension_root'))
@@ -109,8 +110,7 @@ class Com_HierarchyInstallerScript
 
 		if ($buffer !== false)
 		{
-			jimport('joomla.installer.helper');
-			$queries = JInstallerHelper::splitSql($buffer);
+			$queries = \JDatabaseDriver::splitSql($buffer)
 
 			if (count($queries) != 0)
 			{
@@ -124,7 +124,7 @@ class Com_HierarchyInstallerScript
 
 						if (!$db->query())
 						{
-							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+							$this->setMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), 'error');
 
 							return false;
 						}
@@ -159,9 +159,9 @@ class Com_HierarchyInstallerScript
 	private function _installSubextensions($parent)
 	{
 		$src = $parent->getParent()->getPath('source');
-		$db  = JFactory::getDbo();
+		$db  = Factory::getDbo();
 
-		$status = new JObject;
+		$status = new CMSObject;
 		$status->modules = array();
 
 		// Plugins installation
@@ -204,7 +204,7 @@ class Com_HierarchyInstallerScript
 						$db->setQuery($query);
 						$count = $db->loadResult();
 
-						$installer = new JInstaller;
+						$installer = new Installer;
 						$result = $installer->install($path);
 
 						$status->plugins[] = array('name' => $plugin, 'group' => $folder, 'result' => $result, 'status' => $published);
@@ -251,9 +251,9 @@ class Com_HierarchyInstallerScript
 	{
 		jimport('joomla.installer.installer');
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
-		$status = new JObject;
+		$status = new CMSObject;
 		$status->modules = array();
 		$status->plugins = array();
 
@@ -279,7 +279,7 @@ class Com_HierarchyInstallerScript
 
 						if ($id)
 						{
-							$installer = new JInstaller;
+							$installer = new Installer;
 							$result = $installer->uninstall('plugin', $id);
 							$status->plugins[] = array(
 								'name' => 'plg_' . $plugin,

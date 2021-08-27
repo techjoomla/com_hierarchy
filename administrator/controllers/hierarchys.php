@@ -9,16 +9,18 @@
 
 // No direct access.
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.controlleradmin');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 /**
  * The Hierarchys List Controller
  *
  * @since  1.6
  */
-class HierarchyControllerHierarchys extends JControllerAdmin
+class HierarchyControllerHierarchys extends AdminController
 {
 	/**
 	 * Proxy for getModel
@@ -47,23 +49,22 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	 */
 	public function csvImport()
 	{
-		jimport('joomla.filesystem.file');
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Start file heandling functionality
 		$fname       = $_FILES['csvfile']['name'];
 		$rowNum      = 0;
-		$uploadsDir = JFactory::getApplication()->getCfg('tmp_path') . '/' . $fname;
-		JFile::upload($_FILES['csvfile']['tmp_name'], $uploadsDir);
+		$uploadsDir = Factory::getApplication()->get('tmp_path') . '/' . $fname;
+		File::upload($_FILES['csvfile']['tmp_name'], $uploadsDir);
 
 		if ($file = fopen($uploadsDir, "r"))
 		{
-			$ext = JFile::getExt($uploadsDir);
+			$ext = File::getExt($uploadsDir);
 
 			if ($ext != 'csv')
 			{
-				$app->enqueueMessage(JText::_('COM_HIERARCHY_CSV_FORMAT_ERROR'), 'Message');
-				$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false));
+				$app->enqueueMessage(Text::_('COM_HIERARCHY_CSV_FORMAT_ERROR'), 'Message');
+				$app->redirect(Route::_('index.php?option=com_hierarchy&view=hierarchys', false));
 
 				return;
 			}
@@ -100,14 +101,14 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 		}
 		else
 		{
-			$app->enqueueMessage(JText::_('COM_HIERARCHY_IMPORT_CSV_ERROR'), 'error');
-			$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false));
+			$app->enqueueMessage(Text::_('COM_HIERARCHY_IMPORT_CSV_ERROR'), 'error');
+			$app->redirect(Route::_('index.php?option=com_hierarchy&view=hierarchys', false));
 
 			return;
 		}
 
 		$model = $this->getModel();
-		$userID = JFactory::getUser()->id;
+		$userID = Factory::getUser()->id;
 
 		$data = array();
 
@@ -123,8 +124,10 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 			$result = $model->save($data);
 		}
 
-		$msg = JText::_('COM_HIERARCHY_IMPORT_CSV_SUCCESS_MSG');
-		$app->redirect(JRoute::_('index.php?option=com_hierarchy&view=hierarchys', false), $msg);
+		$msg = Text::_('COM_HIERARCHY_IMPORT_CSV_SUCCESS_MSG');
+
+ 		$app->enqueueMessage($msg, 'success');
+		$app->redirect(Route::_('index.php?option=com_hierarchy&view=hierarchys', false));
 
 		return;
 	}
@@ -140,7 +143,7 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	 */
 	public function getUserId($email)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
 			->from($db->quoteName('#__users'))
@@ -160,7 +163,7 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 	public function remove()
 	{
 		$model = $this->getModel();
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$post  = $input->post;
 		$userIds = $post->get('cid', '', 'ARRAY');
 
@@ -181,11 +184,11 @@ class HierarchyControllerHierarchys extends JControllerAdmin
 
 		if ($model->delete($hierarchyIds))
 		{
-			$msg = JText::_('COM_HIERARCHY_HIERARCHY_DELETED_SCUSS');
+			$msg = Text::_('COM_HIERARCHY_HIERARCHY_DELETED_SCUSS');
 		}
 		else
 		{
-			$msg = JText::_('COM_HIERARCHY_HIERARCHY_DELETED_ERROR');
+			$msg = Text::_('COM_HIERARCHY_HIERARCHY_DELETED_ERROR');
 		}
 
 		$this->setRedirect("index.php?option=com_hierarchy&view=hierarchys", $msg);

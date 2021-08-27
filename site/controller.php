@@ -9,6 +9,8 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controller');
 
@@ -17,7 +19,7 @@ jimport('joomla.application.component.controller');
  *
  * @since  1.6
  */
-class HierarchyController extends JControllerLegacy
+class HierarchyController extends BaseController
 {
 	/**
 	 * Method to display a view.
@@ -33,8 +35,8 @@ class HierarchyController extends JControllerLegacy
 	{
 		require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
 
-		$view = JFactory::getApplication()->input->getCmd('view', 'hierarchys');
-		JFactory::getApplication()->input->set('view', $view);
+		$view = Factory::getApplication()->input->getCmd('view', 'hierarchys');
+		Factory::getApplication()->input->set('view', $view);
 
 		parent::display($cachable, $urlparams);
 

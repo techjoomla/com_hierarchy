@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.modellist');
 
@@ -16,7 +18,7 @@ jimport('joomla.application.component.modellist');
  *
  * @since  1.6
  */
-class HierarchyModelHierarchys extends JModelList
+class HierarchyModelHierarchys extends ListModel
 {
 	/**
 	 * Constructor.
@@ -38,7 +40,7 @@ class HierarchyModelHierarchys extends JModelList
 		}
 
 		// Create a new query object.
-		$this->db = JFactory::getDbo();
+		$this->db = Factory::getDbo();
 
 		parent::__construct($config);
 	}
@@ -58,10 +60,10 @@ class HierarchyModelHierarchys extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// List state information
-		$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'));
+		$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->get('list_limit'));
 		$this->setState('list.limit', $limit);
 
 		$limitstart = $app->input->getInt('limitstart', 0);
@@ -87,7 +89,7 @@ class HierarchyModelHierarchys extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// Create a new query object.+
 		$query = $this->db->getQuery(true);
@@ -172,7 +174,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		foreach ($results as $res)
 		{
-			$user = JFactory::getUser($res->user_id);
+			$user = Factory::getUser($res->user_id);
 			$res->reportsToName = $user->name;
 		}
 
@@ -199,7 +201,7 @@ class HierarchyModelHierarchys extends JModelList
 
 		foreach ($results as $res)
 		{
-			$user = JFactory::getUser($res->user_id);
+			$user = Factory::getUser($res->user_id);
 			$res->reportingTo = $user->name;
 		}
 

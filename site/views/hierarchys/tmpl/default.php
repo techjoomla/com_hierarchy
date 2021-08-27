@@ -8,12 +8,15 @@
  */
 // no direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
-JHtml::_('bootstrap.tooltip');
-JHtml::_('behavior.multiselect');
-JHtml::_('formbehavior.chosen', 'select');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.multiselect');
+HTMLHelper::_('formbehavior.chosen', 'select');
 
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
@@ -22,10 +25,10 @@ $saveOrder  = $listOrder == 'a.ordering';
 if ($saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_tjlms&task=venues.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'venueList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
+	HTMLHelper::_('sortablelist.sortable', 'venueList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
 }
 
-$app = JFactory::getApplication();
+$app = Factory::getApplication();
 $menulistChart = $app->getParams()->get('select_layout');
 ?>
 <div class="container-fluid">
@@ -33,7 +36,7 @@ $menulistChart = $app->getParams()->get('select_layout');
 	if ($this->params->get('show_page_heading', 1)):
 		?>
 		<div class="page-header">
-			<h2><?php echo JText::_('COM_HIERARCHY_TITLE'); ?></h2>
+			<h2><?php echo Text::_('COM_HIERARCHY_TITLE'); ?></h2>
 		</div>
 		<?php
 	endif;
