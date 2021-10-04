@@ -16,6 +16,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Installer\Installer;
 
 /**
  * Hierarchy Installer
@@ -110,7 +111,7 @@ class Com_HierarchyInstallerScript
 
 		if ($buffer !== false)
 		{
-			$queries = \JDatabaseDriver::splitSql($buffer)
+			$queries = \JDatabaseDriver::splitSql($buffer);
 
 			if (count($queries) != 0)
 			{
@@ -122,7 +123,7 @@ class Com_HierarchyInstallerScript
 					{
 						$db->setQuery($query);
 
-						if (!$db->query())
+						if (!$db->execute())
 						{
 							$this->setMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), 'error');
 
