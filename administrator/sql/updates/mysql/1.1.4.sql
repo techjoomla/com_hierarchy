@@ -7,4 +7,4 @@ ALTER TABLE `#__hierarchy_users` CHANGE `modified_by` `modified_by` INT(11)  NOT
 ALTER TABLE `#__hierarchy_users` CHANGE `created_date` `created_date` datetime DEFAULT NULL,
 ALTER TABLE `#__hierarchy_users` CHANGE `modified_date` `modified_date` datetime DEFAULT NULL,
 ALTER TABLE `#__hierarchy_users` CHANGE `state` `state` INT(11)  NOT NULL DEFAULT 0;
-ALTER TABLE `#__hierarchy_users` CHANGE `note` `note` TEXT NOT NULL DEFAULT '';
+ALTER TABLE `#__hierarchy_users` CHANGE `note` `note` TEXT DEFAULT NULL;
