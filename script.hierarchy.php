@@ -1,10 +1,10 @@
 <?php
 /**
  * @version    SVN: <svn_id>
- * @package    Com_Tjlms
- * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
- * Shika is free software. This version may have been modified pursuant
+ * @package    Com_Hierarchy
+ * @copyright  Copyright (C) 2016 - 2021 Techjoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see http://www.gnu.org/licenses/gpl-2.0.html
+ * Hierarchy Management Extension is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
@@ -16,6 +16,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Installer\Installer;
 
 /**
  * Hierarchy Installer
@@ -110,7 +111,7 @@ class Com_HierarchyInstallerScript
 
 		if ($buffer !== false)
 		{
-			$queries = \JDatabaseDriver::splitSql($buffer)
+			$queries = \JDatabaseDriver::splitSql($buffer);
 
 			if (count($queries) != 0)
 			{
@@ -122,7 +123,7 @@ class Com_HierarchyInstallerScript
 					{
 						$db->setQuery($query);
 
-						if (!$db->query())
+						if (!$db->execute())
 						{
 							$this->setMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), 'error');
 
