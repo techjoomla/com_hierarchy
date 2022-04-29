@@ -81,7 +81,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 *
 	 * @since   1.1.1
 	 */
-	public function hierarchyOnAfterSaveHierarchy($data, $isNew)
+	public function onAfterHierarchySaveHierarchy($data, $isNew)
 	{
 		if (!$this->params->get('logActionForAssigningManager', 1) || !$isNew)
 		{
@@ -120,7 +120,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	 *
 	 * @since   1.1.1
 	 */
-	public function hierarchyOnAfterDeleteHierarchy($data)
+	public function onAfterHierarchyDeleteHierarchy($data)
 	{
 		if (!$this->params->get('logActionForRemoveManager', 1) || empty($data['id']))
 		{

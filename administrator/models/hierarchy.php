@@ -176,7 +176,7 @@ class HierarchyModelHierarchy extends AdminModel
 		// On before assigning manager
 		PluginHelper::importPlugin("system");
 		PluginHelper::importPlugin("actionlog");
-		Factory::getApplication()->triggerEvent("hierarchyOnBeforeSaveHierarchy", array($data, $isNew));
+		Factory::getApplication()->triggerEvent("onBeforeHierarchySaveHierarchy", array($data, $isNew));
 
 		if (parent::save($data))
 		{
@@ -185,7 +185,7 @@ class HierarchyModelHierarchy extends AdminModel
 			// On after assigning manager
 			PluginHelper::importPlugin("system");
 			PluginHelper::importPlugin("actionlog");
-			Factory::getApplication()->triggerEvent("hierarchyOnAfterSaveHierarchy", array($data, $isNew));
+			Factory::getApplication()->triggerEvent("onAfterHierarchySaveHierarchy", array($data, $isNew));
 
 			return $id;
 		}
@@ -404,14 +404,14 @@ class HierarchyModelHierarchy extends AdminModel
 				// On before removing manager
 				PluginHelper::importPlugin("system");
 				PluginHelper::importPlugin("actionlog");
-				Factory::getApplication()->triggerEvent("hierarchyOnBeforeDeleteHierarchy", array($data));
+				Factory::getApplication()->triggerEvent("onBeforeHierarchyDeleteHierarchy", array($data));
 
 				if ($hierarchyTable->delete($data['id']))
 				{
 					// On after removing manager
 					PluginHelper::importPlugin("system");
 					PluginHelper::importPlugin("actionlog");
-					Factory::getApplication()->triggerEvent("hierarchyOnAfterDeleteHierarchy", array($data));
+					Factory::getApplication()->triggerEvent("onAfterHierarchyDeleteHierarchy", array($data));
 				}
 				else
 				{
@@ -429,14 +429,14 @@ class HierarchyModelHierarchy extends AdminModel
 			// On before removing manager
 			PluginHelper::importPlugin("system");
 			PluginHelper::importPlugin("actionlog");
-			Factory::getApplication()->triggerEvent("hierarchyOnBeforeDeleteHierarchy", array($data));
+			Factory::getApplication()->triggerEvent("onBeforeHierarchyDeleteHierarchy", array($data));
 
 			if ($hierarchyTable->delete($data['id']))
 			{
 				// On after removing manager
 				PluginHelper::importPlugin("system");
 				PluginHelper::importPlugin("actionlog");
-				Factory::getApplication()->triggerEvent("hierarchyOnAfterDeleteHierarchy", array($data));
+				Factory::getApplication()->triggerEvent("onAfterHierarchyDeleteHierarchy", array($data));
 			}
 			else
 			{
