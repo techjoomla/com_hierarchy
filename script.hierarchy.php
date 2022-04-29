@@ -2,7 +2,7 @@
 /**
  * @version    SVN: <svn_id>
  * @package    Com_Hierarchy
- * @copyright  Copyright (C) 2016 - 2021 Techjoomla. All rights reserved.
+ * @copyright  Copyright (C) 2016 - 2022 Techjoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later; see http://www.gnu.org/licenses/gpl-2.0.html
  * Hierarchy Management Extension is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
