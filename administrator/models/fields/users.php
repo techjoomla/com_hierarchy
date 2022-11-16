@@ -21,7 +21,7 @@ JFormHelper::loadFieldClass('list');
  *
  * @since  1.0.0
  */
-class JFormFieldUsers extends FormFieldList
+class JFormFieldUsers extends JFormFieldList
 {
 	/**
 	 * The form field type.
