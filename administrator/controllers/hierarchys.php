@@ -114,14 +114,20 @@ class HierarchyControllerHierarchys extends AdminController
 
 		foreach ($userData as $user)
 		{
-			$data['id']         = '';
-			$data['user_id']    = !empty($user['User_id']) ? $user['User_id'] : $this->getUserId($user['User_email']);
-			$data['reports_to'] = !empty($user['Reports_to']) ? $user['Reports_to'] : $this->getUserId($user['Reports_to_email']);
-			$data['context']    = $user['Context'];
-			$data['context_id'] = $user['Context_id'];
-			$data['created_by'] = $userID;
+			$reportsTo = !empty($user['Reports_to']) ? explode("|", $user['Reports_to']) : $this->getUserId($user['Reports_to_email']);
 
-			$result = $model->save($data);
+			foreach ($reportsTo as $reportTo)
+			{
+				$data['id']         = '';
+				$user_id 			= $this->getUserId($user['User_email']);
+				$data['user_id']    = !empty($user['User_id']) ? $user['User_id'] : $user_id[0];
+				$data['context']    = $user['Context'];
+				$data['context_id'] = $user['Context_id'];
+				$data['reports_to'] = $reportTo;
+				$data['created_by'] = $userID;
+
+				$result = $model->save($data);
+			}
 		}
 
 		$msg = Text::_('COM_HIERARCHY_IMPORT_CSV_SUCCESS_MSG');
@@ -144,13 +150,15 @@ class HierarchyControllerHierarchys extends AdminController
 	public function getUserId($email)
 	{
 		$db = Factory::getDbo();
+		$emails = "'" . implode ("', '", explode("|", $email)) . "'";
+
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
 			->from($db->quoteName('#__users'))
-			->where($db->quoteName('email') . ' = ' . $db->quote($email));
+			->where($db->quoteName('email') . ' IN(' . $emails . ')');
 		$db->setQuery($query);
 
-		return $db->loadResult();
+		return $db->loadColumn();
 	}
 
 	/**
