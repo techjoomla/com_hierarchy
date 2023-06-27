@@ -32,9 +32,12 @@ class HierarchyHelper
 	 */
 	public static function addSubmenu($vName = '')
 	{
-		JHtmlSidebar::addEntry(Text::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'index.php?option=com_hierarchy&view=hierarchys', $vName == 'hierarchys');
+		if (JVERSION < '4.0.0')
+		{
+			JHtmlSidebar::addEntry(Text::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'index.php?option=com_hierarchy&view=hierarchys', $vName == 'hierarchys');
+		}
 	}
-
+	
 	/**
 	 * Gets a list of the actions that can be performed.
 	 *

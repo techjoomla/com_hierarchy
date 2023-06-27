@@ -19,7 +19,7 @@ use Joomla\CMS\Uri\Uri;
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('behavior.modal', 'a.modal');
+HTMLHelper::_('bootstrap.renderModal', 'a.modal');
 HTMLHelper::_('behavior.keepalive');
 
 // Import CSS
