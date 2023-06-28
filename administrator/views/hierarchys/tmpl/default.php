@@ -19,8 +19,16 @@ use Joomla\CMS\Uri\Uri;
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('behavior.modal', 'a.modal');
 HTMLHelper::_('behavior.keepalive');
+
+if (JVERSION < '4.0.0')
+{
+	HTMLHelper::_('behavior.modal', 'a.modal');
+}
+else
+{
+	HTMLHelper::_('bootstrap.renderModal', 'a.modal');
+}
 
 // Import CSS
 HTMLHelper::_('script', 'jui/fielduser.min.js', array('version' => 'auto', 'relative' => true));
