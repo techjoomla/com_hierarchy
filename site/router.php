@@ -14,12 +14,12 @@ use Joomla\CMS\Component\Router\RouterBase;
 use Joomla\CMS\Table\Table;
 
 // Add Table Path
-JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
 
 /**
- * Routing class from com_tjlms
+ * Routing class from com_hierarchy
  *
- * @subpackage  com_tjlms
+ * @subpackage  com_hierarchy
  *
  * @since       1.0.0
  */
@@ -37,31 +37,31 @@ class HierarchyRouter extends RouterBase
 	public function build(&$query)
 	{
 		$segments = array();
-	
+
 		if (isset($query['task']))
 		{
 			$segments[] = implode('/', explode('.', $query['task']));
-		
+
 			unset($query['task']);
 		}
-	
+
 		if (isset($query['view']))
 		{
 			$segments[] = $query['view'];
-		
+
 			unset($query['view']);
 		}
-	
+
 		if (isset($query['id']))
 		{
 			$segments[] = $query['id'];
-		
+
 			unset($query['id']);
 		}
-	
+
 		return $segments;
 	}
-	
+
 	/**
 	 * Parse the segments of a URL.
 	 *
@@ -74,14 +74,14 @@ class HierarchyRouter extends RouterBase
 	public function parse(&$segments)
 	{
 		$vars = array();
-	
+
 		// View is always the first element of the array
 		$vars['view'] = array_shift($segments);
-	
+
 		while (!empty($segments))
 		{
 			$segment = array_pop($segments);
-		
+
 			if (is_numeric($segment))
 			{
 				$vars['id'] = $segment;
@@ -91,7 +91,7 @@ class HierarchyRouter extends RouterBase
 				$vars['task'] = $vars['view'] . '.' . $segment;
 			}
 		}
-	
+
 		return $vars;
 	}
 }
