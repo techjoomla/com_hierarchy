@@ -10,6 +10,21 @@
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\Router\RouterBase;
+use Joomla\CMS\Table\Table;
+
+// Add Table Path
+Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_hierarchy/tables');
+
+/**
+ * Routing class from com_hierarchy
+ *
+ * @subpackage  com_hierarchy
+ *
+ * @since       1.0.0
+ */
+class HierarchyRouter extends RouterBase
+{
 /**
  * Build the route for the com_hierarchy component
  *
@@ -19,63 +34,64 @@ defined('_JEXEC') or die;
  *
  * @since  1.5
  */
-function hierarchyBuildRoute(&$query)
-{
-	$segments = array();
-
-	if (isset($query['task']))
+	public function build(&$query)
 	{
-		$segments[] = implode('/', explode('.', $query['task']));
+		$segments = array();
 
-		unset($query['task']);
-	}
-
-	if (isset($query['view']))
-	{
-		$segments[] = $query['view'];
-
-		unset($query['view']);
-	}
-
-	if (isset($query['id']))
-	{
-		$segments[] = $query['id'];
-
-		unset($query['id']);
-	}
-
-	return $segments;
-}
-
-/**
- * Parse the segments of a URL.
- *
- * @param   array  $segments  The segments of the URL to parse.
- *
- * @return  array  The URL attributes to be used by the application.
- *
- * @since  1.5
- */
-function hierarchyParseRoute($segments)
-{
-	$vars = array();
-
-	// View is always the first element of the array
-	$vars['view'] = array_shift($segments);
-
-	while (!empty($segments))
-	{
-		$segment = array_pop($segments);
-
-		if (is_numeric($segment))
+		if (isset($query['task']))
 		{
-			$vars['id'] = $segment;
+			$segments[] = implode('/', explode('.', $query['task']));
+
+			unset($query['task']);
 		}
-		else
+
+		if (isset($query['view']))
 		{
-			$vars['task'] = $vars['view'] . '.' . $segment;
+			$segments[] = $query['view'];
+
+			unset($query['view']);
 		}
+
+		if (isset($query['id']))
+		{
+			$segments[] = $query['id'];
+
+			unset($query['id']);
+		}
+
+		return $segments;
 	}
 
-	return $vars;
+	/**
+	 * Parse the segments of a URL.
+	 *
+	 * @param   array  $segments  The segments of the URL to parse.
+	 *
+	 * @return  array  The URL attributes to be used by the application.
+	 *
+	 * @since  1.5
+	 */
+	public function parse(&$segments)
+	{
+		$vars = array();
+
+		// View is always the first element of the array
+		$vars['view'] = array_shift($segments);
+
+		while (!empty($segments))
+		{
+			$segment = array_pop($segments);
+
+			if (is_numeric($segment))
+			{
+				$vars['id'] = $segment;
+			}
+			else
+			{
+				$vars['task'] = $vars['view'] . '.' . $segment;
+			}
+		}
+
+		return $vars;
+	}
 }
