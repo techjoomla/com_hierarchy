@@ -15,8 +15,8 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-HTMLHelper::_('behavior.tooltip');
-HTMLHelper::_('behavior.formvalidation');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 $input   = Factory::getApplication()->input;
 $userId = $input->get('user_id', 0);
