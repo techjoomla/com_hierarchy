@@ -9,16 +9,21 @@
 
 // No direct access
 defined('_JEXEC') or die;
-$user = JFactory::getUser();
-$JUriRoot = JUri::root();
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+$user = Factory::getUser();
+$UriRoot = Uri::root();
 ?>
 <div class="alert alert-info" role="alert">
-	<?php echo JText::_('COM_HIERARCHY_SHOW_LIST');?><b><?php echo $user->name . '.'; ?></b>
+	<?php echo Text::_('COM_HIERARCHY_SHOW_LIST');?><b><?php echo $user->name . '.'; ?></b>
 </div>
-<form action="<?php echo JRoute::_('index.php?option=com_hierarchy&view=hierarchys'); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo Route::_('index.php?option=com_hierarchy&view=hierarchys'); ?>" method="post" name="adminForm" id="adminForm">
 	<div class=" col-lg-3 col-md-6 col-sm-6 col-xs-12">
 		<div class="input-group">
-			<input type="text" placeholder="<?php echo JText::_('COM_HIERARCHY_ENTER_USER_NAME'); ?>" name="filter_search" id="filter_search" value="<?php echo $srch = ($this->lists['search'])?$this->lists['search']:''; ?>" class="form-control" onchange="document.adminForm.submit();" />
+			<input type="text" placeholder="<?php echo Text::_('COM_HIERARCHY_ENTER_USER_NAME'); ?>" name="filter_search" id="filter_search" value="<?php echo $srch = ($this->lists['search'])?$this->lists['search']:''; ?>" class="form-control" onchange="document.adminForm.submit();" />
 			<span class="input-group-btn">
 				<button type="button" onclick="this.form.submit();" class="btn btn-success tip hasTooltip" data-original-title="Search"><i class="fa fa-search"></i></button>
 				<button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();" class="btn btn-primary tip hasTooltip" data-original-title="Clear"><i class="fa fa-remove"></i></button>
@@ -27,7 +32,7 @@ $JUriRoot = JUri::root();
 	</div>
 	<div class=" col-lg-8 col-md-6 col-sm-6 col-xs-12">
 		<div class="input-group pull-right">
-			<?php //echo JHtml::_('select.genericlist', $this->contextList, "filter_context", 'style="display:inline-block;" class="selectpicker" data-style="btn-primary" size="1" data-live-search="true"
+			<?php //echo HTMLHelper::_('select.genericlist', $this->contextList, "filter_context", 'style="display:inline-block;" class="selectpicker" data-style="btn-primary" size="1" data-live-search="true"
 				//onchange="document.adminForm.submit();" name="filter_context"',"value", "text", $this->lists['contextList']);
 			?>
 		</div>
@@ -35,7 +40,7 @@ $JUriRoot = JUri::root();
 	<div class=" col-lg-1 col-md-6 col-sm-6 col-xs-12">
 		<div class="btn-group pull-right hidden-xs">
 			<label for="limit" class="element-invisible">
-				<?php echo JText::_('JGLOBAL_DISPLAY_NUM'); ?>
+				<?php echo Text::_('JGLOBAL_DISPLAY_NUM'); ?>
 			</label>
 			<?php echo $this->pagination->getLimitBox(); ?>
 		</div>
@@ -46,7 +51,7 @@ $JUriRoot = JUri::root();
 	{
 		?>
 		<div class="alert alert-info" role="alert">
-			<?php echo JText::_('COM_HIERARCHY_NO_USER'); ?>
+			<?php echo Text::_('COM_HIERARCHY_NO_USER'); ?>
 		</div>
 		<?php
 	}
@@ -57,7 +62,7 @@ $JUriRoot = JUri::root();
 			<thead>
 				<tr>
 					<th class='left'>
-						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_NAME', 'a.name', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_NAME', 'a.name', $listDirn, $listOrder); ?>
 					</th>
 <!--
 					<th class='left'>
@@ -68,10 +73,10 @@ $JUriRoot = JUri::root();
 					</th>
 -->
 					<th class='left'>
-						<?php echo JText::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
+						<?php echo Text::_('COM_HIERARCHY_HIERARCHYS_REPORT_TO'); ?>
 					</th>
 					<th class='right'>
-						<?php echo JHtml::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_HIERARCHY_HIERARCHYS_USER_ID', 'a.id', $listDirn, $listOrder); ?>
 					</th>
 				</tr>
 			</thead>
@@ -120,7 +125,7 @@ $JUriRoot = JUri::root();
 
 							foreach($reportsTo as $reportTo)
 							{
-								$user = JFactory::getUser($reportTo->user_id);
+								$user = Factory::getUser($reportTo->user_id);
 								$name[] = $user->name;
 							}
 
@@ -149,10 +154,10 @@ $JUriRoot = JUri::root();
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
 <script type="text/javascript">
-	var JUriRoot = "<?php echo $JUriRoot; ?>";
+	var UriRoot = "<?php echo $UriRoot; ?>";
 	var gravatar = "<?php echo $this->gravatar; ?>";
 	hierarchySite.hierarchys.showUserNames();
 </script>

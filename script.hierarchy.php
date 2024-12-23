@@ -1,10 +1,10 @@
 <?php
 /**
  * @version    SVN: <svn_id>
- * @package    Com_Tjlms
- * @copyright  Copyright (C) 2005 - 2014. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
- * Shika is free software. This version may have been modified pursuant
+ * @package    Com_Hierarchy
+ * @copyright  Copyright (C) 2016 - 2022 Techjoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see http://www.gnu.org/licenses/gpl-2.0.html
+ * Hierarchy Management Extension is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
@@ -12,9 +12,11 @@
 
 // No direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Installer\InstallerHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Installer\Installer;
 
 /**
  * Hierarchy Installer
@@ -92,7 +94,7 @@ class Com_HierarchyInstallerScript
 	 */
 	public function installSqlFiles($parent)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		// Obviously you may have to change the path and name if your installation SQL file ;)
 		if (method_exists($parent, 'extension_root'))
@@ -109,8 +111,7 @@ class Com_HierarchyInstallerScript
 
 		if ($buffer !== false)
 		{
-			jimport('joomla.installer.helper');
-			$queries = JInstallerHelper::splitSql($buffer);
+			$queries = \JDatabaseDriver::splitSql($buffer);
 
 			if (count($queries) != 0)
 			{
@@ -122,9 +123,9 @@ class Com_HierarchyInstallerScript
 					{
 						$db->setQuery($query);
 
-						if (!$db->query())
+						if (!$db->execute())
 						{
-							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+							$this->setMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), 'error');
 
 							return false;
 						}
@@ -159,9 +160,9 @@ class Com_HierarchyInstallerScript
 	private function _installSubextensions($parent)
 	{
 		$src = $parent->getParent()->getPath('source');
-		$db  = JFactory::getDbo();
+		$db  = Factory::getDbo();
 
-		$status = new JObject;
+		$status = new CMSObject;
 		$status->modules = array();
 
 		// Plugins installation
@@ -204,7 +205,7 @@ class Com_HierarchyInstallerScript
 						$db->setQuery($query);
 						$count = $db->loadResult();
 
-						$installer = new JInstaller;
+						$installer = new Installer;
 						$result = $installer->install($path);
 
 						$status->plugins[] = array('name' => $plugin, 'group' => $folder, 'result' => $result, 'status' => $published);
@@ -251,9 +252,9 @@ class Com_HierarchyInstallerScript
 	{
 		jimport('joomla.installer.installer');
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
-		$status = new JObject;
+		$status = new CMSObject;
 		$status->modules = array();
 		$status->plugins = array();
 
@@ -279,7 +280,7 @@ class Com_HierarchyInstallerScript
 
 						if ($id)
 						{
-							$installer = new JInstaller;
+							$installer = new Installer;
 							$result = $installer->uninstall('plugin', $id);
 							$status->plugins[] = array(
 								'name' => 'plg_' . $plugin,

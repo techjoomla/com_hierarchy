@@ -8,7 +8,10 @@
  */
 
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.form.formfield');
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filesystem\File;
 
 /**
  * JFormFieldIntegrations class
@@ -17,7 +20,7 @@ jimport('joomla.form.formfield');
  * @subpackage  component
  * @since       1.0
  */
-class JFormFieldIntegrations extends JFormField
+class FormFieldIntegrations extends FormField
 {
 	/**
 	 *Function to construct a hierarchy view
@@ -63,37 +66,37 @@ class JFormFieldIntegrations extends JFormField
 		if ($name == 'jform[integration]')
 		{
 			$options = array();
-			$options[] = JHtml::_('select.option', '2', JText::_('COM_HIERARCHY_NATIVE'));
+			$options[] = HTMLHelper::_('select.option', '2', Text::_('COM_HIERARCHY_NATIVE'));
 
-			if (JFile::exists($this->communityMainFile))
+			if (File::exists($this->communityMainFile))
 			{
-				$options[] = JHtml::_('select.option', '1', JText::_('COM_HIERARCHY_JOMSOCIAL'));
+				$options[] = HTMLHelper::_('select.option', '1', Text::_('COM_HIERARCHY_JOMSOCIAL'));
 			}
 
-			if (JFile::exists($this->jeventsMainFile))
+			if (File::exists($this->jeventsMainFile))
 			{
-				$options[] = JHtml::_('select.option', '3', JText::_('COM_HIERARCHY_JEVENT'));
+				$options[] = HTMLHelper::_('select.option', '3', Text::_('COM_HIERARCHY_JEVENT'));
 			}
 
-			if (JFile::exists($this->esMainFile))
+			if (File::exists($this->esMainFile))
 			{
-				$options[] = JHtml::_('select.option', '4', JText::_('COM_HIERARCHY_EASYSOCIAL'));
+				$options[] = HTMLHelper::_('select.option', '4', Text::_('COM_HIERARCHY_EASYSOCIAL'));
 			}
 
-			if (JFile::exists($this->easyProMainFile))
+			if (File::exists($this->easyProMainFile))
 			{
-				$options[] = JHtml::_('select.option', '5', JText::_('COM_HIERARCHY_EASYPROFILE'));
+				$options[] = HTMLHelper::_('select.option', '5', Text::_('COM_HIERARCHY_EASYPROFILE'));
 			}
 
-			if (JFile::exists($this->cbMainFile))
+			if (File::exists($this->cbMainFile))
 			{
-				$options[] = JHtml::_('select.option', '6', JText::_('COM_HIERARCHY_COMMUNITY_BUILDER'));
+				$options[] = HTMLHelper::_('select.option', '6', Text::_('COM_HIERARCHY_COMMUNITY_BUILDER'));
 			}
 
 			$fieldName = $name;
 		}
 
-		$html = JHtml::_('select.genericlist',  $options, $fieldName, 'class="inputbox"', 'value', 'text', $value, $controlName . $name);
+		$html = HTMLHelper::_('select.genericlist',  $options, $fieldName, 'class="inputbox"', 'value', 'text', $value, $controlName . $name);
 
 		return $html;
 	}

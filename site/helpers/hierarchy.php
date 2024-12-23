@@ -8,6 +8,10 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Hierarchys helper.
@@ -23,7 +27,7 @@ class HierarchyFrontendHelper
 	 */
 	public function __construct()
 	{
-		$this->params      = JComponentHelper::getParams('com_hierarchy');
+		$this->params      = ComponentHelper::getParams('com_hierarchy');
 		$this->integration = $this->params->get('integration', 2);
 
 		if ($this->integration != 'none')
@@ -83,7 +87,7 @@ class HierarchyFrontendHelper
 
 		$override = $searchTmpPath . '/templates/' . $defTemplate . '/html/com_hierarchy/' . $viewName . '/' . $layoutName;
 
-		if (JFile::exists($override))
+		if (File::exists($override))
 		{
 			return $view = $override;
 		}
@@ -106,7 +110,7 @@ class HierarchyFrontendHelper
 	{
 		try
 		{
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 
 			// Get current status for Unset previous template from being default
 			// For front end => client_id=0
@@ -135,7 +139,7 @@ class HierarchyFrontendHelper
 	 */
 	public function getUserAvatar($userid, $relative = false)
 	{
-		$user        = JFactory::getUser($userid);
+		$user        = Factory::getUser($userid);
 		$gravatar    = $this->params->get('gravatar');
 		$uimage      = '';
 
@@ -143,7 +147,7 @@ class HierarchyFrontendHelper
 		{
 			if ($gravatar)
 			{
-				$user     = JFactory::getUser($userid);
+				$user     = Factory::getUser($userid);
 				$usermail = $user->get('email');
 
 				// Refer https://en.gravatar.com/site/implement/images/php/
@@ -160,7 +164,7 @@ class HierarchyFrontendHelper
 				}
 				else
 				{
-					$uimage = JUri::root() . 'media/com_hierarchy/images/default_avatar.png';
+					$uimage = Uri::root() . 'media/com_hierarchy/images/default_avatar.png';
 				}
 			}
 		}

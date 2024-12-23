@@ -32,7 +32,7 @@ var hierarchyAdmin =
 
 		getAutoSuggestUsers: function() {
 			/** Invite user field tokenfield **/
-			inviteTaskUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchy.getAutoSuggestUsers&user_id=' + userID;
+			inviteTaskUrl = UriRoot + 'index.php?option=com_hierarchy&task=hierarchy.getAutoSuggestUsers&user_id=' + userID;
 
 			jQuery('#jform_reports_to').tokenize({
 				placeholder: Joomla.JText._('COM_HIERARCHY_USERNAMES_DESC'),
@@ -76,7 +76,7 @@ var hierarchySite =
 		},
 
 		drillUpDrillDownList: function(userID) {
-			reportsUrl = JUriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getReportsTo&user_id=' + userID;
+			reportsUrl = UriRoot + 'index.php?option=com_hierarchy&task=hierarchys.getReportsTo&user_id=' + userID;
 			jQuery.ajax({
 				type:'POST',
 				url:reportsUrl,

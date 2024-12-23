@@ -9,15 +9,18 @@
 
 // No direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.view');
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a list of Hierarchy.
  *
  * @since  1.6
  */
-class HierarchyViewHierarchys extends JViewLegacy
+class HierarchyViewHierarchys extends HtmlView
 {
 	protected $items;
 
@@ -34,7 +37,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 
@@ -64,7 +67,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$this->activeFilters = $this->get('ActiveFilters');
 
 		// Fetch client and client ID from URL
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$this->client = $jinput->get('client');
 		$this->clientId = $jinput->get('client_id');
 
@@ -112,43 +115,43 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$canDo = HierarchyHelper::getActions($state->get('filter.category_id'));
 
 		$message = array();
-		$message['success'] = JText::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
-		$message['error'] = JText::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
-		$message['inprogress'] = JText::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
-		$message['btn-name'] = JText::_("COM_HIERARCHY_EXPORT_CSV");
+		$message['success'] = Text::_("COM_HIERARCHY_EXPORT_FILE_SUCCESS");
+		$message['error'] = Text::_("COM_HIERARCHY_EXPORT_FILE_ERROR");
+		$message['inprogress'] = Text::_("COM_HIERARCHY_EXPORT_FILE_NOTICE");
+		$message['btn-name'] = Text::_("COM_HIERARCHY_EXPORT_CSV");
 
 		if ($canDo->get('core.csv.export'))
 		{
 			$bar->appendButton('CsvExport',  $message);
 		}
 
-		JToolBarHelper::title(JText::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
+		ToolbarHelper::title(Text::_('COM_HIERARCHY_TITLE_HIERARCHYS'), 'list');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/hierarchy';
 
 		$bar = JToolBar::getInstance('toolbar');
 		$buttonImport = '<a href="#import_append" class="btn button modal" rel="{size: {x: 800, y: 200}, ajaxOptions: {method: &quot;get&quot;}}">
-		<span class="icon-upload icon-white"></span>' . JText::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
+		<span class="icon-upload icon-white"></span>' . Text::_('COM_HIERARCHY_IMPORT_CSV') . '</a>';
 
 		if ($canDo->get('core.csv.import'))
 		{
 			$bar->appendButton('Custom', $buttonImport);
 		}
 
-		JToolbarHelper::deleteList('', 'hierarchys.remove', 'JTOOLBAR_DELETE');
+		ToolbarHelper::deleteList('', 'hierarchys.remove', 'JTOOLBAR_DELETE');
 
 		if ($canDo->get('core.edit.state'))
 		{
 			if (isset($this->items[0]->checked_out))
 			{
-				JToolBarHelper::custom('hierarchys.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
+				ToolbarHelper::custom('hierarchys.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
 			}
 		}
 
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::preferences('com_hierarchy');
+			ToolbarHelper::preferences('com_hierarchy');
 		}
 	}
 
@@ -162,9 +165,9 @@ class HierarchyViewHierarchys extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-			'a.id' => JText::_('JGRID_HEADING_ID'),
-			'a.user_id' => JText::_('COM_HIERARCHY_HIERARCHYS_USER_ID'),
-			'a.subuser_id' => JText::_('COM_HIERARCHY_HIERARCHYS_SUBUSER_ID')
+			'a.id' => Text::_('JGRID_HEADING_ID'),
+			'a.user_id' => Text::_('COM_HIERARCHY_HIERARCHYS_USER_ID'),
+			'a.subuser_id' => Text::_('COM_HIERARCHY_HIERARCHYS_SUBUSER_ID')
 		);
 	}
 }

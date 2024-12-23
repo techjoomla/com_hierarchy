@@ -9,13 +9,14 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Table\Table;
 
 /**
  * hierarchy Table class
  * 
  * @since  1.0.4
  */
-class HierarchyTableHierarchy extends JTable
+class HierarchyTableHierarchy extends Table
 {
 	/**
 	 * Constructor

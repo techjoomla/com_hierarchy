@@ -9,29 +9,33 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
-JHtml::_('bootstrap.tooltip');
-JHtml::_('behavior.multiselect');
-JHtml::stylesheet(JUri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.css');
-JHtml::stylesheet(JUri::root() . 'media/com_hierarchy/vendors/treant-js/collapsable.css');
-JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
-JHtml::script(JUri::root() . 'media/com_hierarchy/vendors/treant-js/Treant.js');
-$JUriRoot = JUri::root();
-$user = JFactory::getUser();
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.multiselect');
+HTMLHelper::_('stylesheet', 'media/com_hierarchy/vendors/treant-js/Treant.css');
+HTMLHelper::_('stylesheet', 'media/com_hierarchy/vendors/treant-js/collapsable.css');
+HTMLHelper::_('script', 'media/com_hierarchy/vendors/treant-js/vendor/raphael.js');
+HTMLHelper::_('script', 'media/com_hierarchy/vendors/treant-js/Treant.js');
+$UriRoot = Uri::root();
+$user = Factory::getUser();
 $userName = $user->name;
 
 foreach ($this->items as $hierarchy)
 {
-	$user = JFactory::getUser($hierarchy->user_id);
+	$user = Factory::getUser($hierarchy->user_id);
 	$hierarchy->repoToName = $user->name;
 }
 ?>
 <div class="alert alert-info" role="alert">
-	<?php echo JText::_('COM_HIERARCHY_SHOW_CHART');?><b><?php echo $userName . '.'; ?></b>
+	<?php echo Text::_('COM_HIERARCHY_SHOW_CHART');?><b><?php echo $userName . '.'; ?></b>
 </div>
 <div id="hierarchy_chart"></div>
 <script type="text/javascript">
-	var JUriRoot = "<?php echo $JUriRoot; ?>";
+	var UriRoot = "<?php echo $UriRoot; ?>";
 	var userName = "<?php echo $userName; ?>";
 
 	/** Show people directly reporting to logged in user **/
@@ -42,7 +46,7 @@ foreach ($this->items as $hierarchy)
 			/** Get sub-user names and create node structure **/
 			<?php $hierarchys = $this->hierarchysModel->getReportsTo($data->user_id);
 				foreach ($hierarchys as $hierarchy) {
-					$user = JFactory::getUser($hierarchy->user_id);
+					$user = Factory::getUser($hierarchy->user_id);
 					$hierarchy->subUserName = $user->name;
 				} ?>
 				var subChildArrObj = [];

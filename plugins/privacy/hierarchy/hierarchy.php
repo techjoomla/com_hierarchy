@@ -10,11 +10,12 @@
 
 // No direct access.
 defined('_JEXEC') or die();
+use Joomla\CMS\User\User;
+use Joomla\CMS\Table\User as UserTable;
 
 JLoader::register('PrivacyPlugin', JPATH_ADMINISTRATOR . '/components/com_privacy/helpers/plugin.php');
 JLoader::register('PrivacyRemovalStatus', JPATH_ADMINISTRATOR . '/components/com_privacy/helpers/removal/status.php');
 
-use Joomla\CMS\User\User;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -57,7 +58,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @since   1.1.1
 	 */
-	public function onPrivacyExportRequest(PrivacyTableRequest $request, JUser $user = null)
+	public function onPrivacyExportRequest(PrivacyTableRequest $request, User $user = null)
 	{
 		if (!$user)
 		{
@@ -65,7 +66,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 		}
 
 		/** @var JTableUser $user */
-		$userTable = User::getTable();
+		$userTable = UserTable::getTable();
 		$userTable->load($user->id);
 
 		$domains = array();
@@ -83,7 +84,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @since   1.1.1
 	 */
-	private function createHierarchyUsers(JTableUser $user)
+	private function createHierarchyUsers(UserTable $user)
 	{
 		$domain = $this->createDomain('Hierarchy Users', 'Users hierarchy details');
 
@@ -120,7 +121,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @since   1.1.1
 	 */
-	public function onPrivacyCanRemoveData(PrivacyTableRequest $request, JUser $user = null)
+	public function onPrivacyCanRemoveData(PrivacyTableRequest $request, User $user = null)
 	{
 		$status = new PrivacyRemovalStatus;
 
@@ -142,7 +143,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	 *
 	 * @since   1.1.1
 	 */
-	public function onPrivacyRemoveData(PrivacyTableRequest $request, JUser $user = null)
+	public function onPrivacyRemoveData(PrivacyTableRequest $request, User $user = null)
 	{
 		// This plugin only processes data for registered user accounts
 		if (!$user)

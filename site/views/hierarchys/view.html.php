@@ -7,8 +7,15 @@
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Component\ComponentHelper;
 
-jimport('joomla.application.component.view');
 JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
 
 /**
@@ -16,7 +23,7 @@ JLoader::import('components.com_hierarchy.models.hierarchys', JPATH_SITE);
  *
  * @since  1.6
  */
-class HierarchyViewHierarchys extends JViewLegacy
+class HierarchyViewHierarchys extends HtmlView
 {
 	protected $items;
 
@@ -37,18 +44,20 @@ class HierarchyViewHierarchys extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
-		$user = JFactory::getUser();
+		$app = Factory::getApplication();
+		$user = Factory::getUser();
 
 		// Validate user login.
 		if (empty($user->id))
 		{
-			$msg = JText::_('COM_HIERARCHY_MESSAGE_LOGIN_FIRST');
+			$msg = Text::_('COM_HIERARCHY_MESSAGE_LOGIN_FIRST');
 
 			// Get current url.
-			$current = JUri::getInstance()->toString();
+			$current = Uri::getInstance()->toString();
 			$url     = base64_encode($current);
-			$app->redirect(JRoute::_('index.php?option=com_users&view=login&return=' . $url, false), $msg);
+
+			$app->enqueueMessage($msg, 'notice');
+			$app->redirect(Route::_('index.php?option=com_users&view=login&return=' . $url, false));
 		}
 
 		$this->state = $this->get('State');
@@ -59,14 +68,14 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$contextName = $this->state->get('filter_context');
 
 		$contextList = array();
-		$contextList[] = JHtml::_('select.option', '0', JText::_('COM_HIERARCHY_SELECT_CONTEXT'));
+		$contextList[] = HTMLHelper::_('select.option', '0', Text::_('COM_HIERARCHY_SELECT_CONTEXT'));
 
 		if (!empty($this->items))
 		{
 			foreach ($this->items as $item)
 			{
 				// Get list of people who is managers of logged in user.
-				$this->hierarchysModel = JModelLegacy::getInstance('Hierarchys', 'HierarchyModel');
+				$this->hierarchysModel = BaseDatabaseModel::getInstance('Hierarchys', 'HierarchyModel');
 				$this->reportingsTo = $this->hierarchysModel->getReportingTo($item->reports_to);
 
 				// Get avatar
@@ -75,7 +84,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 
 				// Context filter
 				$context   = $item->context;
-				$contextList[] = JHtml::_('select.option', $context, $context);
+				$contextList[] = HTMLHelper::_('select.option', $context, $context);
 			}
 		}
 
@@ -90,7 +99,7 @@ class HierarchyViewHierarchys extends JViewLegacy
 		$this->HierarchyFrontendHelper     = new HierarchyFrontendHelper;
 
 		// Get component params
-		$this->params     = JComponentHelper::getParams('com_hierarchy');
+		$this->params     = ComponentHelper::getParams('com_hierarchy');
 
 		// Get permissions
 		$this->canCreate  = $user->authorise('core.create', 'com_hierarchy');
