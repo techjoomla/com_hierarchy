@@ -10,18 +10,17 @@
 // No direct access.
 defined('_JEXEC') or die();
 use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-
-JFormHelper::loadFieldClass('list');
 
 /**
  * Supports an HTML select list of courses
  *
  * @since  1.0.0
  */
-class JFormFieldContextList extends JFormFieldList
+class JFormFieldContextList extends ListField
 {
 	/**
 	 * The form field type.
@@ -48,7 +47,7 @@ class JFormFieldContextList extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-		$db = Factory::getDbo();
+		$db = $this->getDatabase();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.

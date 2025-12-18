@@ -59,10 +59,11 @@ class HierarchyControllerHierarchy extends FormController
 
 		// Initialise variables.
 		$app   = Factory::getApplication();
+		$input = $app->getInput();
 		$model = $this->getModel('hierarchy', 'HierarchyModel');
 
 		// Get the user data.
-		$data = Factory::getApplication()->input->get('jform', array(), 'array');
+		$data = $input->get('jform', array(), 'array');
 
 		// Validate the posted data.
 		$form = $model->getForm();
@@ -80,10 +81,9 @@ class HierarchyControllerHierarchy extends FormController
 			$data = $model->validate($form, $data);
 		}
 
-		$jinput = Factory::getApplication()->input;
-		$data['user_id']  = $jinput->get('user_id', '', 'int');
-		$data['created_by']  = $jinput->get('created_by', '', 'int');
-		$data['modified_by'] = $jinput->get('modified_by', '', 'int');
+		$data['user_id']  = $input->get('user_id', '', 'int');
+		$data['created_by']  = $input->get('created_by', '', 'int');
+		$data['modified_by'] = $input->get('modified_by', '', 'int');
 
 		// Get the existing managers of the user
 		$hierarchysData = $model->getReportsTo($data['user_id']);
@@ -116,7 +116,6 @@ class HierarchyControllerHierarchy extends FormController
 			$return = $model->save($data);
 		}
 
-		$input = Factory::getApplication()->input;
 		$id    = $input->get('id');
 
 		if (empty($id))
@@ -160,8 +159,9 @@ class HierarchyControllerHierarchy extends FormController
 	 */
 	public function getAutoSuggestUsers()
 	{
-		$jinput = Factory::getApplication()->input;
-		$userId = $jinput->get('user_id', '', 'int');
+		$app = Factory::getApplication();
+		$input = $app->getInput();
+		$userId = $input->get('user_id', '', 'int');
 
 		// Get the model.
 		$model = $this->getModel('Hierarchy', 'HierarchyModel');
@@ -172,6 +172,6 @@ class HierarchyControllerHierarchy extends FormController
 		// Output json response
 		header('Content-type: application/json');
 		echo json_encode($list);
-		jexit();
+		exit();
 	}
 }

@@ -40,10 +40,11 @@ class HierarchyViewHierarchy extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
-		$jinput = Factory::getApplication()->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 
-		$this->client = $jinput->get('client');
-		$this->clientID = $jinput->get('client_id');
+		$this->client = $input->get('client');
+		$this->clientID = $input->get('client_id');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -64,7 +65,8 @@ class HierarchyViewHierarchy extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		Factory::getApplication()->input->set('hidemainmenu', true);
+		$app = Factory::getApplication();
+		$app->getInput()->set('hidemainmenu', true);
 		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 

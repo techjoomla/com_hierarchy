@@ -87,7 +87,76 @@ class HierarchyModelHierarchys extends ListModel
 	 *
 	 * @since   1.6
 	 */
-	protected function getListQuery()
+	/* protected function getListQuery()
+	{
+		$query = $this->_db->getQuery();
+
+		// Select the required fields from the table.
+		$query->select(
+				$this->getState('list.select',
+				'DISTINCT' . $this->_db->quoteName('a.id', 'subuserId') . ',' . $this->_db->quoteName('a.name') .
+				',' . $this->_db->quoteName('a.username') . ',' . $this->_db->quoteName('a.email', 'user_email')
+				)
+				);
+		$query->from($this->_db->quoteName('#__users', 'a'));
+
+		// Join over the user field 'user_id'
+		$query->select(
+				$this->_db->quoteName(
+					array('hu.id', 'hu.user_id', 'hu.reports_to', 'hu.context','hu.context_id',
+					'hu.created_by', 'hu.modified_by', 'hu.created_date', 'hu.modified_date', 'hu.state', 'hu.note')
+							)
+				);
+		$query->join('LEFT', $this->_db->quoteName('#__hierarchy_users', 'hu') . '
+		ON (' . $this->_db->quoteName('hu.user_id') . ' = ' . $this->_db->quoteName('a.id') . ')');
+
+		// Filter by search in title
+		$search = $this->getState('filter.search');
+		$userNames = $this->getState('filter.hierarchy_users');
+		$contextName = $this->getState('filter.context');
+
+		if (!empty($search))
+		{
+			if (stripos($search, 'id:') === 0)
+			{
+				$query->where('a.id = ' . (int) substr($search, 3));
+			}
+			else
+			{
+				$search = $this->_db->Quote('%' . $this->_db->escape($search, true) . '%');
+				$query->where('( a.name LIKE ' . $search . ' )');
+			}
+		}
+
+		// Filter by user name
+		if (!empty($userNames))
+		{
+			$userNames = $this->_db->Quote('%' . $this->_db->escape($userNames, true) . '%');
+			$query->where('( a.id LIKE ' . $userNames . ' )');
+		}
+
+		// Filter by context
+		if (!empty($contextName))
+		{
+			$contextName = $this->_db->Quote('%' . $this->_db->escape($contextName, true) . '%');
+			$query->where('( hu.context LIKE ' . $contextName . ' )');
+		}
+
+		$query->where('a.block=0');
+
+		// Add the list ordering clause.
+		$orderCol = $this->state->get('list.ordering');
+		$orderDirn = $this->state->get('list.direction');
+
+		if ($orderCol && $orderDirn)
+		{
+			$query->order($this->_db->escape($orderCol . ' ' . $orderDirn));
+		}
+
+		return $query;
+	} */
+
+		protected function getListQuery()
 	{
 		$query = $this->_db->getQuery(true);
 

@@ -47,8 +47,9 @@ class HierarchyControllerHierarchys extends HierarchyController
 	 */
 	public function getReportsTo()
 	{
-		$jinput = Factory::getApplication()->input;
-		$userId = $jinput->get('user_id', '', 'int');
+		$app = Factory::getApplication();
+		$input = $app->getInput();
+		$userId = $input->get('user_id', '', 'int');
 
 		// Get the model.
 		$model = $this->getModel('Hierarchys', 'HierarchyModel');
@@ -66,6 +67,6 @@ class HierarchyControllerHierarchys extends HierarchyController
 		// Output json response
 		header('Content-type: application/json');
 		echo json_encode($reportsTo);
-		jexit();
+		exit();
 	}
 }

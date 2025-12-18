@@ -19,6 +19,7 @@ JLoader::register('PrivacyRemovalStatus', JPATH_ADMINISTRATOR . '/components/com
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Hierarchy Privacy Plugin.
@@ -39,7 +40,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	/**
 	 * Database object
 	 *
-	 * @var    JDatabaseDriver
+	 * @var    DatabaseInterface
 	 * @since  1.1.1
 	 */
 	protected $db;
@@ -88,7 +89,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 	{
 		$domain = $this->createDomain('Hierarchy Users', 'Users hierarchy details');
 
-		$query = $this->db->getQuery(true);
+		$query = $this->db->getQuery();
 		$query->select($this->db->quoteName(array('id', 'user_id', 'reports_to', 'context', 'context_id', 'created_by', 'modified_by')));
 		$query->from($this->db->quoteName('#__hierarchy_users'));
 		$query->where('(' . $this->db->qn('user_id') . '=' . $user->id . ' OR ' . $this->db->qn('reports_to') .
@@ -160,7 +161,7 @@ class PlgPrivacyHierarchy extends PrivacyPlugin
 		$db = $this->db;
 
 		// 1. Delete data from #__kart_customer_address
-		$query = $db->getQuery(true)
+		$query = $db->getQuery()
 			->delete($db->quoteName('#__hierarchy_users'))
 			->where('(' . $db->qn('user_id') . '=' . $user->id . ' OR ' . $db->qn('reports_to') . '=' . $user->id . ')');
 

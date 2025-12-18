@@ -11,7 +11,7 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
@@ -144,7 +144,7 @@ class HierarchyControllerHierarchys extends AdminController
 	public function getUserId($email)
 	{
 		$db = Factory::getDbo();
-		$query = $db->getQuery(true)
+		$query = $db->getQuery()
 			->select($db->quoteName('id'))
 			->from($db->quoteName('#__users'))
 			->where($db->quoteName('email') . ' = ' . $db->quote($email));
@@ -163,7 +163,8 @@ class HierarchyControllerHierarchys extends AdminController
 	public function remove()
 	{
 		$model = $this->getModel();
-		$input = Factory::getApplication()->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$post  = $input->post;
 		$userIds = $post->get('cid', '', 'ARRAY');
 
