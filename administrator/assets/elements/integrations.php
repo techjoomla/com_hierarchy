@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 
 /**
  * JFormFieldIntegrations class

@@ -17,5 +17,5 @@ $files = array(
 		);
 
 $folders = array(
-	'/components/com_hierarchy'
+	'/administrator/components/com_hierarchy'
 );

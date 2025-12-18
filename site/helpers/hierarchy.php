@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
@@ -30,23 +30,25 @@ class HierarchyFrontendHelper
 		$this->params      = ComponentHelper::getParams('com_hierarchy');
 		$this->integration = $this->params->get('integration', 2);
 
+		// Note: jimport calls for Techjoomla JSocial classes
+		// These may need to be updated based on Techjoomla JSocial library compatibility with Joomla 6
 		if ($this->integration != 'none')
 		{
 			if ($this->integration == '2')
 			{
-				jimport('techjoomla.jsocial.joomla');
+				// jimport('techjoomla.jsocial.joomla');
 			}
 			elseif ($this->integration == '1')
 			{
-				jimport('techjoomla.jsocial.jomsocial');
+				// jimport('techjoomla.jsocial.jomsocial');
 			}
 			elseif ($this->integration == '4')
 			{
-				jimport('techjoomla.jsocial.easysocial');
+				// jimport('techjoomla.jsocial.easysocial');
 			}
 			elseif($this->integration == '6')
 			{
-				jimport('techjoomla.jsocial.cb');
+				// jimport('techjoomla.jsocial.cb');
 			}
 		}
 	}
@@ -110,11 +112,11 @@ class HierarchyFrontendHelper
 	{
 		try
 		{
-			$db = Factory::getDBO();
+			$db = Factory::getDbo();
 
 			// Get current status for Unset previous template from being default
 			// For front end => client_id=0
-			$query = $db->getQuery(true)->select('template')->from($db->quoteName('#__template_styles'))->where('client_id=' . $client)->where('home=1');
+			$query = $db->getQuery()->select('template')->from($db->quoteName('#__template_styles'))->where('client_id=' . $client)->where('home=1');
 			$db->setQuery($query);
 
 			return $db->loadResult();

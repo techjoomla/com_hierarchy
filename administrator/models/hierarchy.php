@@ -103,16 +103,17 @@ class HierarchyModelHierarchy extends AdminModel
 		$item = parent::getItem($pk);
 
 		// Get client and client_id from URL
-		$jinput = Factory::getApplication()->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 
-		if (empty($item->context) && $jinput->get('client'))
+		if (empty($item->context) && $input->get('client'))
 		{
-			$item->context = $jinput->get('client');
+			$item->context = $input->get('client');
 		}
 
-		if (empty($item->context_id) && $jinput->get('client_id'))
+		if (empty($item->context_id) && $input->get('client_id'))
 		{
-			$item->context_id = $jinput->get('client_id');
+			$item->context_id = $input->get('client_id');
 		}
 
 		if ($item->user_id)
@@ -242,7 +243,7 @@ class HierarchyModelHierarchy extends AdminModel
 			return false;
 		}
 
-		$db = Factory::getDBO();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		if ($onlyIds)
@@ -293,7 +294,7 @@ class HierarchyModelHierarchy extends AdminModel
 			return false;
 		}
 
-		$db = Factory::getDBO();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__hierarchy_users'));
@@ -327,12 +328,16 @@ class HierarchyModelHierarchy extends AdminModel
 			return false;
 		}
 
-		$db = Factory::getDbo();
+		// $db = Factory::getDbo();
+		// $db = Factory::getContainer()->get(DatabaseInterface::class);
+		$db = $this->getDatabase();
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName(array('hu.id', 'user_id','reports_to','name','username','email')));
+		$query->select($db->quoteName('hu.id') . ', ' . $db->quoteName('hu.user_id') . ', ' . $db->quoteName('hu.reports_to') . ', ' . $db->quoteName('u.name') . ', ' . $db->quoteName('u.username') . ', ' . $db->quoteName('u.email'));
 		$query->from($db->quoteName('#__hierarchy_users', 'hu'));
 		$query->join('INNER', $db->quoteName('#__users', 'u') . ' ON (' . $db->quoteName('u.id') . ' = ' . $db->quoteName('hu.reports_to') . ')');
 		$query->where($db->quoteName('hu.user_id') . " = " . $db->quote($reportsTo));
+
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 
@@ -351,9 +356,10 @@ class HierarchyModelHierarchy extends AdminModel
 	public function getAutoSuggestUsers($userId)
 	{
 		$app = Factory::getApplication();
+		$input = $app->getInput();
 
 		// Get search term
-		$searchTerm = $app->input->get('search', '', 'STRING');
+		$searchTerm = $input->get('search', '', 'STRING');
 
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);

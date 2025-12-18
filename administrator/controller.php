@@ -33,8 +33,10 @@ class HierarchyController extends BaseController
 	{
 		require_once JPATH_COMPONENT . '/helpers/hierarchy.php';
 
-		$view = Factory::getApplication()->input->getCmd('view', 'hierarchys');
-		Factory::getApplication()->input->set('view', $view);
+		$app = Factory::getApplication();
+		$input = $app->getInput();
+		$view = $input->getCmd('view', 'hierarchys');
+		$input->set('view', $view);
 
 		parent::display($cachable, $urlparams);
 

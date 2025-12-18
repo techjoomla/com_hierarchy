@@ -16,6 +16,7 @@ JLoader::register('ActionlogsHelper', JPATH_ADMINISTRATOR . '/components/com_act
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Hierarchy Actions Logging Plugin.
@@ -27,7 +28,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	/**
 	 * Application object.
 	 *
-	 * @var    JApplicationCms
+	 * @var    \Joomla\CMS\Application\CMSApplication
 	 * @since  1.1.1
 	 */
 	protected $app;
@@ -35,7 +36,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 	/**
 	 * Database object.
 	 *
-	 * @var    JDatabaseDriver
+	 * @var    DatabaseInterface
 	 * @since  1.1.1
 	 */
 	protected $db;
@@ -88,7 +89,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 			return;
 		}
 
-		$option       = $this->app->input->getCmd('option');
+		$option       = $this->app->getInput()->getCmd('option');
 		$actor        = Factory::getUser();
 		$manager      = Factory::getUser($data['reports_to']);
 		$user = Factory::getUser($data['user_id']);
@@ -127,7 +128,7 @@ class PlgActionlogHierarchy extends CMSPlugin
 			return;
 		}
 
-		$option       = $this->app->input->getCmd('option');
+		$option       = $this->app->getInput()->getCmd('option');
 		$actor        = Factory::getUser();
 		$manager      = Factory::getUser($data['reports_to']);
 		$user = Factory::getUser($data['user_id']);

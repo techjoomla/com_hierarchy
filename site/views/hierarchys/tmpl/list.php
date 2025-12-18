@@ -66,10 +66,10 @@ $UriRoot = Uri::root();
 					</th>
 <!--
 					<th class='left'>
-						<?php //echo JText::_('COM_HIERARCHY_CONTEXT'); ?>
+						<?php //echo Text::_('COM_HIERARCHY_CONTEXT'); ?>
 					</th>
 					<th class='left'>
-						<?php //echo JText::_('COM_HIERARCHY_CONTEXT_ID'); ?>
+						<?php //echo Text::_('COM_HIERARCHY_CONTEXT_ID'); ?>
 					</th>
 -->
 					<th class='left'>

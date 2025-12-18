@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.0" method="upgrade">
+<extension type="component" version="4.0" method="upgrade">
     <name>com_hierarchy</name>
     <creationDate>29th Apr 2022</creationDate>
     <copyright>Copyright (C) 2016 - 2022 Techjoomla. All rights reserved.</copyright>

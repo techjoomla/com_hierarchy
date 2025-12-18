@@ -21,13 +21,11 @@ if (!Factory::getUser()->authorise('core.manage', 'com_hierarchy'))
 	throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
 }
 
-// Include dependancies
-jimport('joomla.application.component.controller');
-
 // Initialize hierarchy js
 $document = Factory::getDocument();
 HTMLHelper::_('script', '/media/com_hierarchy/js/hierarchy.js');
 
+$app = Factory::getApplication();
 $controller = BaseController::getInstance('Hierarchy');
-$controller->execute(Factory::getApplication()->input->get('task'));
+$controller->execute($app->getInput()->get('task'));
 $controller->redirect();

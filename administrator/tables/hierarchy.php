@@ -10,6 +10,7 @@
 // No direct access
 defined('_JEXEC') or die;
 use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * hierarchy Table class
@@ -21,9 +22,9 @@ class HierarchyTableHierarchy extends Table
 	/**
 	 * Constructor
 	 *
-	 * @param   JDatabase  &$db  A database connector object
+	 * @param   DatabaseInterface  $db  A database connector object
 	 */
-	public function __construct(&$db)
+	public function __construct(DatabaseInterface $db)
 	{
 		parent::__construct('#__hierarchy_users', 'id', $db);
 	}

@@ -15,10 +15,9 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-HTMLHelper::_('behavior.tooltip');
-HTMLHelper::_('behavior.formvalidation');
 HTMLHelper::_('behavior.keepalive');
-$input   = Factory::getApplication()->input;
+$app = Factory::getApplication();
+$input = $app->getInput();
 $userId = $input->get('user_id', 0);
 $UriRoot = Uri::root(true) . '/administrator/';
 

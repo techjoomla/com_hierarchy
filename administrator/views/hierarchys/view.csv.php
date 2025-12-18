@@ -13,15 +13,16 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 
-// Import CSV library view
-jimport('techjoomla.view.csv');
+// Note: Techjoomla CSV export library - may need to be updated for Joomla 6 compatibility
+// jimport('techjoomla.view.csv');
 
 /**
- * Hierarchy View class that extends TjExportCsv class
+ * Hierarchy View class for CSV export
+ * Note: May need to extend Techjoomla CSV export class if available for Joomla 6
  *
  * @since  0.0.1
  */
-class HierarchyViewHierarchys extends TjExportCsv
+class HierarchyViewHierarchys extends \Joomla\CMS\MVC\View\HtmlView
 {
 	/**
 	 * Display the Hierarchy view
@@ -33,7 +34,7 @@ class HierarchyViewHierarchys extends TjExportCsv
 	public function display($tpl = null)
 	{
 		$app   = Factory::getApplication();
-		$input = $app->input;
+		$input = $app->getInput();
 		$user  = Factory::getUser();
 		$userAuthorisedExport = $user->authorise('core.create', 'com_hierarchy');
 

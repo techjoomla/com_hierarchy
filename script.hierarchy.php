@@ -96,6 +96,9 @@ class Com_HierarchyInstallerScript
 	{
 		$db = Factory::getDBO();
 
+		if (!defined('DS')) {
+			define('DS', DIRECTORY_SEPARATOR);
+		}
 		// Obviously you may have to change the path and name if your installation SQL file ;)
 		if (method_exists($parent, 'extension_root'))
 		{
@@ -111,7 +114,7 @@ class Com_HierarchyInstallerScript
 
 		if ($buffer !== false)
 		{
-			$queries = \JDatabaseDriver::splitSql($buffer);
+			$queries = $db->splitSql($buffer);
 
 			if (count($queries) != 0)
 			{
@@ -123,9 +126,14 @@ class Com_HierarchyInstallerScript
 					{
 						$db->setQuery($query);
 
-						if (!$db->execute())
+						try
 						{
-							$this->setMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), 'error');
+							$db->execute();
+						}
+						catch (\Exception $e)
+						{
+							$app = Factory::getApplication();
+							$app->enqueueMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), 'error');
 
 							return false;
 						}
@@ -205,7 +213,8 @@ class Com_HierarchyInstallerScript
 						$db->setQuery($query);
 						$count = $db->loadResult();
 
-						$installer = new Installer;
+						$installer = new Installer();
+						$installer->setDatabase($db);
 						$result = $installer->install($path);
 
 						$status->plugins[] = array('name' => $plugin, 'group' => $folder, 'result' => $result, 'status' => $published);
@@ -280,7 +289,8 @@ class Com_HierarchyInstallerScript
 
 						if ($id)
 						{
-							$installer = new Installer;
+							$installer = new Installer();
+							$installer->setDatabase($db);
 							$result = $installer->uninstall('plugin', $id);
 							$status->plugins[] = array(
 								'name' => 'plg_' . $plugin,

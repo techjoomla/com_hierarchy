@@ -19,8 +19,9 @@ HTMLHelper::_('bootstrap.loadcss');
 HTMLHelper::_('bootstrap.framework');
 
 // Execute the task.
+$app = Factory::getApplication();
 $controller = BaseController::getInstance('Hierarchy');
-$controller->execute(Factory::getApplication()->input->get('task'));
+$controller->execute($app->getInput()->get('task'));
 $controller->redirect();
 
 // Initialize hierarchy js

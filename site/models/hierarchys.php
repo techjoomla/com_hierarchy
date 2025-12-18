@@ -11,8 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Factory;
 
-jimport('joomla.application.component.modellist');
-
 /**
  * Methods supporting a list of Hierarchy records.
  *
@@ -92,7 +90,7 @@ class HierarchyModelHierarchys extends ListModel
 		$user = Factory::getUser();
 
 		// Create a new query object.+
-		$query = $this->db->getQuery(true);
+		$query = $this->db->getQuery();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -165,7 +163,7 @@ class HierarchyModelHierarchys extends ListModel
 	 */
 	public function getReportsTo($reportsTo)
 	{
-		$query = $this->db->getQuery(true);
+		$query = $this->db->getQuery();
 		$query->select('*');
 		$query->from($this->db->quoteName('#__hierarchy_users'));
 		$query->where($this->db->quoteName('reports_to') . ' = ' . $this->db->quote($reportsTo));
@@ -192,7 +190,7 @@ class HierarchyModelHierarchys extends ListModel
 	 */
 	public function getReportingTo($userID)
 	{
-		$query = $this->db->getQuery(true);
+		$query = $this->db->getQuery();
 		$query->select('*');
 		$query->from($this->db->quoteName('#__hierarchy_users'));
 		$query->where($this->db->quoteName('user_id') . ' < ' . $this->db->quote($userID));
